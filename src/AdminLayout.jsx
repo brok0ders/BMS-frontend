@@ -23,7 +23,7 @@ import {
 
 const drawerWidth = 240;
 
-const Layout = () => {
+const AdminLayout = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleDrawerToggle = () => {
@@ -116,4 +116,4 @@ const Layout = () => {
   );
 };
 
-export default Layout;
+export default AdminLayout;
