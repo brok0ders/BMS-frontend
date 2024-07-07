@@ -4,6 +4,7 @@ import {
   Route,
   RouterProvider,
   createBrowserRouter,
+  Outlet,
 } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
@@ -29,7 +30,11 @@ const App = () => {
     )
   );
 
-  return <RouterProvider router={router} />;
+  return (
+    <div>
+      <RouterProvider router={router} />
+    </div>
+  );
 };
 
 export default App;
