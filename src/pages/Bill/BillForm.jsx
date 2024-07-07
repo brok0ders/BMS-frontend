@@ -551,7 +551,7 @@ const BillForm = () => {
       {/* Final submit button */}
       <Box className="py-2 px-2 flex md:justify-end mt-4 gap-5 justify-center">
         <Button variant="contained" onClick={handleBillSubmit}>
-          SUBMIT
+          SUBMIT {"  "}
         </Button>
       </Box>
     </Box>
