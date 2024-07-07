@@ -6,13 +6,13 @@ import {
   createBrowserRouter,
   Outlet,
 } from "react-router-dom";
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
-import HomePage from "./pages/HomePage.jsx";
+import LoginPage from "./pages/User/LoginPage";
+import RegisterPage from "./pages/User/RegisterPage";
 import BeerForm from "./pages/Beer/BeerForm.jsx";
 import LiquorForm from "./pages/Liquor/LiquorForm.jsx";
 import CompanyList from "./pages/Company/CompanyList.jsx";
-import Layout from "./Layout.jsx";
+import Layout from "./AdminLayout.jsx";
+import HomePage from "./Homepage/HomePage.jsx";
 
 const App = () => {
   const router = createBrowserRouter(
