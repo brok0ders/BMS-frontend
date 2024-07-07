@@ -96,33 +96,32 @@ function AppAppBar({ mode, toggleColorMode }) {
                 flexGrow: 5,
                 alignItems: "center",
                 ml: "-18px",
-                mx: '10%',
                 px: 0,
                 textAlign: "center",
-                justifyContent: 'space-evenly',
-                display: {xs:'none', lg: 'flex'}
+                justifyContent: 'center',
+                display: {xs:'none', lg: 'flex'},
               }}>
                 <MenuItem
                   onClick={() => scrollToSection("faq")}
-                  sx={{ py: "6px", px: "12px" }}
+                  sx={{ py: "6px", px: "12px", mx: "1%" }}
                 >
-                  <Typography variant="body2" color="text.primary">
+                  <Typography variant="body2" color="text.primary" sx={{fontSize: '1rem'}}>
                     Home
                   </Typography>
                 </MenuItem>
                 <MenuItem
                   onClick={() => scrollToSection("faq")}
-                  sx={{ py: "6px", px: "12px" }}
+                  sx={{ py: "6px", px: "12px", mx: "1%" }}
                 >
-                  <Typography variant="body2" color="text.primary">
+                  <Typography variant="body2" color="text.primary" sx={{fontSize: '1rem'}}>
                     About
                   </Typography>
                 </MenuItem>
                 <MenuItem
                   onClick={() => scrollToSection("faq")}
-                  sx={{ py: "6px", px: "12px" }}
+                  sx={{ py: "6px", px: "12px", mx: "1%" }}
                 >
-                  <Typography variant="body2" color="text.primary">
+                  <Typography variant="body2" color="text.primary" sx={{fontSize: '1rem'}}>
                     Contact us
                   </Typography>
                 </MenuItem>
@@ -141,6 +140,7 @@ function AppAppBar({ mode, toggleColorMode }) {
                 variant="contained"
                 size="small"
                 component="a"
+                sx={{fontSize: '0.8rem'}}
               >
                 <Link to={"/login"}>Login</Link>
               </Button>
