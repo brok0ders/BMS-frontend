@@ -27,7 +27,7 @@ const Layout = () => {
     </>
   );
 };
-import BillForm from "./pages/Bill/BillForm.jsx";
+import BillForm from "./pages/Bill/LiquorBillForm.jsx";
 
 const App = () => {
   const router = createBrowserRouter(
