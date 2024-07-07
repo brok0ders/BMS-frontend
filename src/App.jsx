@@ -11,7 +11,6 @@ import RegisterPage from "./pages/User/RegisterPage";
 
 import BeerForm from "./pages/Beer/BeerForm.jsx";
 import LiquorForm from "./pages/Liquor/LiquorForm.jsx";
-import CompanyForm from "./pages/Company/CompanyForm.jsx";
 import CompanyList from "./pages/Company/CompanyList.jsx";
 import HomePage from "./Homepage/HomePage.jsx";
 
@@ -26,7 +25,8 @@ const Layout = () => {
       <Outlet />
     </>
   );
-};
+};import Layout from "./Layout.jsx";
+
 const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -35,9 +35,11 @@ const App = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/bill/records" element={<BillRecords />} />
-          <Route path="/beer/create" element={<BeerForm />} />
-          <Route path="/liquor/create" element={<LiquorForm />} />
-          <Route path="/company" element={<CompanyList />} />
+          <Route path="/dashboard/:id" element={<Layout />}>
+          <Route index element={<CompanyList />} /> {/* Default nested route */}
+          <Route path="beer/create" element={<BeerForm />} />
+            <Route path="liquor/create" element={<LiquorForm />} />
+          </Route>
         </Route>
       </Route>
     )
