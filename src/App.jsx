@@ -17,6 +17,7 @@ import HomePage from "./Homepage/HomePage.jsx";
 import Navbar from "./components/Navbar.jsx";
 import LoginPage from "./pages/User/LoginPage.jsx";
 import BillRecords from "./pages/Bill/BillRecords.jsx";
+import AdminHome from "./pages/Home/AdminHome.jsx";
 
 const Layout = () => {
   return (
@@ -37,7 +38,9 @@ const App = () => {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/bill/records" element={<BillRecords />} />
           <Route path="/dashboard/:id">
-            <Route index element={<CompanyList />} />{" "}
+            <Route index element={<AdminHome />} />
+
+            <Route path="company" element={<CompanyList />} />
             <Route path="beer/create" element={<BeerForm />} />
             <Route path="liquor/create" element={<LiquorForm />} />
           </Route>
