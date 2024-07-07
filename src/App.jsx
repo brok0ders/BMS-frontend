@@ -36,12 +36,11 @@ const App = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/bill/records" element={<BillRecords />} />
-          <Route path="/dashboard/:id" element={<Layout />}>
-            <Route index element={<CompanyList />} />{" "}
-            {/* Default nested route */}
-            <Route path="beer/create" element={<BeerForm />} />
-            <Route path="liquor/create" element={<LiquorForm />} />
-          </Route>
+        </Route>
+        <Route path="/dashboard/:id" element={<Layout />}>
+          <Route index element={<CompanyList />} />
+          <Route path="beer/create" element={<BeerForm />} />
+          <Route path="liquor/create" element={<LiquorForm />} />
         </Route>
       </Route>
     )

@@ -50,6 +50,7 @@ function AppAppBar({ mode, toggleColorMode }) {
           bgcolor: "transparent",
           backgroundImage: "none",
           mt: 2,
+          width: "100%",
         }}
       >
         <Container maxWidth="lg">
