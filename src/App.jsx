@@ -27,15 +27,16 @@ const Layout = () => {
     </>
   );
 };
+import BillForm from "./pages/Bill/BillForm.jsx";
 
 const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route>
-        <Route path="/" element={<Layout />}>
+            <Route path="/" element={<Layout />}>
           <Route path="" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
           <Route path="/bill/records" element={<BillRecords />} />
           <Route path="/dashboard/:id">
             <Route index element={<AdminHome />} />
@@ -45,8 +46,9 @@ const App = () => {
             <Route path="liquor/create" element={<LiquorForm />} />
           </Route>
         </Route>
+          <Route path="/bill/create" element={<BillForm />} />
       </Route>
-    )
+      )
   );
 
   return (
