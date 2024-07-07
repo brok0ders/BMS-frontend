@@ -92,15 +92,41 @@ function AppAppBar({ mode, toggleColorMode }) {
                 style={logoStyle}
                 alt="logo of sitemark"
               />
-
-              <MenuItem
-                onClick={() => scrollToSection("faq")}
-                sx={{ py: "6px", px: "12px" }}
-              >
-                <Typography variant="body2" color="text.primary">
-                  FAQ
-                </Typography>
-              </MenuItem>
+              <Box sx={{
+                flexGrow: 5,
+                alignItems: "center",
+                ml: "-18px",
+                mx: '10%',
+                px: 0,
+                textAlign: "center",
+                justifyContent: 'space-evenly',
+                display: {xs:'none', lg: 'flex'}
+              }}>
+                <MenuItem
+                  onClick={() => scrollToSection("faq")}
+                  sx={{ py: "6px", px: "12px" }}
+                >
+                  <Typography variant="body2" color="text.primary">
+                    Home
+                  </Typography>
+                </MenuItem>
+                <MenuItem
+                  onClick={() => scrollToSection("faq")}
+                  sx={{ py: "6px", px: "12px" }}
+                >
+                  <Typography variant="body2" color="text.primary">
+                    About
+                  </Typography>
+                </MenuItem>
+                <MenuItem
+                  onClick={() => scrollToSection("faq")}
+                  sx={{ py: "6px", px: "12px" }}
+                >
+                  <Typography variant="body2" color="text.primary">
+                    Contact us
+                  </Typography>
+                </MenuItem>
+              </Box>
             </Box>
             <Box
               sx={{
