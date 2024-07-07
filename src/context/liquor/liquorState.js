@@ -89,10 +89,7 @@ const LiquorState = (props) => {
     const config = {
       Authorization: localStorage.getItem("token"),
     };
-    const { data } = await API.delete(
-      `/liquor/delete/${id}`,
-      config
-    );
+    const { data } = await API.delete(`/liquor/delete/${id}`, config);
     if (data.success) {
       setLiquor(data.liquor);
       console.log(data.message);
@@ -109,8 +106,8 @@ const LiquorState = (props) => {
         getAllLiquor,
         getLiquorCom,
         updateLiquor,
-        createLiquor, 
-        deleteLiquor
+        createLiquor,
+        deleteLiquor,
       }}
     >
       {props.children}

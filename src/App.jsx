@@ -28,27 +28,35 @@ const Layout = () => {
   );
 };
 import BillForm from "./pages/Bill/LiquorBillForm.jsx";
+import LiquorList from "./pages/Liquor/LiquorList.jsx";
+import BeerList from "./pages/Beer/BeerList.jsx";
+import UpdateBeerForm from "./pages/Beer/UpdateBeerForm.jsx";
+import UpdateLiquorForm from "./pages/Liquor/UpdateLiquorForm.jsx";
 
 const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route>
-            <Route path="/" element={<Layout />}>
+        <Route path="/" element={<Layout />}>
           <Route path="" element={<HomePage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-          <Route path="/bill/records" element={<BillRecords />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
           <Route path="/dashboard/:id">
             <Route index element={<AdminHome />} />
+            <Route path="bill/records" element={<BillRecords />} />
+            <Route path="liquor" element={<LiquorList />} />
+            <Route path="beer" element={<BeerList />} />
+            <Route path="beer/edit/:id" element={<UpdateBeerForm />} />
+            <Route path="liquor/edit/:id" element={<UpdateLiquorForm />} />
 
             <Route path="company" element={<CompanyList />} />
             <Route path="beer/create" element={<BeerForm />} />
             <Route path="liquor/create" element={<LiquorForm />} />
           </Route>
         </Route>
-          <Route path="/bill/create" element={<BillForm />} />
+        <Route path="/bill/create" element={<BillForm />} />
       </Route>
-      )
+    )
   );
 
   return (
