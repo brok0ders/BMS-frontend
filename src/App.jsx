@@ -25,7 +25,7 @@ const Layout = () => {
       <Outlet />
     </>
   );
-};import Layout from "./Layout.jsx";
+};
 
 const App = () => {
   const router = createBrowserRouter(
