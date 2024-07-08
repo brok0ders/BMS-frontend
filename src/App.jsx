@@ -27,7 +27,7 @@ const Layout = () => {
     </>
   );
 };
-import BeerBillForm from "./pages/Bill/LiquorBillForm.jsx";
+import BeerBillForm from "./pages/Bill/BeerBillForm.jsx";
 import LiquorList from "./pages/Liquor/LiquorList.jsx";
 import BeerList from "./pages/Beer/BeerList.jsx";
 import UpdateBeerForm from "./pages/Beer/UpdateBeerForm.jsx";
@@ -44,7 +44,6 @@ const App = () => {
           <Route path="" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/bill/records" element={<BillRecords />} />
           <Route path="/dashboard">
             <Route index element={<AdminHome />} />
             <Route path="bill/records" element={<BillRecords />} />
@@ -58,8 +57,14 @@ const App = () => {
 
             <Route path="beer/create/:company" element={<BeerForm />} />
             <Route path="liquor/create/:company" element={<LiquorForm />} />
-            <Route path="liquor/bill/create" element={<LiquorBillForm />} />
-            <Route path="beer/bill/create" element={<BeerBillForm />} />
+            <Route
+              path="liquor/bill/create/:company"
+              element={<LiquorBillForm />}
+            />
+            <Route
+              path="beer/bill/create/:company"
+              element={<BeerBillForm />}
+            />
           </Route>
         </Route>
       </Route>

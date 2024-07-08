@@ -11,8 +11,8 @@ import {
   Typography,
   Box,
 } from "@mui/material";
-import { Delete, Edit } from "@mui/icons-material";
-import { Link } from "react-router-dom";
+import { Add, Delete, Edit } from "@mui/icons-material";
+import { Link, useParams } from "react-router-dom";
 
 const BeerList = () => {
   const { company } = useParams();
@@ -72,6 +72,20 @@ const BeerList = () => {
   return (
     <Box className="py-5 px-10">
       <h1 className="text-center text-4xl font-bold">Beer Details</h1>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-end",
+          gap: 2,
+        }}
+      >
+        {" "}
+        <Link to={`/dashboard/beer/create/${company}`}>
+          <Button startIcon={<Add />} variant="contained">
+            New Beer
+          </Button>
+        </Link>
+      </Box>
       <TableContainer className="py-10 ">
         <Table
           sx={{ minWidth: 650, border: 1.34, borderColor: "grey.400" }}
@@ -194,7 +208,7 @@ const BeerList = () => {
                     className="w-0"
                     sx={{ border: 1.34, borderColor: "grey.400" }}
                   >
-                    <Link to={`edit/${p._id}`}>
+                    <Link to={`/dashboard/beer/edit/${p._id}`}>
                       <Button sx={{ minWidth: 1 }}>
                         <Edit sx={{ fontSize: 20 }} />
                       </Button>
@@ -229,25 +243,25 @@ const BeerList = () => {
                 align="right"
                 sx={{ border: 1.34, borderColor: "grey.400" }}
               >
-                <Typography fontWeight="normal">{total650mlStock}</Typography>
+                <Typography fontWeight="bold">{total650mlStock}</Typography>
               </TableCell>
               <TableCell
                 align="right"
                 sx={{ border: 1.34, borderColor: "grey.400" }}
               >
-                <Typography fontWeight="normal">{total500mlStock}</Typography>
+                <Typography fontWeight="bold">{total500mlStock}</Typography>
               </TableCell>
               <TableCell
                 align="right"
                 sx={{ border: 1.34, borderColor: "grey.400" }}
               >
-                <Typography fontWeight="normal">{total650mlPrice}</Typography>
+                <Typography fontWeight="bold">{total650mlPrice}</Typography>
               </TableCell>
               <TableCell
                 align="right"
                 sx={{ border: 1.34, borderColor: "grey.400" }}
               >
-                <Typography fontWeight="normal">{total500mlPrice}</Typography>
+                <Typography fontWeight="bold">{total500mlPrice}</Typography>
               </TableCell>
             </TableRow>
           </TableBody>

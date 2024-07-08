@@ -10,7 +10,7 @@ const BillSelection = () => {
       <div className="h-[75vh] bg-[#f6f6f6]">
         <div className="flex flex-col items-center justify-center h-[75vh] md:h-[50vh]">
           <div className="grid place-items-center place grid-cols-1 md:grid-cols-2 gap-28 mx-20 my-10">
-            <Link to={"/company/liquor"}>
+            <Link to={"/dashboard/company/liquor?page=create"}>
               <div className="text-center">
                 <div className="flex justify-center items-center bg-gradient-to-r from-blue-100 to-green-100 rounded-full w-36 h-36">
                   <img src="/images/liquorbill.png" alt="#" width={100} />
@@ -18,7 +18,7 @@ const BillSelection = () => {
                 <h1 className="mx-4 my-2">Liquor Bill</h1>
               </div>
             </Link>
-            <Link to={"/company/beer"}>
+            <Link to={"/dashboard/company/beer?page=create"}>
               <div className="text-center">
                 <div className="flex justify-center items-center bg-gradient-to-r from-blue-100 to-green-100 rounded-full w-36 h-36">
                   <img src="/images/beerbill.png" alt="#" width={100} />
