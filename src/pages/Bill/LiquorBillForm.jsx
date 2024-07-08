@@ -59,7 +59,7 @@ const liquorBrandData = [
   },
 ];
 
-const BillForm = () => {
+const LiquorBillForm = () => {
   const [licensee, setLicensee] = useState("");
   const [shop, setShop] = useState("");
   const [firm, setFirm] = useState("");
@@ -246,7 +246,7 @@ const BillForm = () => {
     <Box
       noValidate
       autoComplete="off"
-      className="py-10 px-10 md:py-20 md:px-20 "
+      className="py-10 px-10 md:py-5 md:px-20 "
     >
       <h1 className="md:text-5xl text-center font-bold text-slate-700 px-2 py-2 m-4 text-4xl">
         Bill Details
@@ -349,14 +349,17 @@ const BillForm = () => {
         <Box className="px-3 grid md:grid-cols-3 sm:grid-cols-2 gap-10">
           <TextField
             required
-            defaultValue={""}
+            
             id="outlined-basic"
             label="Quarts(Q)"
             name="quantity-Q"
             variant="outlined"
             type="number"
             inputProps={{ min: 0 }}
-            value={currentInput?.quantity?.Q}
+            value={currentInput?.quantity?.Q !== undefined
+              ? currentInput.quantity?.Q
+              : ""}
+            
             onChange={handleInputChange}
           />
           <TextField
@@ -367,7 +370,9 @@ const BillForm = () => {
             variant="outlined"
             type="number"
             inputProps={{ min: 0 }}
-            value={currentInput?.quantity?.P}
+            value={currentInput?.quantity?.P !== undefined
+              ? currentInput.quantity?.P
+              : ""}
             onChange={handleInputChange}
           />
           <TextField
@@ -378,7 +383,9 @@ const BillForm = () => {
             variant="outlined"
             type="number"
             inputProps={{ min: 0 }}
-            value={currentInput?.quantity?.N}
+            value={currentInput?.quantity?.N !== undefined
+              ? currentInput.quantity?.N
+              : ""}
             onChange={handleInputChange}
           />
           <TextField
@@ -440,6 +447,9 @@ const BillForm = () => {
       {/* Table creation for adding bills */}
 
       <TableContainer className="py-12">
+        <h1 className="md:text-3xl text-2xl font-semibold text-slate-700 py-5">
+          Added Products
+        </h1>
         <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
           <TableHead>
             <TableRow>
@@ -549,7 +559,7 @@ const BillForm = () => {
         />
       </Box>
       {/* Final submit button */}
-      <Box className="py-2 px-2 flex md:justify-end mt-4 gap-5 justify-center">
+      <Box className="py-2 px-2 flex md:justify-end mt-1 gap-5 justify-center">
         <Button variant="contained" onClick={handleBillSubmit}>
           SUBMIT {"  "}
         </Button>
@@ -558,4 +568,4 @@ const BillForm = () => {
   );
 };
 
-export default BillForm;
+export default LiquorBillForm;

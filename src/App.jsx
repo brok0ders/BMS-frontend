@@ -27,11 +27,17 @@ const Layout = () => {
     </>
   );
 };
+<<<<<<< HEAD
 import BillForm from "./pages/Bill/LiquorBillForm.jsx";
 import LiquorList from "./pages/Liquor/LiquorList.jsx";
 import BeerList from "./pages/Beer/BeerList.jsx";
 import UpdateBeerForm from "./pages/Beer/UpdateBeerForm.jsx";
 import UpdateLiquorForm from "./pages/Liquor/UpdateLiquorForm.jsx";
+=======
+import LiquorBillForm from "./pages/Bill/LiquorBillForm.jsx";
+import BeerBillForm from "./pages/Bill/BeerBillForm.jsx";
+
+>>>>>>> 4328113 (Bill form Completed)
 
 const App = () => {
   const router = createBrowserRouter(
@@ -52,9 +58,14 @@ const App = () => {
             <Route path="company" element={<CompanyList />} />
             <Route path="beer/create" element={<BeerForm />} />
             <Route path="liquor/create" element={<LiquorForm />} />
+            <Route path="liquor/bill/create" element={<LiquorBillForm />} />
+            <Route path="beer/bill/create" element={<BeerBillForm />} />
           </Route>
         </Route>
+<<<<<<< HEAD
         <Route path="/bill/create" element={<BillForm />} />
+=======
+>>>>>>> 4328113 (Bill form Completed)
       </Route>
     )
   );
