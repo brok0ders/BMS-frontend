@@ -41,11 +41,11 @@ const App = () => {
           <Route path="" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/dashboard/:id">
+          <Route path="/dashboard">
             <Route index element={<AdminHome />} />
             <Route path="bill/records" element={<BillRecords />} />
-            <Route path="liquor" element={<LiquorList />} />
-            <Route path="beer" element={<BeerList />} />
+            <Route path="liquor/:company" element={<LiquorList />} />
+            <Route path="beer/:company" element={<BeerList />} />
             <Route path="beer/edit/:id" element={<UpdateBeerForm />} />
             <Route path="liquor/edit/:id" element={<UpdateLiquorForm />} />
 
