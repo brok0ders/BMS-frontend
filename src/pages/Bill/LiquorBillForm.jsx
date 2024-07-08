@@ -249,7 +249,7 @@ const LiquorBillForm = () => {
       className="py-10 px-10 md:py-5 md:px-20 "
     >
       <h1 className="md:text-5xl text-center font-bold text-slate-700 px-2 py-2 m-4 text-4xl">
-        Bill Details
+        FL Bill Details
       </h1>
 
       {/* Licensee Details */}
