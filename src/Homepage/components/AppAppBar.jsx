@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
 import Box from "@mui/material/Box";
@@ -13,6 +13,11 @@ import Drawer from "@mui/material/Drawer";
 import MenuIcon from "@mui/icons-material/Menu";
 import ToggleColorMode from "./ToggleColorMode";
 import { Link } from "react-router-dom";
+import UserContext from "../../context/user/userContext";
+import { Avatar } from "@mui/material";
+import { Dropdown } from "@mui/base/Dropdown";
+import { Menu } from "@mui/base/Menu";
+import MenuIntroduction from "../../components/Layout/Avatar";
 
 const logoStyle = {
   width: "140px",
@@ -21,7 +26,15 @@ const logoStyle = {
 };
 
 function AppAppBar({ mode, toggleColorMode }) {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const { getUser, user } = useContext(UserContext);
+
+  const getData = async () => {
+    await getUser();
+  };
+  useEffect(() => {
+    getData();
+  }, []);
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -51,6 +64,7 @@ function AppAppBar({ mode, toggleColorMode }) {
           backgroundImage: "none",
           mt: 2,
           width: "100%",
+          top: 0,
         }}
       >
         <Container maxWidth="lg">
@@ -93,37 +107,50 @@ function AppAppBar({ mode, toggleColorMode }) {
                 style={logoStyle}
                 alt="logo of sitemark"
               />
-              <Box sx={{
-                flexGrow: 5,
-                alignItems: "center",
-                ml: "-18px",
-                mx: '10%',
-                px: 0,
-                textAlign: "center",
-                justifyContent: 'space-evenly',
-                display: {xs:'none', lg: 'flex'}
-              }}>
+              <Box
+                sx={{
+                  flexGrow: 5,
+                  alignItems: "center",
+                  ml: "-18px",
+                  px: 0,
+                  textAlign: "center",
+                  justifyContent: "center",
+                  display: { xs: "none", lg: "flex" },
+                }}
+              >
                 <MenuItem
                   onClick={() => scrollToSection("faq")}
-                  sx={{ py: "6px", px: "12px" }}
+                  sx={{ py: "6px", px: "12px", mx: "1%" }}
                 >
-                  <Typography variant="body2" color="text.primary">
+                  <Typography
+                    variant="body2"
+                    color="text.primary"
+                    sx={{ fontSize: "1rem" }}
+                  >
                     Home
                   </Typography>
                 </MenuItem>
                 <MenuItem
                   onClick={() => scrollToSection("faq")}
-                  sx={{ py: "6px", px: "12px" }}
+                  sx={{ py: "6px", px: "12px", mx: "1%" }}
                 >
-                  <Typography variant="body2" color="text.primary">
+                  <Typography
+                    variant="body2"
+                    color="text.primary"
+                    sx={{ fontSize: "1rem" }}
+                  >
                     About
                   </Typography>
                 </MenuItem>
                 <MenuItem
                   onClick={() => scrollToSection("faq")}
-                  sx={{ py: "6px", px: "12px" }}
+                  sx={{ py: "6px", px: "12px", mx: "1%" }}
                 >
-                  <Typography variant="body2" color="text.primary">
+                  <Typography
+                    variant="body2"
+                    color="text.primary"
+                    sx={{ fontSize: "1rem" }}
+                  >
                     Contact us
                   </Typography>
                 </MenuItem>
@@ -136,16 +163,24 @@ function AppAppBar({ mode, toggleColorMode }) {
                 alignItems: "center",
               }}
             >
-              <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
-              <Button
-                color="primary"
-                variant="contained"
-                size="small"
-                component="a"
-              >
-                <Link to={"/login"}>Login</Link>
-              </Button>
+              {/* <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} /> */}
+              {user ? (
+                <>
+                  <MenuIntroduction />
+                </>
+              ) : (
+                <Button
+                  color="primary"
+                  variant="contained"
+                  size="small"
+                  component="a"
+                  sx={{ fontSize: "0.8rem" }}
+                >
+                  <Link to={"/login"}>Sign in</Link>
+                </Button>
+              )}
             </Box>
+
             <Box sx={{ display: { sm: "", md: "none" } }}>
               <Button
                 variant="text"
