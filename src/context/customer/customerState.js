@@ -102,4 +102,4 @@ const CustomerState = (props) => {
   );
 };
 
-export default customerState;
+export default CustomerState;

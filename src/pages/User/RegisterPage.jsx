@@ -80,7 +80,7 @@ export default function RegisterPage() {
         toast.success(
           `${data.user.username} has been registered successfully!`
         );
-        navigate(`/dashboard/${data.user._id}`);
+        navigate(`/dashboard/`);
         localStorage.setItem("token", data?.token);
       } else {
         toast.warning(`Wrong data input format`);

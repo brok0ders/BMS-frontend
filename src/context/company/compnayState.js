@@ -2,7 +2,7 @@ import { useState } from "react";
 import API from "../../utils/API";
 import CompanyContext from "./companyContext";
 
-const companyState = (props) => {
+const CompanyState = (props) => {
   const [company, setCompany] = useState({});
 
   const getAllCompany = async () => {
@@ -102,4 +102,4 @@ const companyState = (props) => {
   );
 };
 
-export default companyState;
+export default CompanyState;

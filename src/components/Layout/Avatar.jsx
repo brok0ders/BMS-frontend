@@ -28,7 +28,7 @@ export default function MenuIntroduction() {
   return (
     <Dropdown>
       <MenuButton sx={{ p: 0, borderRadius: "50%" }}>
-        <Avatar alt="Travis Howard" src="/Images/profile.png" />
+        <Avatar alt="Travis Howard" src="/images/profile.png" />
       </MenuButton>
       <Menu slots={{ listbox: AnimatedListbox }}>
         <MenuItem onClick={createHandleMenuClick("Profile")}>Profile</MenuItem>

@@ -55,16 +55,14 @@ function AppAppBar({ mode, toggleColorMode }) {
   };
 
   return (
-    <div>
       <AppBar
         position="sticky"
         sx={{
           boxShadow: 0,
           bgcolor: "transparent",
-          backgroundImage: "none",
           mt: 2,
           width: "100%",
-          top: 0,
+          top: 10,
         }}
       >
         <Container maxWidth="lg">
@@ -259,7 +257,6 @@ function AppAppBar({ mode, toggleColorMode }) {
           </Toolbar>
         </Container>
       </AppBar>
-    </div>
   );
 }
 

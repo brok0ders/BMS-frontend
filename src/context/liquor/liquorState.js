@@ -115,4 +115,4 @@ const LiquorState = (props) => {
   );
 };
 
-export default liquorState;
+export default LiquorState;

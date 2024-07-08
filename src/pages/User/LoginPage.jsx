@@ -55,7 +55,7 @@ export default function LoginPage() {
       const data = await userLogin({ username, password });
       if (data.success) {
         toast.success(`${data.user.username} has been logged in successfully!`);
-        navigate(`/dashboard/${data.user._id}`);
+        navigate(`/dashboard/`);
         localStorage.setItem("token", data?.token);
       }
     } catch (e) {}
