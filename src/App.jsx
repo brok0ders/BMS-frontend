@@ -27,11 +27,12 @@ const Layout = () => {
     </>
   );
 };
-import BillForm from "./pages/Bill/LiquorBillForm.jsx";
+import BeerBillForm from "./pages/Bill/LiquorBillForm.jsx";
 import LiquorList from "./pages/Liquor/LiquorList.jsx";
 import BeerList from "./pages/Beer/BeerList.jsx";
 import UpdateBeerForm from "./pages/Beer/UpdateBeerForm.jsx";
 import UpdateLiquorForm from "./pages/Liquor/UpdateLiquorForm.jsx";
+import LiquorBillForm from "./pages/Bill/LiquorBillForm.jsx";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -56,7 +57,6 @@ const App = () => {
             <Route path="beer/bill/create" element={<BeerBillForm />} />
           </Route>
         </Route>
-        <Route path="/bill/create" element={<BillForm />} />
       </Route>
     )
   );
