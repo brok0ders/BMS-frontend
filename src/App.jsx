@@ -14,7 +14,7 @@ import LiquorForm from "./pages/Liquor/LiquorForm.jsx";
 import CompanyList from "./pages/Company/CompanyList.jsx";
 import HomePage from "./Homepage/HomePage.jsx";
 
-import Navbar from "./components/Navbar.jsx";
+import Navbar from "./components/Layout/Navbar.jsx";
 import LoginPage from "./pages/User/LoginPage.jsx";
 import BillRecords from "./pages/Bill/BillRecords.jsx";
 import AdminHome from "./pages/Home/AdminHome.jsx";
@@ -33,10 +33,10 @@ const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route>
-            <Route path="/" element={<Layout />}>
+        <Route path="/" element={<Layout />}>
           <Route path="" element={<HomePage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
           <Route path="/bill/records" element={<BillRecords />} />
           <Route path="/dashboard/:id">
             <Route index element={<AdminHome />} />
@@ -46,9 +46,9 @@ const App = () => {
             <Route path="liquor/create" element={<LiquorForm />} />
           </Route>
         </Route>
-          <Route path="/bill/create" element={<BillForm />} />
+        <Route path="/bill/create" element={<BillForm />} />
       </Route>
-      )
+    )
   );
 
   return (
