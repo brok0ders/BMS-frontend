@@ -44,12 +44,7 @@ const App = () => {
           <Route path="" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-<<<<<<< HEAD
-          <Route path="/bill/records" element={<BillRecords />} />
-          <Route path="/dashboard/:id">
-=======
           <Route path="/dashboard">
->>>>>>> 230d150739028cd350043cd2f372f3a44a68773c
             <Route index element={<AdminHome />} />
             <Route path="bill/records" element={<BillRecords />} />
             <Route path="liquor/:company" element={<LiquorList />} />
@@ -72,10 +67,6 @@ const App = () => {
             />
           </Route>
         </Route>
-<<<<<<< HEAD
-        <Route path="/bill/create" element={<BillForm />} />
-=======
->>>>>>> 230d150739028cd350043cd2f372f3a44a68773c
       </Route>
     )
   );
