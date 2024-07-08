@@ -35,6 +35,7 @@ import UpdateLiquorForm from "./pages/Liquor/UpdateLiquorForm.jsx";
 import LiquorBillForm from "./pages/Bill/LiquorBillForm.jsx";
 import BillSelection from "./pages/Bill/BillSelection.jsx";
 import CompanySelection from "./components/Company/CompanySelection.jsx";
+import AnalyticsPage from "./pages/Analytics/AnalyticsPage.jsx";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -53,6 +54,8 @@ const App = () => {
             <Route path="liquor/edit/:id" element={<UpdateLiquorForm />} />
             <Route path="select" element={<BillSelection />} />
             <Route path="company" element={<CompanyList />} />
+            <Route path="analytics" element={<AnalyticsPage />} />
+
             <Route path="company/:companyType" element={<CompanySelection />} />
 
             <Route path="beer/create/:company" element={<BeerForm />} />

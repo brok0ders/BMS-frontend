@@ -100,7 +100,7 @@ const LiquorState = (props) => {
   };
 
   return (
-    <liquorContext.Provider
+    <LiquorContext.Provider
       value={{
         getLiquor,
         getAllLiquor,
@@ -111,7 +111,7 @@ const LiquorState = (props) => {
       }}
     >
       {props.children}
-    </liquorContext.Provider>
+    </LiquorContext.Provider>
   );
 };
 
