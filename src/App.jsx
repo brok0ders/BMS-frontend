@@ -27,7 +27,14 @@ const Layout = () => {
     </>
   );
 };
-import BillForm from "./pages/Bill/BillForm.jsx";
+import BeerBillForm from "./pages/Bill/LiquorBillForm.jsx";
+import LiquorList from "./pages/Liquor/LiquorList.jsx";
+import BeerList from "./pages/Beer/BeerList.jsx";
+import UpdateBeerForm from "./pages/Beer/UpdateBeerForm.jsx";
+import UpdateLiquorForm from "./pages/Liquor/UpdateLiquorForm.jsx";
+import LiquorBillForm from "./pages/Bill/LiquorBillForm.jsx";
+import BillSelection from "./pages/Bill/BillSelection.jsx";
+import CompanySelection from "./components/Company/CompanySelection.jsx";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -37,16 +44,32 @@ const App = () => {
           <Route path="" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+<<<<<<< HEAD
           <Route path="/bill/records" element={<BillRecords />} />
           <Route path="/dashboard/:id">
+=======
+          <Route path="/dashboard">
+>>>>>>> 230d150739028cd350043cd2f372f3a44a68773c
             <Route index element={<AdminHome />} />
-
+            <Route path="bill/records" element={<BillRecords />} />
+            <Route path="liquor/:company" element={<LiquorList />} />
+            <Route path="beer/:company" element={<BeerList />} />
+            <Route path="beer/edit/:id" element={<UpdateBeerForm />} />
+            <Route path="liquor/edit/:id" element={<UpdateLiquorForm />} />
+            <Route path="select" element={<BillSelection />} />
             <Route path="company" element={<CompanyList />} />
-            <Route path="beer/create" element={<BeerForm />} />
-            <Route path="liquor/create" element={<LiquorForm />} />
+            <Route path="company/:companyType" element={<CompanySelection />} />
+
+            <Route path="beer/create/:company" element={<BeerForm />} />
+            <Route path="liquor/create/:company" element={<LiquorForm />} />
+            <Route path="liquor/bill/create" element={<LiquorBillForm />} />
+            <Route path="beer/bill/create" element={<BeerBillForm />} />
           </Route>
         </Route>
+<<<<<<< HEAD
         <Route path="/bill/create" element={<BillForm />} />
+=======
+>>>>>>> 230d150739028cd350043cd2f372f3a44a68773c
       </Route>
     )
   );

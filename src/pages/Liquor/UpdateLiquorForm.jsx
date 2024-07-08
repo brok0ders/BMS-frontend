@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import { Button, TextField } from "@mui/material";
+import { Link, useParams } from "react-router-dom";
 
-const LiquorForm = () => {
+const UpdateLiquorForm = () => {
   const [brandName, setBrandName] = useState("");
   const [stock, setStock] = useState({ Q: null, P: null, N: null });
   const [price, setPrice] = useState({ Q: null, P: null, N: null });
-
+  const { id } = useParams();
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -27,6 +28,39 @@ const LiquorForm = () => {
     }
   };
 
+  // GEt the liquor data
+
+  const getLiquorData = async () => {
+    try {
+      // Data fetching
+
+      const data = {
+        _id: "343254t234",
+        brandName: "Test brand",
+        stock: {
+          Q: 56,
+          P: 56,
+          N: 56,
+        },
+        price: {
+          Q: 5600,
+          P: 5006,
+          N: 1526,
+        },
+        company: "NK traders",
+      };
+      setBrandName(data.brandName);
+      setStock(data.stock);
+      setPrice(data.price);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  useEffect(() => {
+    getLiquorData();
+  }, [id]);
+
   return (
     <Box
       component="form"
@@ -34,7 +68,7 @@ const LiquorForm = () => {
       className="w-full px-5 md:px-10 lg:px-20 py-10 md:py-16"
     >
       <h1 className="text-center text-4xl md:text-5xl font-bold text-gray-900">
-        Create Liquor Brand
+        Exit Liquor Details
       </h1>
       <Box className="py-10">
         <h1 className="text-2xl font-semibold mb-3">Brand</h1>
@@ -116,17 +150,31 @@ const LiquorForm = () => {
           justifyContent: "end",
         }}
       >
+        <Link to={-1}>
+          <Button
+            sx={{
+              fontSize: "1rem",
+              color: "black",
+              fontWeight: "medium",
+            }}
+            type="submit"
+            variant="text"
+            className="p-4 !px-6"
+          >
+            Cancel
+          </Button>
+        </Link>
         <Button
           sx={{ fontSize: "1rem" }}
           type="submit"
           variant="contained"
           className=" p-4 !px-6"
         >
-          Create
+          Update
         </Button>
       </Box>
     </Box>
   );
 };
 
-export default LiquorForm;
+export default UpdateLiquorForm;

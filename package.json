@@ -13,7 +13,12 @@
     "@ant-design/icons": "^5.3.7",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
+<<<<<<< HEAD
     "@mui/base": "^5.0.0-beta.40",
+=======
+    "@fortawesome/free-solid-svg-icons": "^6.5.2",
+    "@fortawesome/react-fontawesome": "^0.2.2",
+>>>>>>> 230d150739028cd350043cd2f372f3a44a68773c
     "@mui/icons-material": "^5.16.0",
     "@mui/material": "^5.16.0",
     "@mui/system": "^5.16.0",

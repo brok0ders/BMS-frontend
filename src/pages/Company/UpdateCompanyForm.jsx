@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import {
   Button,
@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from "@mui/material";
 
-const CompanyForm = ({ open, onClose }) => {
+const UpdateCompanyForm = ({ id, open, onClose }) => {
   const [name, setName] = useState("");
 
   const handleSubmit = async (e) => {
@@ -27,6 +27,16 @@ const CompanyForm = ({ open, onClose }) => {
       console.error("Error:", error);
     }
   };
+
+  const getCompany = () => {
+    // Fetch the company data from the server using the provided id
+
+    setName("Test Company");
+  };
+
+  useEffect(() => {
+    getCompany();
+  }, []);
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
@@ -73,7 +83,7 @@ const CompanyForm = ({ open, onClose }) => {
           <Button onClick={onClose} color="inherit">
             Cancel
           </Button>
-          <Button type="submit" variant="contained" className=" p-2 !px-4">
+          <Button type="submit" variant="contained" className="p-2 !px-4">
             Create
           </Button>
         </DialogActions>
@@ -82,4 +92,4 @@ const CompanyForm = ({ open, onClose }) => {
   );
 };
 
-export default CompanyForm;
+export default UpdateCompanyForm;
