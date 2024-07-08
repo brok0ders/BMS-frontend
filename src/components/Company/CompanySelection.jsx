@@ -113,12 +113,12 @@ const CompanySelection = () => {
     };
     getAllCompanies();
   }, [companyType]);
-
+  // liquor/bill/create/:company
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 my-10">
       {companyData.map((company) => (
         <SelectCompanyCard
-          url={`${companyType}${page ? "/" + page : ""}`}
+          url={`${companyType}${page ? "/bill/" + page : ""}`}
           key={company._id}
           name={company.name}
           id={company._id}

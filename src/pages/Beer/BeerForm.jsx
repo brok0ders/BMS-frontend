@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import { Button, TextField } from "@mui/material";
 
@@ -8,6 +8,7 @@ const BeerForm = () => {
   const [stock650ml, setStock650ml] = useState("");
   const [price650ml, setPrice650ml] = useState("");
   const [price500ml, setPrice500ml] = useState("");
+  const [companyName, setCompanyName] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,6 +34,14 @@ const BeerForm = () => {
     }
   };
 
+  const getCompanyById = () => {
+    setCompanyName("Company Name");
+  };
+
+  useEffect(() => {
+    getCompanyById();
+  }, []);
+
   return (
     <Box
       component="form"
@@ -42,17 +51,29 @@ const BeerForm = () => {
       <h1 className="text-center text-4xl md:text-5xl font-bold text-gray-900">
         Create Beer Brand
       </h1>
-      <Box className="py-10">
-        <h1 className="text-2xl font-semibold mb-3">Brand</h1>
-        <TextField
-          required
-          onChange={(e) => setBrandName(e.target.value)}
-          value={brandName}
-          id="outlined-basic"
-          className="w-full md:w-fit"
-          label="Brand Name"
-          variant="outlined"
-        />
+      <Box className="pb-10 grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-10">
+        <Box className="py-10">
+          <h1 className="text-2xl font-semibold mb-5">Company</h1>
+          <TextField
+            required
+            aria-readonly
+            value={companyName}
+            className="w-full "
+            label="Company Name"
+            variant="outlined"
+          />
+        </Box>
+        <Box className="py-10">
+          <h1 className="text-2xl font-semibold mb-5">Brand</h1>
+          <TextField
+            required
+            onChange={(e) => setBrandName(e.target.value)}
+            value={brandName}
+            className="w-full "
+            label="Brand Name"
+            variant="outlined"
+          />
+        </Box>
       </Box>
       <h1 className="text-2xl font-semibold mb-3">500 ML</h1>
       <Box className="pb-10 grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-10">

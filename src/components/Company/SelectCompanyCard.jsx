@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 const SelectCompanyCard = ({ url, id, name, totalBrands }) => {
   return (
     <Link
-      to={`${url}/${id}`}
+      to={`/dashboard/${url}/${id}`}
       className="flex flex-col gap-2  py-5 px-5 relative glass-effect border  border-gray-100"
     >
       <h2 className="text-xl text-center font-semibold">{name}</h2>

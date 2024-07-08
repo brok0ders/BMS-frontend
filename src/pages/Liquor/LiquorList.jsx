@@ -11,7 +11,7 @@ import {
   Typography,
   Box,
 } from "@mui/material";
-import { Delete, Edit } from "@mui/icons-material";
+import { Add, Delete, Edit } from "@mui/icons-material";
 import { Link, useParams } from "react-router-dom";
 
 const LiquorList = () => {
@@ -76,9 +76,22 @@ const LiquorList = () => {
   };
 
   return (
-    <Box>
+    <Box className="py-5 px-10">
       <h1 className="text-center py-5 text-4xl font-bold">Liquor Details</h1>
-      <TableContainer className="py-5 px-10">
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-end",
+          gap: 2,
+        }}
+      >
+        <Link to={`/dashboard/liquor/create/${company}`}>
+          <Button startIcon={<Add />} variant="contained">
+            New Liquor
+          </Button>
+        </Link>
+      </Box>
+      <TableContainer className="py-5">
         <Table
           sx={{ minWidth: 650, border: 1.34, borderColor: "grey.400" }}
           size="small"
@@ -225,7 +238,7 @@ const LiquorList = () => {
                     className="w-0"
                     sx={{ border: 1.34, borderColor: "grey.400" }}
                   >
-                    <Link to={`edit/${p._id}`}>
+                    <Link to={`/dashboard/liquor/edit/${p._id}`}>
                       <Button
                         className="hover:text-blue-800"
                         sx={{ minWidth: 1 }}
@@ -263,37 +276,37 @@ const LiquorList = () => {
                 align="right"
                 sx={{ border: 1.34, borderColor: "grey.400" }}
               >
-                <Typography fontWeight="normal">{totalQStock}</Typography>
+                <Typography fontWeight="bold">{totalQStock}</Typography>
               </TableCell>
               <TableCell
                 align="right"
                 sx={{ border: 1.34, borderColor: "grey.400" }}
               >
-                <Typography fontWeight="normal">{totalPStock}</Typography>
+                <Typography fontWeight="bold">{totalPStock}</Typography>
               </TableCell>
               <TableCell
                 align="right"
                 sx={{ border: 1.34, borderColor: "grey.400" }}
               >
-                <Typography fontWeight="normal">{totalNStock}</Typography>
+                <Typography fontWeight="bold">{totalNStock}</Typography>
               </TableCell>
               <TableCell
                 align="right"
                 sx={{ border: 1.34, borderColor: "grey.400" }}
               >
-                <Typography fontWeight="normal">{totalQPrice}</Typography>
+                <Typography fontWeight="bold">{totalQPrice}</Typography>
               </TableCell>
               <TableCell
                 align="right"
                 sx={{ border: 1.34, borderColor: "grey.400" }}
               >
-                <Typography fontWeight="normal">{totalPPrice}</Typography>
+                <Typography fontWeight="bold">{totalPPrice}</Typography>
               </TableCell>
               <TableCell
                 align="right"
                 sx={{ border: 1.34, borderColor: "grey.400" }}
               >
-                <Typography fontWeight="normal">{totalNPrice}</Typography>
+                <Typography fontWeight="bold">{totalNPrice}</Typography>
               </TableCell>
             </TableRow>
           </TableBody>

@@ -8,6 +8,8 @@ const UpdateBeerForm = () => {
   const [stock650ml, setStock650ml] = useState("");
   const [price650ml, setPrice650ml] = useState("");
   const [price500ml, setPrice500ml] = useState("");
+  const [companyName, setCompanyName] = useState("");
+
   const { id } = useParams();
   console.log(id);
   const getBeerData = async () => {
@@ -30,6 +32,7 @@ const UpdateBeerForm = () => {
       setStock650ml(data.stock[650]);
       setPrice650ml(data.price[650]);
       setPrice500ml(data.price[500]);
+      setCompanyName(data.company);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -72,17 +75,29 @@ const UpdateBeerForm = () => {
       <h1 className="text-center text-4xl md:text-5xl font-bold text-gray-900">
         Edit Beer Details
       </h1>
-      <Box className="py-10">
-        <h1 className="text-2xl font-semibold mb-5">Brand</h1>
-        <TextField
-          required
-          onChange={(e) => setBrandName(e.target.value)}
-          value={brandName}
-          id="outlined-basic"
-          className="w-full md:w-fit"
-          label="Brand Name"
-          variant="outlined"
-        />
+      <Box className="pb-10 grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-10">
+        <Box className="py-10">
+          <h1 className="text-2xl font-semibold mb-5">Company</h1>
+          <TextField
+            required
+            aria-readonly
+            value={companyName}
+            className="w-full "
+            label="Company Name"
+            variant="outlined"
+          />
+        </Box>
+        <Box className="py-10">
+          <h1 className="text-2xl font-semibold mb-5">Brand</h1>
+          <TextField
+            required
+            onChange={(e) => setBrandName(e.target.value)}
+            value={brandName}
+            className="w-full "
+            label="Brand Name"
+            variant="outlined"
+          />
+        </Box>
       </Box>
       <h1 className="text-2xl font-semibold mb-5">500 ML</h1>
       <Box className="pb-10 grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-10">
