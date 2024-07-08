@@ -3,9 +3,9 @@ import React, { useState } from "react";
 import CompanyForm from "./CompanyForm";
 import { Add } from "@mui/icons-material";
 import Companies from "../../components/Company/Companies";
+import CompanyTabs from "../../components/Company/CompanyTabs";
 const CompanyList = () => {
   const [open, setOpen] = useState(false);
-
   const handleOpen = () => {
     setOpen(true);
   };
@@ -26,7 +26,7 @@ const CompanyList = () => {
       <Box
         sx={{
           display: "flex",
-          justifyContent: "end",
+          justifyContent: "space-between",
           alignItems: "center",
           mb: "1rem",
           fontWeight: "bold",
@@ -34,14 +34,13 @@ const CompanyList = () => {
           color: "#334155",
         }}
       >
+        <CompanyTabs />
         <Button
           variant="contained"
           startIcon={<Add />}
           sx={{
-            bgcolor: "#334155",
-            "&:hover": {
-              bgcolor: "#64748B",
-            },
+            minWidth: "12rem",
+            py: 1,
           }}
           onClick={handleOpen}
         >

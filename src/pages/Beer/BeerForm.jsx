@@ -113,7 +113,7 @@ const BeerForm = () => {
           }}
           type="submit"
           variant="contained"
-          className="!bg-slate-700 p-4 !px-6"
+          className=" p-4 !px-6"
         >
           Create
         </Button>
