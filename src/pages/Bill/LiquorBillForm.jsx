@@ -215,7 +215,12 @@ const LiquorBillForm = () => {
       0
     ) * 36;
 
-  // const hologram=
+  // const holoQ =
+  //   holoQ + parseInt(p.hologram.Q || 0) * parseInt(p.quantity.Q || 0);
+  // const holoP =
+  //   holoP + parseInt(p.hologram.P || 0) * parseInt(p.quantity.P || 0);
+  // const holoN =
+  //   holoN + parseInt(p.hologram.N || 0) * parseInt(p.quantity.N || 0);
 
   const profit =
     products.reduce(
@@ -349,17 +354,17 @@ const LiquorBillForm = () => {
         <Box className="px-3 grid md:grid-cols-3 sm:grid-cols-2 gap-10">
           <TextField
             required
-            
             id="outlined-basic"
             label="Quarts(Q)"
             name="quantity-Q"
             variant="outlined"
             type="number"
             inputProps={{ min: 0 }}
-            value={currentInput?.quantity?.Q !== undefined
-              ? currentInput.quantity?.Q
-              : ""}
-            
+            value={
+              currentInput?.quantity?.Q !== undefined
+                ? currentInput.quantity?.Q
+                : ""
+            }
             onChange={handleInputChange}
           />
           <TextField
@@ -370,9 +375,11 @@ const LiquorBillForm = () => {
             variant="outlined"
             type="number"
             inputProps={{ min: 0 }}
-            value={currentInput?.quantity?.P !== undefined
-              ? currentInput.quantity?.P
-              : ""}
+            value={
+              currentInput?.quantity?.P !== undefined
+                ? currentInput.quantity?.P
+                : ""
+            }
             onChange={handleInputChange}
           />
           <TextField
@@ -383,9 +390,11 @@ const LiquorBillForm = () => {
             variant="outlined"
             type="number"
             inputProps={{ min: 0 }}
-            value={currentInput?.quantity?.N !== undefined
-              ? currentInput.quantity?.N
-              : ""}
+            value={
+              currentInput?.quantity?.N !== undefined
+                ? currentInput.quantity?.N
+                : ""
+            }
             onChange={handleInputChange}
           />
           <TextField
