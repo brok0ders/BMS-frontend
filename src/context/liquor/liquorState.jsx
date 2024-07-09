@@ -1,6 +1,7 @@
 import { useState } from "react";
 import API from "../../utils/API";
 import LiquorContext from "./liquorContext";
+import { toast } from "react-toastify";
 
 const LiquorState = (props) => {
   const [liquor, setLiquor] = useState({});
@@ -33,18 +34,23 @@ const LiquorState = (props) => {
     return undefined;
   };
 
-  const getLiquorCom = async ({ companyId }) => {
-    const config = {
-      Authorization: localStorage.getItem("token"),
-    };
-    const { data } = await API.get(`/liquor/company/${companyId}`, config);
-    if (data.success) {
-      setLiquor(data.liquor);
+  const getLiquorCom = async ({ id }) => {
+    try {
+      const config = {
+        headers: {
+          authorization: localStorage.getItem("token"),
+        },
+      };
+      const { data } = await API.get(`/liquor/company/${id}`, config);
+      if (data.success) {
+        setLiquor(data.liquor);
+      }
       console.log(data.message);
-      return data.liquor;
+      return data;
     }
-    console.log(data.message);
-    return undefined;
+    catch(e) {
+      toast.error(e.response.data.message);
+    }
   };
 
   const createLiquor = async ({ brandName, stock, price, company }) => {
@@ -100,7 +106,7 @@ const LiquorState = (props) => {
   };
 
   return (
-    <liquorContext.Provider
+    <LiquorContext.Provider
       value={{
         getLiquor,
         getAllLiquor,
@@ -111,7 +117,7 @@ const LiquorState = (props) => {
       }}
     >
       {props.children}
-    </liquorContext.Provider>
+    </LiquorContext.Provider>
   );
 };
 

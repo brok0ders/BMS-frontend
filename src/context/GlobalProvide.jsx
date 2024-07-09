@@ -1,10 +1,10 @@
 import React from "react";
-import UserState from "./user/userState";
-import BillState from "./bill/billState";
-import BeerState from "./beer/beerState";
-import CompanyState from "./company/compnayState";
-import CustomerState from "./customer/customerState";
-import LiquorState from "./liquor/liquorState";
+import UserState from "./user/userState.jsx";
+import BillState from "./bill/billState.jsx";
+import BeerState from "./beer/beerState.jsx";
+import CompanyState from "./company/companyState.jsx";
+import CustomerState from "./customer/customerState.jsx";
+import LiquorState from "./liquor/liquorState.jsx";
 const GlobalProvider = ({ children }) => {
   return (
     <UserState>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Box from "@mui/material/Box";
 import {
   Button,
@@ -7,21 +7,34 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
+import CompanyContext from "../../context/company/companyContext";
+import { toast } from "react-toastify";
 
 const CompanyForm = ({ open, onClose }) => {
   const [name, setName] = useState("");
+  const [companyType, setCompanyType] = useState("");
+  const {createCompany, getAllCompany} = useContext(CompanyContext);
+  const handleChange = (event) => {
+    setCompanyType(event.target.value);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const formdata = { name };
-      console.log(formdata);
-
+      const formdata = { name, companyType };
       // Send the form data to the server
-
-      // Handle success (e.g., reset form, display success message)
+      const res = await createCompany(formdata);
+      if (res?.success) {
+        await getAllCompany();
+        toast.success(`${res.company.name} is created successfully`);
+      }
       setName(""); // Reset form
+      setCompanyType("");
       onClose(); // Close the modal
     } catch (error) {
       console.error("Error:", error);
@@ -63,6 +76,26 @@ const CompanyForm = ({ open, onClose }) => {
             fullWidth
             className="mb-0"
           />
+          <FormControl sx={{ minWidth: "50%", marginTop: 3 }}>
+            <InputLabel id="comapny-label">Company Type</InputLabel>
+            <Select
+              required
+              labelId="company-label"
+              id="company-select"
+              value={companyType}
+              label="Company Type"
+              name="companyType"
+              className="w-full"
+              onChange={handleChange}
+            >
+              <MenuItem
+                value='beer'
+              >Beer</MenuItem>
+              <MenuItem
+                value='liquor'
+              >Liquor</MenuItem>
+            </Select>
+          </FormControl>
         </DialogContent>
         <DialogActions
           sx={{

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import {
   Button,
@@ -7,35 +7,47 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
+import CompanyContext from "../../context/company/companyContext";
+import { toast } from "react-toastify";
 
 const UpdateCompanyForm = ({ id, open, onClose }) => {
   const [name, setName] = useState("");
-
+  const [companyType, setCompanyType] = useState("");
+  const { company, updateCompany, getCompany, getAllCompany } = useContext(CompanyContext);
+  const handleChange = (event) => {
+    setCompanyType(event.target.value);
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const formdata = { name };
-      console.log(formdata);
-
-      // Send the form data to the server
-
-      // Handle success (e.g., reset form, display success message)
-      setName(""); // Reset form
+      const res = await updateCompany({ id, name, companyType });
+      if (res?.success) {
+        toast.success(`Company updated successfully!`);
+      }
+      getCompany2();
+      await getAllCompany();
       onClose(); // Close the modal
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
-  const getCompany = () => {
-    // Fetch the company data from the server using the provided id
-
-    setName("Test Company");
+  const getCompany2 = async () => {
+    try {
+      const res = await getCompany({ id });
+      console.log(res);
+      setName(res?.company?.name);
+      setCompanyType(res?.company?.companyType);
+    } catch (e) {}
   };
 
   useEffect(() => {
-    getCompany();
+    getCompany2();
   }, []);
 
   return (
@@ -48,7 +60,7 @@ const UpdateCompanyForm = ({ id, open, onClose }) => {
           my: 0,
         }}
       >
-        Create Company
+        Update Company
       </DialogTitle>
       <Box
         component="form"
@@ -73,6 +85,22 @@ const UpdateCompanyForm = ({ id, open, onClose }) => {
             fullWidth
             className="mb-0"
           />
+          <FormControl sx={{ minWidth: "50%", marginTop: 3 }}>
+            <InputLabel id="comapny-label">Company Type</InputLabel>
+            <Select
+              required
+              labelId="company-label"
+              id="company-select"
+              value={companyType}
+              label="Company Type"
+              name="companyType"
+              className="w-full"
+              onChange={handleChange}
+            >
+              <MenuItem value="beer">Beer</MenuItem>
+              <MenuItem value="liquor">Liquor</MenuItem>
+            </Select>
+          </FormControl>
         </DialogContent>
         <DialogActions
           sx={{
@@ -84,7 +112,7 @@ const UpdateCompanyForm = ({ id, open, onClose }) => {
             Cancel
           </Button>
           <Button type="submit" variant="contained" className="p-2 !px-4">
-            Create
+            Update
           </Button>
         </DialogActions>
       </Box>

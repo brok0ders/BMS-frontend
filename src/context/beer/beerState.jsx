@@ -1,6 +1,7 @@
 import { useState } from "react";
 import API from "../../utils/API";
 import BeerContext from "./beerContext";
+import { toast } from "react-toastify";
 
 const BeerState = (props) => {
   const [beer, setBeer] = useState({});
@@ -33,18 +34,23 @@ const BeerState = (props) => {
     return undefined;
   };
 
-  const getBeerCom = async ({ com }) => {
-    const config = {
-      Authorization: localStorage.getItem("token"),
-    };
-    const { data } = await API.get(`/beer/company/${com}`, config);
-    if (data.success) {
-      setBeer(data.beer);
+  const getBeerCom = async ({ id }) => {
+    try {
+      const config = {
+        headers: {
+          authorization: localStorage.getItem("token"),
+        },
+      };
+      const { data } = await API.get(`/beer/company/${id}`, config);
+      if (data.success) {
+        setBeer(data.beer);
+      }
       console.log(data.message);
-      return data.beer;
+      return data;
     }
-    console.log(data.message);
-    return undefined;
+    catch(e) {
+      toast.error(e.response.data.message);
+    }
   };
 
   const createBeer = async ({ brandName, stock, price, company }) => {
