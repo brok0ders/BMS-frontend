@@ -1,14 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import { Button, TextField } from "@mui/material";
 import { Link, useParams } from "react-router-dom";
+import LiquorContext from "../../context/liquor/liquorContext";
 
 const UpdateLiquorForm = () => {
   const [brandName, setBrandName] = useState("");
   const [companyName, setCompanyName] = useState("");
-  const [stock, setStock] = useState({ Q: null, P: null, N: null });
-  const [price, setPrice] = useState({ Q: null, P: null, N: null });
+  const [stock, setStock] = useState([]);
   const { id } = useParams();
+  const { getLiquor } = useContext(LiquorContext);
+  const [data, setData] = useState({});
+  const handleQuantityChange = (index, value) => {
+    const newStock = [...stock];
+    newStock[index].quantity = value;
+    setStock(newStock);
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -16,13 +23,13 @@ const UpdateLiquorForm = () => {
         brandName,
         stock,
         price,
-        company: "667767676769hgjg98787hg", // Replace with actual company ID
+        company: "", // Replace with actual company ID
       };
       console.log(formdata);
 
       setBrandName("");
-      setPrice({ Q: "", P: "", N: "" });
-      setStock({ Q: "", P: "", N: "" });
+      setPrice({});
+      setStock({});
       // Handle success (e.g., reset form, display success message)
     } catch (error) {
       console.error("Error:", error);
@@ -34,26 +41,13 @@ const UpdateLiquorForm = () => {
   const getLiquorData = async () => {
     try {
       // Data fetching
+      const res = await getLiquor({ id });
+      console.log(res);
+      setData(res.liquor);
 
-      const data = {
-        _id: "343254t234",
-        brandName: "Test brand",
-        stock: {
-          Q: 56,
-          P: 56,
-          N: 56,
-        },
-        price: {
-          Q: 5600,
-          P: 5006,
-          N: 1526,
-        },
-        company: "NK traders",
-      };
-      setBrandName(data.brandName);
+      setBrandName(data.liquor.brandName);
       setStock(data.stock);
-      setPrice(data.price);
-      setCompanyName(data.company);
+      setCompanyName(data.liquor.company);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -96,69 +90,31 @@ const UpdateLiquorForm = () => {
           />
         </Box>
       </Box>
-      <h1 className="text-2xl font-semibold mb-3">Quarts</h1>
-      <Box className="pb-10 grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-10">
-        <TextField
-          onChange={(e) => setStock({ ...stock, Q: e.target.value })}
-          value={stock.Q}
-          type="number"
-          inputProps={{ min: 0 }}
-          required
-          label="Stock Q"
-          variant="outlined"
-        />
-        <TextField
-          onChange={(e) => setPrice({ ...price, Q: e.target.value })}
-          value={price.Q}
-          type="number"
-          inputProps={{ min: 0 }}
-          required
-          label="Price Q"
-          variant="outlined"
-        />
-      </Box>
-      <h1 className="text-2xl font-semibold mb-3">Pints</h1>
-      <Box className="pb-10 grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-10">
-        <TextField
-          onChange={(e) => setStock({ ...stock, P: e.target.value })}
-          value={stock.P}
-          type="number"
-          inputProps={{ min: 0 }}
-          required
-          label="Stock P"
-          variant="outlined"
-        />
-        <TextField
-          onChange={(e) => setPrice({ ...price, P: e.target.value })}
-          value={price.P}
-          type="number"
-          inputProps={{ min: 0 }}
-          required
-          label="Price P"
-          variant="outlined"
-        />
-      </Box>
-      <h1 className="text-2xl font-semibold mb-3">Nips</h1>
-      <Box className="pb-10 grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-10">
-        <TextField
-          onChange={(e) => setStock({ ...stock, N: e.target.value })}
-          value={stock.N}
-          type="number"
-          inputProps={{ min: 0 }}
-          required
-          label="Stock N"
-          variant="outlined"
-        />
-        <TextField
-          onChange={(e) => setPrice({ ...price, N: e.target.value })}
-          value={price.N}
-          type="number"
-          inputProps={{ min: 0 }}
-          required
-          label="Price N"
-          variant="outlined"
-        />
-      </Box>
+      {stock?.map((s) => (
+        <>
+          <h1 className="text-2xl font-semibold mb-3">{s.size}</h1>
+          <Box className="pb-10 grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-10">
+            <TextField
+              onChange={(e) => handleQuantityChange(index, e.target.value)}
+              value={s?.quantity}
+              type="number"
+              inputProps={{ min: 0 }}
+              required
+              label={`S`}
+              variant="outlined"
+            />
+            <TextField
+              value={s.price}
+              type="number"
+              inputProps={{ min: 0 }}
+              required
+              label="Price Q"
+              variant="outlined"
+            />
+          </Box>
+        </>
+      ))}
+
       <Box
         sx={{
           display: "flex",

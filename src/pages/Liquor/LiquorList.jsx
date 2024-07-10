@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -13,41 +13,21 @@ import {
 } from "@mui/material";
 import { Add, Delete, Edit } from "@mui/icons-material";
 import { Link, useParams } from "react-router-dom";
+import LiquorContext from "../../context/liquor/liquorContext";
 
 const LiquorList = () => {
   const { company } = useParams();
-  const [liquor, setLiquor] = useState([
-    {
-      _id: "343254t234",
-      brandName: "Test brand this is a brand from",
-      stock: {
-        Q: 56,
-        P: 56,
-        N: 56,
-      },
-      price: {
-        Q: 5600,
-        P: 5006,
-        N: 1526,
-      },
-      company: "NK traders",
-    },
-    {
-      _id: "4353",
-      brandName: "Test2 brand",
-      stock: {
-        Q: 36,
-        P: 12,
-        N: 23,
-      },
-      price: {
-        Q: 1600,
-        P: 1000,
-        N: 1500,
-      },
-      company: "Pandey traders",
-    },
-  ]);
+  const { getAllLiquor } = useContext(LiquorContext);
+  const [liquor, setLiquor] = useState([]);
+  const headers = ["750ml", "180ml", "375ml", "700ml"];
+
+  const getLiquor = async () => {
+    try {
+      const res = await getAllLiquor();
+      console.log(res);
+      setLiquor(res.liquors);
+    } catch (e) {}
+  };
 
   let totalQStock = 0;
   let totalQPrice = 0;
@@ -56,7 +36,7 @@ const LiquorList = () => {
   let totalNStock = 0;
   let totalNPrice = 0;
   const getTotalData = () => {
-    if (liquor.length > 0) {
+    if (liquor?.length > 0) {
       liquor.forEach((liquor) => {
         totalQStock += liquor.stock.Q;
         totalQPrice += liquor.price.Q;
@@ -67,13 +47,17 @@ const LiquorList = () => {
       });
     }
   };
-  getTotalData();
+  // getTotalData();
 
   // temporary delete for testing purposes
   const handleDelete = (id) => {
     const updatedLiquor = liquor.filter((liquor) => liquor._id !== id);
     setLiquor(updatedLiquor);
   };
+
+  useEffect(() => {
+    getLiquor();
+  }, []);
 
   return (
     <Box className="py-5 px-10">
@@ -140,42 +124,23 @@ const LiquorList = () => {
               <TableCell
                 sx={{ border: 1.34, borderColor: "grey.400" }}
               ></TableCell>
-              <TableCell
-                align="right"
-                sx={{ border: 1.34, borderColor: "grey.400" }}
-              >
-                <Typography fontWeight="bold">Q</Typography>
-              </TableCell>
-              <TableCell
-                align="right"
-                sx={{ border: 1.34, borderColor: "grey.400" }}
-              >
-                <Typography fontWeight="bold">P</Typography>
-              </TableCell>
-              <TableCell
-                align="right"
-                sx={{ border: 1.34, borderColor: "grey.400" }}
-              >
-                <Typography fontWeight="bold">N</Typography>
-              </TableCell>
-              <TableCell
-                align="right"
-                sx={{ border: 1.34, borderColor: "grey.400" }}
-              >
-                <Typography fontWeight="bold">Q</Typography>
-              </TableCell>
-              <TableCell
-                align="right"
-                sx={{ border: 1.34, borderColor: "grey.400" }}
-              >
-                <Typography fontWeight="bold">P</Typography>
-              </TableCell>
-              <TableCell
-                align="right"
-                sx={{ border: 1.34, borderColor: "grey.400" }}
-              >
-                <Typography fontWeight="bold">N</Typography>
-              </TableCell>
+              {headers.map((s) => (
+                <TableCell
+                  align="right"
+                  sx={{ border: 1.34, borderColor: "grey.400" }}
+                >
+                  <Typography fontWeight="bold">{s}</Typography>
+                </TableCell>
+              ))}
+              {headers.map((s) => (
+                <TableCell
+                  align="right"
+                  sx={{ border: 1.34, borderColor: "grey.400" }}
+                >
+                  <Typography fontWeight="bold">{s}</Typography>
+                </TableCell>
+              ))}
+
               <TableCell sx={{ border: 1.34, borderColor: "grey.400" }}>
                 {" "}
                 <Typography fontWeight="bold">Edit</Typography>
@@ -188,80 +153,78 @@ const LiquorList = () => {
           </TableHead>
 
           <TableBody>
-            {liquor.length > 0 &&
-              liquor.map((p, i) => (
-                <TableRow key={i} sx={{ "& .MuiTableCell-root": { py: 0.3 } }}>
-                  <TableCell sx={{ border: 1.34, borderColor: "grey.400" }}>
-                    <Typography fontWeight="bold">{i + 1}</Typography>
-                  </TableCell>
-                  <TableCell sx={{ border: 1.34, borderColor: "grey.400" }}>
-                    <Typography fontWeight="normal">{p.brandName}</Typography>
-                  </TableCell>
-                  <TableCell
-                    align="right"
-                    sx={{ border: 1.34, borderColor: "grey.400" }}
-                  >
-                    <Typography fontWeight="normal"> {p.stock.Q}</Typography>
-                  </TableCell>
-                  <TableCell
-                    align="right"
-                    sx={{ border: 1.34, borderColor: "grey.400" }}
-                  >
-                    <Typography fontWeight="normal"> {p.stock.P}</Typography>
-                  </TableCell>
-                  <TableCell
-                    align="right"
-                    sx={{ border: 1.34, borderColor: "grey.400" }}
-                  >
-                    <Typography fontWeight="normal"> {p.stock.N}</Typography>
-                  </TableCell>
-                  <TableCell
-                    align="right"
-                    sx={{ border: 1.34, borderColor: "grey.400" }}
-                  >
-                    <Typography fontWeight="normal"> {p.price.Q} </Typography>
-                  </TableCell>
-                  <TableCell
-                    align="right"
-                    sx={{ border: 1.34, borderColor: "grey.400" }}
-                  >
-                    <Typography fontWeight="normal"> {p.price.P} </Typography>
-                  </TableCell>
-                  <TableCell
-                    align="right"
-                    sx={{ border: 1.34, borderColor: "grey.400" }}
-                  >
-                    <Typography fontWeight="normal"> {p.price.N}</Typography>
-                  </TableCell>
-                  <TableCell
-                    align="right"
-                    className="w-0"
-                    sx={{ border: 1.34, borderColor: "grey.400" }}
-                  >
-                    <Link to={`/dashboard/liquor/edit/${p._id}`}>
-                      <Button
-                        className="hover:text-blue-800"
-                        sx={{ minWidth: 1 }}
-                      >
-                        <Edit sx={{ fontSize: 20 }} />
-                      </Button>
-                    </Link>
-                  </TableCell>
-                  <TableCell
-                    align="right"
-                    className="w-0"
-                    sx={{ border: 1.34, borderColor: "grey.400" }}
-                  >
+            {liquor?.map((p, i) => (
+              <TableRow key={i} sx={{ "& .MuiTableCell-root": { py: 0.3 } }}>
+                <TableCell sx={{ border: 1.34, borderColor: "grey.400" }}>
+                  <Typography fontWeight="bold">{i + 1}</Typography>
+                </TableCell>
+                <TableCell sx={{ border: 1.34, borderColor: "grey.400" }}>
+                  <Typography fontWeight="normal">
+                    {p?.liquor?.brandName}
+                  </Typography>
+                </TableCell>
+                {headers.map((header, idx) => {
+                  const stockItem = p?.stock?.find(
+                    (item) => item.size === header
+                  );
+                  return (
+                    <TableCell
+                      key={idx}
+                      align="right"
+                      sx={{ border: 1.34, borderColor: "grey.400" }}
+                    >
+                      <Typography fontWeight="normal">
+                        {stockItem ? stockItem.quantity : 0}
+                      </Typography>
+                    </TableCell>
+                  );
+                })}
+                 {headers.map((header, idx) => {
+                  const stockItem = p?.stock?.find(
+                    (item) => item.size === header
+                  );
+                  return (
+                    <TableCell
+                      key={idx}
+                      align="right"
+                      sx={{ border: 1.34, borderColor: "grey.400" }}
+                    >
+                      <Typography fontWeight="normal">
+                        {stockItem ? stockItem.price : 0}
+                      </Typography>
+                    </TableCell>
+                  );
+                })}
+
+                <TableCell
+                  align="right"
+                  className="w-0"
+                  sx={{ border: 1.34, borderColor: "grey.400" }}
+                >
+                  <Link to={`/dashboard/liquor/edit/${p._id}`}>
                     <Button
-                      onClick={() => handleDelete(p._id)}
-                      color="error"
+                      className="hover:text-blue-800"
                       sx={{ minWidth: 1 }}
                     >
-                      <Delete sx={{ fontSize: 20 }} />
+                      <Edit sx={{ fontSize: 20 }} />
                     </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
+                  </Link>
+                </TableCell>
+                <TableCell
+                  align="right"
+                  className="w-0"
+                  sx={{ border: 1.34, borderColor: "grey.400" }}
+                >
+                  <Button
+                    onClick={() => handleDelete(p._id)}
+                    color="error"
+                    sx={{ minWidth: 1 }}
+                  >
+                    <Delete sx={{ fontSize: 20 }} />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
 
             {/* Total Calculations */}
             <TableRow>

@@ -11,6 +11,7 @@ import {
 import LiquorContext from "../../context/liquor/liquorContext";
 import { useParams } from "react-router-dom";
 import CompanyContext from "../../context/company/companyContext";
+import { toast } from "react-toastify";
 
 const LiquorForm = () => {
   const [temp, setTemp] = useState([]);
@@ -104,15 +105,39 @@ const LiquorForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log(stock);
-      // const res = await createLiquor({ liquorId: brandName._id });
-      // console.log(res);
+      const res = await createLiquor({ liquorId: brandName._id, stock });
+      console.log(res);
+      if (res.success) {
+        toast.success(res.message);
+      }
       setBrandName("");
       setStock([]);
-      // Handle success (e.g., reset form, display success message)
     } catch (error) {
       console.error("Error:", error);
     }
+  };
+  const handleStockChange = (e, size, price) => {
+    const { name, value } = e.target;
+    setStock((prevStock) => {
+      const stockIndex = prevStock.findIndex((item) => item.size === size);
+      if (stockIndex > -1) {
+        const updatedStock = [...prevStock];
+        updatedStock[stockIndex] = {
+          ...updatedStock[stockIndex],
+          [name]: name === "quantity" ? Number(value) : value,
+        };
+        return updatedStock;
+      } else {
+        return [
+          ...prevStock,
+          {
+            size,
+            price,
+            [name]: name === "quantity" ? Number(value) : value,
+          },
+        ];
+      }
+    });
   };
 
   const getLiquorByComp = async () => {
@@ -173,13 +198,14 @@ const LiquorForm = () => {
           </div>
         </Box>
       </Box>
-      {brandName?.sizes?.map((b) => (
-        <>
+      {brandName?.sizes?.map((b, index) => (
+        <div key={index}>
           <h1 className="text-2xl font-semibold mb-3">{b.size}</h1>
           <Box className="pb-10 grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-10">
             <TextField
-              onChange={(e) => setStock({ ...stock, [b.size]: e.target.value })}
-              value={stock?.[b.size]}
+              onChange={(e) => handleStockChange(e, b.size, b.price)}
+              value={stock.find((item) => item.size === b.size)?.quantity || ""}
+              name="quantity"
               type="number"
               inputProps={{ min: 0 }}
               required
@@ -194,7 +220,7 @@ const LiquorForm = () => {
               variant="outlined"
             />
           </Box>
-        </>
+        </div>
       ))}
       <Box
         sx={{
