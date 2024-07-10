@@ -14,62 +14,49 @@ import {
 import { Add, Delete, Edit } from "@mui/icons-material";
 import { Link, useParams } from "react-router-dom";
 import BeerContext from "../../context/beer/beerContext";
+import { toast } from "react-toastify";
 
 const BeerList = () => {
   const { company } = useParams();
   const [beer, setBeer] = useState([]);
-  const { getAllBeer, deleteBeer } = useContext(BeerContext);
-  const headers = [
-    "750ml",
-    "180ml",
-    "375ml",
-    "125ml",
-    "330ml",
-    "275ml",
-    "L 30",
-    "650ml",
-    "500ml",
-  ];
+  const { getBeerCom, deleteBeer } = useContext(BeerContext);
 
+  // Get beer data from the context
   const getBeer = async () => {
     try {
-      const res = await getAllBeer();
+      const res = await getBeerCom({id: company});
       setBeer(res.beer);
       console.log(res.beer);
-    } catch (e) {}
-  };
-
-  let total650mlStock = 0;
-  let total650mlPrice = 0;
-  let total500mlStock = 0;
-  let total500mlPrice = 0;
-
-  const getTotalData = () => {
-    if (beer.length > 0) {
-      beer.forEach((beer) => {
-        total650mlStock += beer.stock[650];
-        total650mlPrice += beer.price[650];
-        total500mlStock += beer.stock[500];
-        total500mlPrice += beer.price[500];
-      });
+    } catch (e) {
+      console.error(e);
     }
-  };
-  // getTotalData();
-
-  // temporary delete for testing purposes
-  const handleDelete = async (id) => {
-    const res = await deleteBeer({ id });
-    toast.success("Beer deleted succesfully!");
-    getLiquor();
   };
 
   useEffect(() => {
     getBeer();
   }, []);
 
+  // Extract all unique sizes
+  const allSizes = Array.from(
+    new Set(
+      beer.flatMap((product) => product.stock.map((size) => size.size))
+    )
+  );
+
+  // Handle delete action
+  const handleDelete = async (id) => {
+    try {
+      await deleteBeer({ id });
+      toast.success("Beer deleted successfully!");
+      getBeer();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <Box className="py-5 px-10">
-      <h1 className="text-center py-5 text-4xl font-bold">Liquor Details</h1>
+      <h1 className="text-center py-5 text-4xl font-bold">Beer Details</h1>
       <Box
         sx={{
           display: "flex",
@@ -77,9 +64,9 @@ const BeerList = () => {
           gap: 2,
         }}
       >
-        <Link to={`/dashboard/liquor/create/${company}`}>
+        <Link to={`/dashboard/beer/create/${company}`}>
           <Button startIcon={<Add />} variant="contained">
-            New Liquor
+            New Beer
           </Button>
         </Link>
       </Box>
@@ -101,20 +88,19 @@ const BeerList = () => {
               >
                 <Typography fontWeight="bold">Brand Name</Typography>
               </TableCell>
-
               <TableCell
                 align="center"
-                colSpan={9}
+                colSpan={allSizes.length}
                 sx={{ border: 1.34, borderColor: "grey.400", py: 1.2 }}
               >
                 <Typography fontWeight="bold">Stock</Typography>
               </TableCell>
               <TableCell
                 align="center"
-                colSpan={9}
+                colSpan={allSizes.length}
                 sx={{ border: 1.34, borderColor: "grey.400", py: 1.2 }}
               >
-                <Typography fontWeight="bold">Rate (In Case)</Typography>
+                <Typography fontWeight="bold">Rate</Typography>
               </TableCell>
               <TableCell
                 align="center"
@@ -132,106 +118,101 @@ const BeerList = () => {
               <TableCell
                 sx={{ border: 1.34, borderColor: "grey.400" }}
               ></TableCell>
-              {headers.map((s) => (
+              {allSizes.map((size) => (
                 <TableCell
-                  align="right"
+                  key={`stock-header-${size}`}
+                  align="center"
                   sx={{ border: 1.34, borderColor: "grey.400" }}
                 >
-                  <Typography fontWeight="bold">{s}</Typography>
+                  <Typography fontWeight="bold">{size}</Typography>
                 </TableCell>
               ))}
-              {headers.map((s) => (
+              {allSizes.map((size) => (
                 <TableCell
-                  align="right"
+                  key={`rate-header-${size}`}
+                  align="center"
                   sx={{ border: 1.34, borderColor: "grey.400" }}
                 >
-                  <Typography fontWeight="bold">{s}</Typography>
+                  <Typography fontWeight="bold">{size}</Typography>
                 </TableCell>
               ))}
-
               <TableCell sx={{ border: 1.34, borderColor: "grey.400" }}>
-                {" "}
                 <Typography fontWeight="bold">Edit</Typography>
               </TableCell>
               <TableCell sx={{ border: 1.34, borderColor: "grey.400" }}>
-                {" "}
                 <Typography fontWeight="bold">Delete</Typography>
               </TableCell>
             </TableRow>
           </TableHead>
-
           <TableBody>
-            {beer?.map((p, i) => (
-              <TableRow key={i} sx={{ "& .MuiTableCell-root": { py: 0.3 } }}>
-                <TableCell sx={{ border: 1.34, borderColor: "grey.400" }}>
-                  <Typography fontWeight="bold">{i + 1}</Typography>
-                </TableCell>
-                <TableCell sx={{ border: 1.34, borderColor: "grey.400" }}>
-                  <Typography fontWeight="normal">
-                    {p?.liquor?.brandName}
-                  </Typography>
-                </TableCell>
-                {headers.map((header, idx) => {
-                  const stockItem = p?.stock?.find(
-                    (item) => item.size === header
-                  );
-                  return (
-                    <TableCell
-                      key={idx}
-                      align="right"
-                      sx={{ border: 1.34, borderColor: "grey.400" }}
-                    >
-                      <Typography fontWeight="normal">
-                        {stockItem ? stockItem.quantity : 0}
-                      </Typography>
-                    </TableCell>
-                  );
-                })}
-                {headers.map((header, idx) => {
-                  const stockItem = p?.stock?.find(
-                    (item) => item.size === header
-                  );
-                  return (
-                    <TableCell
-                      key={idx}
-                      align="right"
-                      sx={{ border: 1.34, borderColor: "grey.400" }}
-                    >
-                      <Typography fontWeight="normal">
-                        {stockItem ? stockItem.price : 0}
-                      </Typography>
-                    </TableCell>
-                  );
-                })}
-
-                <TableCell
-                  align="right"
-                  className="w-0"
-                  sx={{ border: 1.34, borderColor: "grey.400" }}
-                >
-                  <Link to={`/dashboard/liquor/edit/${p._id}`}>
+            {beer.map((p, i) => (
+              <React.Fragment key={i}>
+                <TableRow sx={{ "& .MuiTableCell-root": { py: 0.3 } }}>
+                  <TableCell sx={{ border: 1.34, borderColor: "grey.400" }}>
+                    <Typography fontWeight="bold">{i + 1}</Typography>
+                  </TableCell>
+                  <TableCell sx={{ border: 1.34, borderColor: "grey.400" }}>
+                    <Typography fontWeight="normal">
+                      {p?.beer?.brandName}
+                    </Typography>
+                  </TableCell>
+                  {allSizes.map((size, idx) => {
+                    const stockItem = p.stock.find((item) => item.size === size);
+                    return (
+                      <TableCell
+                        key={`quantity-${i}-${idx}`}
+                        align="center"
+                        sx={{ border: 1.34, borderColor: "grey.400" }}
+                      >
+                        <Typography fontWeight="normal">
+                          {stockItem ? stockItem.quantity : 0}
+                        </Typography>
+                      </TableCell>
+                    );
+                  })}
+                  {allSizes.map((size, idx) => {
+                    const stockItem = p.stock.find((item) => item.size === size);
+                    return (
+                      <TableCell
+                        key={`price-${i}-${idx}`}
+                        align="center"
+                        sx={{ border: 1.34, borderColor: "grey.400" }}
+                      >
+                        <Typography fontWeight="normal">
+                          {stockItem ? stockItem.price : 0}
+                        </Typography>
+                      </TableCell>
+                    );
+                  })}
+                  <TableCell
+                    align="center"
+                    className="w-0"
+                    sx={{ border: 1.34, borderColor: "grey.400" }}
+                  >
+                    <Link to={`/dashboard/beer/edit/${p._id}`}>
+                      <Button
+                        className="hover:text-blue-800"
+                        sx={{ minWidth: 1 }}
+                      >
+                        <Edit sx={{ fontSize: 20 }} />
+                      </Button>
+                    </Link>
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    className="w-0"
+                    sx={{ border: 1.34, borderColor: "grey.400" }}
+                  >
                     <Button
-                      className="hover:text-blue-800"
+                      onClick={() => handleDelete(p._id)}
+                      color="error"
                       sx={{ minWidth: 1 }}
                     >
-                      <Edit sx={{ fontSize: 20 }} />
+                      <Delete sx={{ fontSize: 20 }} />
                     </Button>
-                  </Link>
-                </TableCell>
-                <TableCell
-                  align="right"
-                  className="w-0"
-                  sx={{ border: 1.34, borderColor: "grey.400" }}
-                >
-                  <Button
-                    onClick={() => handleDelete(p._id)}
-                    color="error"
-                    sx={{ minWidth: 1 }}
-                  >
-                    <Delete sx={{ fontSize: 20 }} />
-                  </Button>
-                </TableCell>
-              </TableRow>
+                  </TableCell>
+                </TableRow>
+              </React.Fragment>
             ))}
             {/* Total Calculations */}
             <TableRow>
@@ -242,29 +223,44 @@ const BeerList = () => {
               >
                 <Typography fontWeight="bold">Total</Typography>
               </TableCell>
+              {allSizes.map((size, idx) => (
+                <TableCell
+                  key={`total-quantity-${idx}`}
+                  align="center"
+                  sx={{ border: 1.34, borderColor: "grey.400" }}
+                >
+                  <Typography fontWeight="bold">
+                    {
+                      beer.reduce((acc, p) => {
+                        const stockItem = p.stock.find((item) => item.size === size);
+                        return acc + (stockItem ? stockItem.quantity : 0);
+                      }, 0)
+                    }
+                  </Typography>
+                </TableCell>
+              ))}
+              {allSizes.map((size, idx) => (
+                <TableCell
+                  key={`total-price-${idx}`}
+                  align="center"
+                  sx={{ border: 1.34, borderColor: "grey.400" }}
+                >
+                  <Typography fontWeight="bold">
+                    {
+                      beer.reduce((acc, p) => {
+                        const stockItem = p.stock.find((item) => item.size === size);
+                        return acc + (stockItem ? stockItem.price : 0);
+                      }, 0)
+                    }
+                  </Typography>
+                </TableCell>
+              ))}
               <TableCell
-                align="right"
+                align="center"
                 sx={{ border: 1.34, borderColor: "grey.400" }}
+                colSpan={2}
               >
-                <Typography fontWeight="bold">{}</Typography>
-              </TableCell>
-              <TableCell
-                align="right"
-                sx={{ border: 1.34, borderColor: "grey.400" }}
-              >
-                <Typography fontWeight="bold">{}</Typography>
-              </TableCell>
-              <TableCell
-                align="right"
-                sx={{ border: 1.34, borderColor: "grey.400" }}
-              >
-                <Typography fontWeight="bold">{}</Typography>
-              </TableCell>
-              <TableCell
-                align="right"
-                sx={{ border: 1.34, borderColor: "grey.400" }}
-              >
-                <Typography fontWeight="bold">{}</Typography>
+                <Typography fontWeight="bold">Grand Total</Typography>
               </TableCell>
             </TableRow>
           </TableBody>

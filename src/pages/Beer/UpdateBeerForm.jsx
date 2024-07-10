@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import { Button, TextField } from "@mui/material";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import BeerContext from "../../context/beer/beerContext";
 import CompanyContext from "../../context/company/companyContext";
+import { toast } from "react-toastify";
 const UpdateBeerForm = () => {
   const [brandName, setBrandName] = useState("");
   const [companyName, setCompanyName] = useState("");
@@ -23,7 +24,7 @@ const UpdateBeerForm = () => {
     e.preventDefault();
     try {
       const res = await updateBeer({ id, stock });
-      toast.succes("Beer updated succesfully!");
+      toast.success("Beer updated succesfully!");
       setBrandName("");
       setStock([]);
       navigate(`/dashboard/beer/${compId}`)
@@ -36,7 +37,8 @@ const UpdateBeerForm = () => {
     try {
       // Data fetching
       const res = await getBeer({ id });
-      const res1 = await getCompany({ id: res?.beer?.company?._id });
+      console.log(res);
+      const res1 = await getCompany({ id: res?.beer?.company });
       setCompanyName(res1?.company?.company?.name);
       setCompId(res?.beer?.company?.company?._id);
 
