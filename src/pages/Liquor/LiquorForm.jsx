@@ -105,7 +105,7 @@ const LiquorForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await createLiquor({ liquorId: brandName._id, stock });
+      const res = await createLiquor({ liquorId: brandName._id, stock, company });
       console.log(res);
       if (res.success) {
         toast.success(res.message);

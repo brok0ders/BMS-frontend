@@ -257,7 +257,7 @@ const LiquorState = (props) => {
     }
   };
 
-  const createLiquor = async ({ liquorId, stock }) => {
+  const createLiquor = async ({ liquorId, stock, company }) => {
     try {
       const config = {
         headers: {
@@ -267,7 +267,7 @@ const LiquorState = (props) => {
       };
       const { data } = await API.post(
         "/liquor/new",
-        { liquorId, stock },
+        { liquorId, stock , company},
         config
       );
       if (data.success) {

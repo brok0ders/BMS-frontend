@@ -10,7 +10,7 @@ const UpdateLiquorForm = () => {
   const [stock, setStock] = useState([]);
   const { id } = useParams();
   const { getLiquor } = useContext(LiquorContext);
-  const [data, setData] = useState({});
+
   const handleQuantityChange = (index, value) => {
     const newStock = [...stock];
     newStock[index].quantity = value;
@@ -43,11 +43,10 @@ const UpdateLiquorForm = () => {
       // Data fetching
       const res = await getLiquor({ id });
       console.log(res);
-      setData(res.liquor);
 
-      setBrandName(data.liquor.brandName);
-      setStock(data.stock);
-      setCompanyName(data.liquor.company);
+      setBrandName(res.liquor.liquor?.brandName);
+      setStock(res.liquor.stock);
+      setCompanyName(res.liquor.liquor.company);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -90,7 +89,7 @@ const UpdateLiquorForm = () => {
           />
         </Box>
       </Box>
-      {stock?.map((s) => (
+      {stock?.map((s, index) => (
         <>
           <h1 className="text-2xl font-semibold mb-3">{s.size}</h1>
           <Box className="pb-10 grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-10">
@@ -100,7 +99,7 @@ const UpdateLiquorForm = () => {
               type="number"
               inputProps={{ min: 0 }}
               required
-              label={`S`}
+              label={`Quantity ${s?.size}`}
               variant="outlined"
             />
             <TextField
