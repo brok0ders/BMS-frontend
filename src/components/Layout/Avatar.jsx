@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React, { useContext } from "react";
 import PropTypes from "prop-types";
 import { Dropdown } from "@mui/base/Dropdown";
 import { Menu } from "@mui/base/Menu";
@@ -12,8 +12,8 @@ import UserContext from "../../context/user/userContext";
 import { useNavigate } from "react-router-dom";
 
 export default function MenuIntroduction() {
-    const navigate = useNavigate();
-    const { getUser, user, setUser } = useContext(UserContext);
+  const navigate = useNavigate();
+  const { getUser, user, setUser } = useContext(UserContext);
   const logoutHandler = async () => {
     localStorage.removeItem("token");
     setUser(null);
@@ -21,7 +21,7 @@ export default function MenuIntroduction() {
   };
   const createHandleMenuClick = (menuItem) => {
     return () => {
-      console.log(`Clicked on ${menuItem}`);
+      navigate(`/dashboard/profile/${user?._id}`);
     };
   };
 
