@@ -19,7 +19,7 @@ const LiquorList = () => {
   const { company } = useParams();
   const { getAllLiquor, deleteLiquor } = useContext(LiquorContext);
   const [liquor, setLiquor] = useState([]);
-  const headers = ["750ml", "180ml", "375ml", "700ml"];
+  const headers = ["750ml", "700ml", "375ml", "180ml"];
 
   const getLiquor = async () => {
     try {
