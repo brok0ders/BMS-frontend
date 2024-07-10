@@ -70,7 +70,7 @@ const BeerList = () => {
   };
 
   return (
-    <Box className="py-5 px-10">
+    <Box className="py-7 px-10">
       <h1 className="text-center text-4xl font-bold">Beer Details</h1>
       <Box
         sx={{
