@@ -47,12 +47,6 @@ const ProfilePage = () => {
     getUserProfile();
   }, []);
 
-  const handleEmailChange = (e, index) => {
-    const newEmails = [...userData.email];
-    newEmails[index] = e.target.value;
-    setUserData((prev) => ({ ...prev, email: newEmails }));
-  };
-
   return (
     <div>
       <h1 className="text-center text-5xl text-slate-900 my-10 font-bold">
@@ -183,7 +177,7 @@ const ProfilePage = () => {
       <ProfileUpdateForm
         open={open}
         onClose={handleClose}
-        emails={userData?.email}
+        setUserData={setUserData}
       />
     </div>
   );

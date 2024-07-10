@@ -10,8 +10,8 @@ const CompanySelection = () => {
   const [searchParams] = useSearchParams();
   const { companyType } = useParams();
   const page = searchParams.get("page");
-  const { getAllCompany} = useContext(CompanyContext);
-  const getAllCompanies = async() => {
+  const { getAllCompany } = useContext(CompanyContext);
+  const getAllCompanies = async () => {
     // Data fetching
     const res = await getAllCompany();
     const filteredCompanies = res.company.filter(

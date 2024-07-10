@@ -44,8 +44,7 @@ const BeerState = (props) => {
       }
       console.log(data.message);
       return data;
-    }
-    catch(e) {
+    } catch (e) {
       toast.error(e.response.data.message);
     }
   };
@@ -55,7 +54,7 @@ const BeerState = (props) => {
       headers: {
         "Content-Type": "application/json",
         authorization: localStorage.getItem("token"),
-      }
+      },
     };
     const { data } = await API.post(
       "/beer/create",
@@ -69,18 +68,14 @@ const BeerState = (props) => {
     return data;
   };
 
-  const updateBeer = async ({id, stock }) => {
+  const updateBeer = async ({ id, stock }) => {
     const config = {
       headers: {
         "Content-Type": "application/json",
         authorization: localStorage.getItem("token"),
-      }
+      },
     };
-    const { data } = await API.put(
-      `/beer/update/${id}`,
-      { stock },
-      config
-    );
+    const { data } = await API.put(`/beer/update/${id}`, { stock }, config);
     if (data.success) {
       setBeer(data.beer);
     }
@@ -92,10 +87,7 @@ const BeerState = (props) => {
     const config = {
       Authorization: localStorage.getItem("token"),
     };
-    const { data } = await API.delete(
-      `/beer/delete/${id}`,
-      config
-    );
+    const { data } = await API.delete(`/beer/delete/${id}`, config);
     if (data.success) {
       setBeer(data.beer);
       console.log(data.message);
@@ -105,7 +97,7 @@ const BeerState = (props) => {
     return undefined;
   };
 
-  const allGlobalBeer = async() => {
+  const allGlobalBeer = async () => {
     try {
       const config = {
         headers: {
@@ -114,11 +106,10 @@ const BeerState = (props) => {
       };
       const { data } = await API.get(`/master-beer/all`, config);
       return data.beers;
-    }
-    catch (e) {
+    } catch (e) {
       toast.error(e.response.data.message);
     }
-  }
+  };
 
   return (
     <BeerContext.Provider
@@ -128,8 +119,8 @@ const BeerState = (props) => {
         getAllBeer,
         getBeerCom,
         updateBeer,
-        createBeer, 
-        deleteBeer
+        createBeer,
+        deleteBeer,
       }}
     >
       {props.children}

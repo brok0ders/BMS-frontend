@@ -16,170 +16,60 @@ import {
 } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { Delete } from "@mui/icons-material";
+import beerContext from "../../context/beer/beerContext";
+import CustomerContext from "../../context/customer/customerContext";
+import BillContext from "../../context/bill/billContext";
+import UserContext from "../../context/user/userContext";
 import CompanyContext from "../../context/company/companyContext";
 import { useParams } from "react-router-dom";
 import BeerContext from "../../context/beer/beerContext";
-import { RiCreativeCommonsByFill } from "react-icons/ri";
-import BillContext from "../../context/bill/billContext";
-import CustomerContext from "../../context/customer/customerContext";
-import UserContext from "../../context/user/userContext";
 
 const BeerBillForm = () => {
-  const {createBill} = useContext(BillContext);
-  const { getCompany } = useContext(CompanyContext);
+  const { company } = useParams();
   const [licensee, setLicensee] = useState("");
+  const [beerBrandData, setbeerBrandData] = useState([{}]);
   const [shop, setShop] = useState("");
   const [firm, setFirm] = useState("");
   const [pan, setPan] = useState("");
   const [excise, setExcise] = useState("");
   const [pno, setPno] = useState("");
+  const { getBeerCom } = useContext(BeerContext);
+  const { createCustomer } = useContext(CustomerContext);
+  const { createBill } = useContext(BillContext);
+  const { user } = useContext(UserContext);
+  const { getCompany } = useContext(CompanyContext);
+  const [comp, setComp] = useState("");
   const [products, setProducts] = useState([]);
-  const [comp, setComp] = useState('');
-  const {company} = useParams();
-  const [beerBrandData, setBeerBrandData] = useState([]);
-  const {getBeerCom} = useContext(BeerContext);
-  const {createCustomer} = useContext(CustomerContext);
-  const {user} = useContext(UserContext);
-  let customerId = '';
-  const getCompany2 = async() => {
-    const res = await getCompany({id: company});
-    setComp(res?.company?.name);
-  }
-  const getBeers = async() => {
-    const res = await getBeerCom({id: company});
-    console.log(res);
-    setBeerBrandData(res.beer);
-  }
-  const createCustomer2 = async() => {
-    const res = await createCustomer({licensee, shop, firm, pan});
-    console.log(res);
+
+  let customerId = "";
+
+  const [currentInput, setCurrentInput] = useState({ brand: "", sizes: [] });
+
+  const getbeers = async () => {
+    const res = await getBeerCom({ id: company });
+    setbeerBrandData(res.beer);
+  };
+  const createCustomer2 = async () => {
+    const res = await createCustomer({ licensee, shop, firm, pan });
     customerId = res.customer._id;
-  }
-  const createBill2 = async() => {
-    const res = await createBill({customer: customerId, seller: user, products, company});
+  };
+  const createBill2 = async () => {
+    const res = await createBill({
+      customer: customerId,
+      seller: user,
+      products,
+      company,
+    });
     console.log(res);
-  }
+  };
+  const getCompany2 = async () => {
+    const res = await getCompany({ id: company });
+    setComp(res?.company?.company.name);
+  };
   useEffect(() => {
     getCompany2();
-    getBeers();
+    getbeers();
   }, []);
-
-  const [currentInput, setCurrentInput] = useState({
-    brandName: "",
-    quantity: {
-      650: "",
-      500: "",
-    },
-    price: {
-      650: "",
-      500: "",
-    },
-  });
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    const [type, key] = name.split("-");
-    if (value < 0) return;
-
-    setCurrentInput((prevInput) => {
-      const updatedInput = {
-        ...prevInput,
-        [type]: {
-          ...prevInput[type],
-          [key]: parseInt(value),
-        },
-      };
-
-      if (type === "quantity" && updatedInput.brandName) {
-        const selectedBrand = beerBrandData.find(
-          (brand) => brand.brandName === updatedInput.brandName
-        );
-
-        if (selectedBrand) {
-          updatedInput.price[key] =
-            selectedBrand.price[key] * parseInt(value) || 0;
-        }
-      }
-
-      return updatedInput;
-    });
-  };
-
-  const handleAddProduct = (e) => {
-    e.preventDefault();
-
-    if (!currentInput.brandName) return;
-
-    setProducts((prevProducts) => {
-      const existingProductIndex = prevProducts.findIndex(
-        (product) => product.brandName === currentInput.brandName
-      );
-
-      if (existingProductIndex > -1) {
-        const updatedProducts = [...prevProducts];
-        updatedProducts[existingProductIndex] = {
-          brandName: currentInput.brandName,
-          quantity: {
-            650:
-              parseInt(currentInput?.quantity[650] || 0) +
-              parseInt(
-                updatedProducts[existingProductIndex].quantity[650] || 0
-              ),
-            500:
-              parseInt(currentInput.quantity[500] || 0) +
-              parseInt(
-                updatedProducts[existingProductIndex].quantity[500] || 0
-              ),
-          },
-          price: {
-            650:
-              parseInt(currentInput.price[650] || 0) +
-              parseInt(updatedProducts[existingProductIndex].price[650] || 0),
-            500:
-              parseInt(currentInput.price[500] || 0) +
-              parseInt(updatedProducts[existingProductIndex].price[500] || 0),
-          },
-        };
-        return updatedProducts;
-      }
-
-      return [
-        ...prevProducts,
-        {
-          brandName: currentInput?.brandName,
-          quantity: { ...currentInput?.quantity },
-          price: { ...currentInput?.price },
-        },
-      ];
-    });
-
-    setCurrentInput({
-      brandName: "",
-      quantity: {
-        650: "",
-        500: "",
-      },
-      price: {
-        650: "",
-        500: "",
-      },
-    });
-  };
-
-  const handleDeleteProduct = (index) => {
-    setProducts((prevProducts) => prevProducts.filter((_, i) => i !== index));
-  };
-
-  const handleBrandChange = (e) => {
-    const brandName = e.target.value;
-    setCurrentInput((prevInput) => ({
-      ...prevInput,
-      brandName,
-      quantity: { 650: "", 500: "" },
-      price: { 650: "", 500: "" },
-    }));
-  };
-
   const handleBillSubmit = (e) => {
     e.preventDefault();
     const formData = {
@@ -203,26 +93,124 @@ const BeerBillForm = () => {
     setProducts([]);
   };
 
-  const total = products.reduce(
-    (acc, p) => acc + parseInt(p.price[650] || 0) + parseInt(p.price[500] || 0),
-    0
+  const handleInputChange = (e) => {
+    e.preventDefault();
+    const { name, value } = e.target;
+    const [type, size] = name.split("-");
+
+    if (value < 0) return;
+
+    setCurrentInput((prevInput) => {
+      const existingSizeIndex = prevInput.sizes.findIndex(
+        (s) => s.size === size
+      );
+
+      if (existingSizeIndex > -1) {
+        const updatedSizes = [...prevInput.sizes];
+        updatedSizes[existingSizeIndex] = {
+          ...updatedSizes[existingSizeIndex],
+          [type]: parseInt(value),
+        };
+
+        if (type === "quantity") {
+          const selectedBrand = beerBrandData.find(
+            (brand) => brand.beer.brandName === currentInput.brand
+          );
+          const selectedSize = selectedBrand.beer.sizes.find(
+            (s) => s.size === size
+          );
+
+          if (selectedSize) {
+            updatedSizes[existingSizeIndex].price =
+              selectedSize.price * parseInt(value);
+          }
+        }
+
+        return { ...prevInput, sizes: updatedSizes };
+      } else {
+        const newSize = {
+          size: size,
+          [type]: parseInt(value),
+        };
+
+        if (type === "quantity") {
+          const selectedBrand = beerBrandData.find(
+            (brand) => brand.beer.brandName === currentInput.brand
+          );
+          const selectedSize = selectedBrand.beer.sizes.find(
+            (s) => s.size === size
+          );
+
+          if (selectedSize) {
+            newSize.price = selectedSize.price * parseInt(value);
+          }
+        }
+
+        return { ...prevInput, sizes: [...prevInput.sizes, newSize] };
+      }
+    });
+  };
+
+  const handleAddProduct = (e) => {
+    e.preventDefault();
+    const existingProductIndex = products.findIndex(
+      (product) => product.brand === currentInput.brand
+    );
+
+    if (existingProductIndex > -1) {
+      // Update existing product
+      const updatedProducts = [...products];
+      updatedProducts[existingProductIndex].sizes = currentInput.sizes;
+      setProducts(updatedProducts);
+    } else {
+      // Add new product
+      setProducts((prevProducts) => [
+        ...prevProducts,
+        {
+          brand: currentInput.brand,
+          sizes: currentInput.sizes,
+        },
+      ]);
+    }
+    setCurrentInput({ brand: "", sizes: [] });
+  };
+
+  const handleDeleteProduct = (index) => {
+    setProducts((prevProducts) => prevProducts.filter((_, i) => i !== index));
+  };
+
+  const handleBrandChange = (e) => {
+    const brand = e.target.value;
+    setCurrentInput((prevInput) => ({
+      ...prevInput,
+      brand: brand,
+      sizes: [],
+    }));
+  };
+
+  // Preprocess products to create a sizes object
+  const processedProducts = products.map((product) => {
+    const sizesObject = {};
+    product.sizes.forEach((size) => {
+      sizesObject[size.size] = { quantity: size.quantity, price: size.price };
+    });
+    return { ...product, sizes: sizesObject };
+  });
+
+  // Extract all unique sizes
+  const allSizes = Array.from(
+    new Set(
+      products.flatMap((product) => product.sizes.map((size) => size.size))
+    )
   );
 
+  // All taxes calculation
+  const total = products.reduce((acc, p) => acc + p.price, 0);
   const vatTax = 12 / 100;
   const cess = 2 / 100;
-  const wecp =
-    products.reduce(
-      (acc, p) =>
-        acc + parseInt(p.quantity[650] || 0) + parseInt(p.quantity[500] || 0),
-      0
-    ) * 36;
+  const wecp = products.reduce((acc, p) => acc + p.quantity, 0) * 36;
 
-  const profit =
-    products.reduce(
-      (acc, p) =>
-        acc + parseInt(p.quantity[650] || 0) + parseInt(p.quantity[500] || 0),
-      0
-    ) * 50;
+  const profit = products.reduce((acc, p) => acc + p.quantity, 0) * 50;
 
   const taxTotal =
     total + total * vatTax + (total + total * vatTax) * cess + wecp + profit;
@@ -239,14 +227,16 @@ const BeerBillForm = () => {
         Beer Bill Details
       </h1>
 
-      <Box className="w-full">
+      {/* Licensee Details */}
+
+      <Box className="w-full ">
         <h1 className="md:text-3xl px-2 py-2 m-4 font-semibold text-2xl">
           Licensee Details
         </h1>
-        <Box className="px-3 grid md:grid-cols-3 gap-10 sm:grid-cols-2">
+        <Box className="px-3 grid md:grid-cols-3 gap-10 sm:grid-cols-2 ">
           <TextField
             required
-            id="licensee"
+            id="outlined-basic"
             value={licensee}
             onChange={(e) => setLicensee(e.target.value)}
             label="Licensee"
@@ -254,7 +244,7 @@ const BeerBillForm = () => {
           />
           <TextField
             required
-            id="shop"
+            id="outlined-basic"
             value={shop}
             onChange={(e) => setShop(e.target.value)}
             label="Shop"
@@ -262,7 +252,7 @@ const BeerBillForm = () => {
           />
           <TextField
             required
-            id="firm"
+            id="outlined-basic"
             value={firm}
             onChange={(e) => setFirm(e.target.value)}
             label="Firm"
@@ -270,7 +260,7 @@ const BeerBillForm = () => {
           />
           <TextField
             required
-            id="pan"
+            id="outlined-basic"
             value={pan}
             onChange={(e) => setPan(e.target.value)}
             label="PAN No."
@@ -278,7 +268,7 @@ const BeerBillForm = () => {
           />
           <TextField
             required
-            id="excise"
+            id="outlined-basic"
             value={excise}
             onChange={(e) => setExcise(e.target.value)}
             label="Excise FL"
@@ -286,7 +276,7 @@ const BeerBillForm = () => {
           />
           <TextField
             required
-            id="pno"
+            id="outlined-basic"
             value={pno}
             onChange={(e) => setPno(e.target.value)}
             label="P. No."
@@ -295,213 +285,200 @@ const BeerBillForm = () => {
         </Box>
       </Box>
 
-      <Box className="w-full" component="form" onSubmit={handleAddProduct}>
+      {/* For Brand Selection */}
+
+      {/* For selecting quantities */}
+      <Box className="w-full " component="form" onSubmit={handleAddProduct}>
         <Box className="w-full">
           <h1 className="md:text-3xl px-2 py-2 m-4 font-semibold text-2xl">
-            Select Brand
+            Supplier
           </h1>
           <Box className="px-3 grid grid-cols-1 sm:grid-cols-3 gap-10">
-            <FormControl sx={{ m: 1, minWidth: 120 }}>
-              <InputLabel id="brand-label">Brand Name</InputLabel>
-              <Select
-                required
-                labelId="brand-label"
-                id="brand-select"
-                value={currentInput?.brandName || ""}
-                label="Brand Name"
-                name="brand"
-                className="w-full"
-                onChange={handleBrandChange}
-              >
-                {beerBrandData.map((brand) => (
-                  <MenuItem key={brand.brandName} value={brand.brandName}>
-                    {brand.brandName}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
             <FormControl sx={{ m: 1, minWidth: 120 }}>
               <TextField
                 value={comp}
                 label="Supplier"
                 required
                 variant="outlined"
-                aria-readonly
+                inputProps={{
+                  readOnly: true,
+                }}
               />
             </FormControl>
           </Box>
         </Box>
-        <h1 className="md:text-3xl px-2 py-2 m-4 font-semibold text-2xl">
-          Select Quantities
-        </h1>
-        <Box className="px-3 grid md:grid-cols-2 gap-10 sm:grid-cols-2">
-          <TextField
-            required
-            id="quantity-650"
-            name="quantity-650"
-            type="number"
-            value={
-              currentInput?.quantity[650] !== undefined
-                ? currentInput.quantity[650]
-                : ""
-            }
-            onChange={handleInputChange}
-            inputProps={{ min: 0 }}
-            label="650 ml Quantity"
-            variant="outlined"
-          />
-          <TextField
-            required
-            id="quantity-500"
-            name="quantity-500"
-            type="number"
-            value={
-              currentInput?.quantity[500] !== undefined
-                ? currentInput.quantity[500]
-                : ""
-            }
-            onChange={handleInputChange}
-            inputProps={{ min: 0 }}
-            label="500 ml Quantity"
-            variant="outlined"
-          />
-          <TextField
-            id="price-650"
-            name="price-650"
-            value={currentInput?.price[650] || ""}
-            onChange={handleInputChange}
-            label="650 ml Price"
-            disabled
-            variant="outlined"
-            InputProps={{
-              readOnly: true,
-            }}
-          />
-          <TextField
-            id="price-500"
-            name="price-500"
-            value={currentInput?.price[500] || ""}
-            onChange={handleInputChange}
-            label="500 ml Price"
-            disabled
-            variant="outlined"
-            InputProps={{
-              readOnly: true,
-            }}
-          />
+        <Box className="w-full">
+          <h1 className="md:text-3xl px-2 py-2 m-4 font-semibold text-2xl">
+            Select Brand
+          </h1>
+          <Box className="px-3 grid grid-cols-1 sm:grid-cols-3 gap-10">
+            <FormControl sx={{ m: 1, minWidth: 120 }}>
+              <InputLabel id="demo-simple-select-helper-label">
+                Brand Name
+              </InputLabel>
+              <Select
+                required
+                labelId="demo-simple-select-helper-label"
+                id="demo-simple-select-helper"
+                value={currentInput?.brand || ""}
+                label="Brand Name"
+                name="brand"
+                className="w-full"
+                onChange={handleBrandChange}
+              >
+                {beerBrandData.length > 0 &&
+                  beerBrandData?.map((brand) => (
+                    <MenuItem key={brand._id} value={brand?.beer?.brandName}>
+                      {brand?.beer?.brandName}
+                    </MenuItem>
+                  ))}
+              </Select>
+            </FormControl>
+          </Box>
         </Box>
-
-        <Box className="py-2 px-2 flex justify-end mt-4 gap-5">
-          <TextField
-            required
-            id="outlined-read-only-input"
-            label="Total"
-            InputProps={{
-              readOnly: true,
-            }}
-            disabled
-            value={
-              (currentInput?.price[650] || 0) + (currentInput?.price[500] || 0)
-            }
-          />
-
-          <Button variant="contained" type="submit">
-            Add
-          </Button>
-        </Box>
+        {currentInput?.brand && (
+          <>
+            <h1 className="md:text-3xl px-2 py-2 m-4 font-semibold text-2xl">
+              Select Quantities
+            </h1>
+            <Box className="px-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
+              {currentInput?.brand &&
+                beerBrandData
+                  .find(
+                    (brand) => brand?.beer?.brandName === currentInput?.brand
+                  )
+                  ?.beer?.sizes?.map((size) => (
+                    <Box key={size?.size} className="flex flex-col gap-5">
+                      <TextField
+                        fullWidth
+                        value={
+                          currentInput?.sizes.find((s) => s.size === size?.size)
+                            ?.quantity || ""
+                        }
+                        label={`Quantity ${size?.size}`}
+                        name={`quantity-${size?.size}`}
+                        onChange={handleInputChange}
+                        variant="outlined"
+                        type="number"
+                      />
+                      <TextField
+                        fullWidth
+                        value={
+                          currentInput?.sizes.find((s) => s.size === size?.size)
+                            ?.price || ""
+                        }
+                        label={`Price ${size?.size}`}
+                        name={`price-${size?.size}`}
+                        onChange={handleInputChange}
+                        variant="outlined"
+                        type="number"
+                        focused={false}
+                        inputProps={{ readOnly: true }}
+                      />
+                    </Box>
+                  ))}
+            </Box>
+            <Box className="px-2 py-2 m-4 flex justify-end">
+              <Button variant="contained" type="submit">
+                Add Product
+              </Button>
+            </Box>
+          </>
+        )}
       </Box>
 
-      <Box className="w-full">
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell align="left" colSpan={6}>
-                  <h1 className="md:text-3xl text-2xl font-semibold text-slate-700 py-2">
-                    Added Products
-                  </h1>
+      {/* Product Details */}
+
+      <TableContainer className="py-12">
+        <h1 className="md:text-3xl text-2xl font-semibold text-slate-700 py-5">
+          Added Products
+        </h1>
+        <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+          <TableHead>
+            <TableRow>
+              <TableCell>S.No.</TableCell>
+              <TableCell>Brand Name</TableCell>
+              <TableCell align="center" colSpan={allSizes.length}>
+                Quantity
+              </TableCell>
+              <TableCell align="center" colSpan={allSizes.length}>
+                Price
+              </TableCell>
+              <TableCell align="center">Action</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+              {allSizes.map((size) => (
+                <TableCell key={`qty-${size}`} align="center">
+                  {size}
                 </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell align="center" colSpan={2}>
-                  Brand Name
+              ))}
+              {allSizes.map((size) => (
+                <TableCell key={`price-${size}`} align="center">
+                  {size}
                 </TableCell>
-                <TableCell align="center">650 ml Quantity</TableCell>
-                <TableCell align="center">500 ml Quantity</TableCell>
-                <TableCell align="center">650 ml Price</TableCell>
-                <TableCell align="center">500 ml Price</TableCell>
-                <TableCell align="center">Remove</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {products.map((product, index) => (
-                <TableRow key={index}>
-                  <TableCell align="center" colSpan={2}>
-                    {product.brandName}
-                  </TableCell>
-                  <TableCell align="center">{product?.quantity[650]}</TableCell>
-                  <TableCell align="center">{product?.quantity[500]}</TableCell>
-                  <TableCell align="center">{product?.price[650]}</TableCell>
-                  <TableCell align="center">{product?.price[500]}</TableCell>
-                  <TableCell align="center">
-                    <Button onClick={() => handleDeleteProduct(index)}>
+              ))}
+              <TableCell></TableCell>
+            </TableRow>
+          </TableHead>
+
+          <TableBody>
+            {processedProducts.length > 0 &&
+              processedProducts.map((p, i) => (
+                <TableRow key={i}>
+                  <TableCell>{i + 1}</TableCell>
+                  <TableCell>{p.brand}</TableCell>
+                  {allSizes.map((size) => (
+                    <TableCell key={`qty-${size}-${i}`} align="center">
+                      {p.sizes[size]?.quantity || "-"}
+                    </TableCell>
+                  ))}
+                  {allSizes.map((size) => (
+                    <TableCell key={`price-${size}-${i}`} align="center">
+                      {p.sizes[size]?.price || "-"}
+                    </TableCell>
+                  ))}
+                  <TableCell align="right" className="w-0">
+                    <Button
+                      className="text-red-500 hover:text-red-700"
+                      onClick={() => handleDeleteProduct(i)}
+                    >
                       <Delete />
                     </Button>
                   </TableCell>
                 </TableRow>
               ))}
-              <TableRow>
-                <TableCell align="center" colSpan={2} sx={{ fontWeight: 700 }}>
-                  Total
-                </TableCell>
-                <TableCell align="center">
-                  {products.reduce(
-                    (acc, p) => parseInt(acc) + parseInt(p?.quantity[650] || 0),
+            <TableRow>
+              <TableCell colSpan={2} sx={{ fontWeight: 700 }}>
+                Total
+              </TableCell>
+              {allSizes.map((size) => (
+                <TableCell key={`qty-total-${size}`} align="center">
+                  {processedProducts.reduce(
+                    (acc, p) => acc + (p.sizes[size]?.quantity || 0),
                     0
-                  ) || 0}
+                  )}
                 </TableCell>
-                <TableCell align="center">
-                  {products.reduce(
-                    (acc, p) => parseInt(acc) + parseInt(p?.quantity[500] || 0),
+              ))}
+              {allSizes.map((size) => (
+                <TableCell key={`price-total-${size}`} align="center">
+                  {processedProducts.reduce(
+                    (acc, p) => acc + (p.sizes[size]?.price || 0),
                     0
-                  ) || 0}
+                  )}
                 </TableCell>
+              ))}
+              <TableCell></TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </TableContainer>
+      {/* Total Calculation */}
 
-                <TableCell align="center">
-                  {products.reduce(
-                    (acc, p) => parseInt(acc) + parseInt(p?.price[650] || 0),
-                    0
-                  ) || 0}
-                </TableCell>
-                <TableCell align="center">
-                  {products.reduce(
-                    (acc, p) => parseInt(acc) + parseInt(p?.price[500] || 0),
-                    0
-                  ) || 0}
-                </TableCell>
-
-                <TableCell></TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Box>
-      <Box className="py-2 px-2 flex justify-end mt-4 gap-5">
-        <TextField
-          required
-          id="outlined-read-only-input"
-          label="Grand Total"
-          InputProps={{
-            readOnly: true,
-          }}
-          variant="filled"
-          value={grandTotal.toFixed(2)}
-        />
-      </Box>
-      {/* Final submit button */}
-      <Box className="py-2 px-2 flex md:justify-end mt-1 gap-5 justify-center">
+      <Box className="px-2 py-2 m-4 flex justify-end">
         <Button variant="contained" onClick={handleBillSubmit}>
-          SUBMIT {"  "}
+          Submit
         </Button>
       </Box>
     </Box>

@@ -1,7 +1,7 @@
+@import url("https://fonts.googleapis.com/css2?family=Montesarat:ital,wght@0,100..900;1,100..900&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import url("https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap");
 
 .glass-effect {
   background: linear-gradient(
@@ -16,7 +16,7 @@
 }
 
 * {
-  font-family: "Raleway", sans-serif !important;
+  font-family: "Montesarat", sans-serif !important;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
