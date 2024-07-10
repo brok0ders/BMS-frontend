@@ -85,16 +85,14 @@ const BeerState = (props) => {
 
   const deleteBeer = async ({ id }) => {
     const config = {
-      Authorization: localStorage.getItem("token"),
+      headers: {
+        "Content-Type": "application/json",
+        authorization: localStorage.getItem("token"),
+      },
     };
     const { data } = await API.delete(`/beer/delete/${id}`, config);
-    if (data.success) {
-      setBeer(data.beer);
-      console.log(data.message);
-      return data.beer;
-    }
     console.log(data.message);
-    return undefined;
+    return data;
   };
 
   const allGlobalBeer = async () => {
