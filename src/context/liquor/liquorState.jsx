@@ -334,7 +334,7 @@ const LiquorState = (props) => {
       if (data.success) {
         setBrands(data.liquors);
       }
-      console.log(data.liquors);
+      // console.log(data.liquors);
       return data.liquors;
     }
     catch (e) {

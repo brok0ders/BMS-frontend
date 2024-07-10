@@ -94,51 +94,40 @@ const LiquorForm = () => {
     },
   ]);
   const [brandName, setBrandName] = useState({});
-  const [globalId, setGlobalId] = useState("");
-  const [stock, setStock] = useState({});
-  const [price, setPrice] = useState({});
+  const [stock, setStock] = useState([]);
   const [companyName, setCompanyName] = useState("");
-  const { brands, getLiquorCom, allGlobalLiquor, createLiquor } = useContext(LiquorContext);
+  const { brands, getLiquorCom, allGlobalLiquor, createLiquor } =
+    useContext(LiquorContext);
   const { getCompany } = useContext(CompanyContext);
   const { company } = useParams();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await createLiquor({liquorId: brandName });
-      console.log(res);
+      console.log(stock);
+      // const res = await createLiquor({ liquorId: brandName._id });
+      // console.log(res);
       setBrandName("");
-      setPrice({});
-      setStock({});
+      setStock([]);
       // Handle success (e.g., reset form, display success message)
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
-  
-
-  const getCompanyById = async () => {
-    const r = await allGlobalLiquor();
-    const res = await getCompany({ id: company });
-    setGlobalId(res.company.company._id);
-    setCompanyName(res.company.company.name);
-  };
-
   const getLiquorByComp = async () => {
+    const res1 = await getCompany({ id: company });
+    setCompanyName(res1.company.company.name);
     const res = await allGlobalLiquor();
-    const filtered = await res.filter((liq) => liq.company === globalId);
-    console.log("all liquor: ", filtered);
+    const filtered = await res.filter(
+      (liq) => liq.company === res1.company.company._id
+    );
     setTemp(filtered);
   };
 
-  const gettingData = async() => {
-    await getCompanyById();
-    await getLiquorByComp();
-  }
   useEffect(() => {
-    gettingData();
-  }, []);
+    getLiquorByComp();
+  }, [company]);
   return (
     <Box
       component="form"
@@ -155,9 +144,9 @@ const LiquorForm = () => {
             <TextField
               required
               aria-readonly
+              label="Company Name"
               value={companyName}
               className="w-full "
-              label="Company Name"
               variant="outlined"
             />
             <FormControl fullWidth>
@@ -175,7 +164,7 @@ const LiquorForm = () => {
                 }}
               >
                 {temp?.map((b) => (
-                  <MenuItem key={b._id} value={b._id}>
+                  <MenuItem key={b._id} value={b}>
                     {b.brandName}
                   </MenuItem>
                 ))}
@@ -190,7 +179,7 @@ const LiquorForm = () => {
           <Box className="pb-10 grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-10">
             <TextField
               onChange={(e) => setStock({ ...stock, [b.size]: e.target.value })}
-              value={stock?.[b.size]} 
+              value={stock?.[b.size]}
               type="number"
               inputProps={{ min: 0 }}
               required
@@ -198,9 +187,7 @@ const LiquorForm = () => {
               variant="outlined"
             />
             <TextField
-              onChange={(e) => setPrice({ ...price, [b.size]: e.target.value })}
               value={b?.price}
-              type="number"
               inputProps={{ min: 0 }}
               aria-readonly
               label={`Price ${b.size}`}
