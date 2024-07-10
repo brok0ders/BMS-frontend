@@ -13,7 +13,6 @@ import {
   TableRow,
   TextField,
   Typography,
-  useColorScheme,
 } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { Delete } from "@mui/icons-material";
@@ -25,7 +24,7 @@ import CompanyContext from "../../context/company/companyContext";
 import { useParams } from "react-router-dom";
 
 const LiquorBillForm = () => {
-  const {company} = useParams();
+  const { company } = useParams();
   const [licensee, setLicensee] = useState("");
   const [liquorBrandData, setLiquorBrandData] = useState([{}]);
   const [shop, setShop] = useState("");
@@ -43,16 +42,14 @@ const LiquorBillForm = () => {
 
   let customerId = "";
 
-  const [currentInput, setCurrentInput] = useState({});
+  const [currentInput, setCurrentInput] = useState({ brand: "", sizes: [] });
 
   const getLiquors = async () => {
     const res = await getLiquorCom({ id: company });
-    console.log(res);
     setLiquorBrandData(res.liquor);
   };
   const createCustomer2 = async () => {
     const res = await createCustomer({ licensee, shop, firm, pan });
-    console.log(res);
     customerId = res.customer._id;
   };
   const createBill2 = async () => {
@@ -66,7 +63,7 @@ const LiquorBillForm = () => {
   };
   const getCompany2 = async () => {
     const res = await getCompany({ id: company });
-    setComp(res?.company?.name);
+    setComp(res?.company?.company.name);
   };
   useEffect(() => {
     getCompany2();
@@ -98,93 +95,83 @@ const LiquorBillForm = () => {
   const handleInputChange = (e) => {
     e.preventDefault();
     const { name, value } = e.target;
-    const [type, key] = name.split("-");
+    const [type, size] = name.split("-");
+
     if (value < 0) return;
 
     setCurrentInput((prevInput) => {
-      const updatedInput = {
-        ...prevInput,
-        [type]: {
-          ...prevInput[type],
-          [key]: parseInt(value),
-        },
-      };
+      const existingSizeIndex = prevInput.sizes.findIndex(
+        (s) => s.size === size
+      );
 
-      if (type === "quantity" && updatedInput.brand) {
-        const selectedBrand = liquorBrandData.find(
-          (brand) => brand.brandName === updatedInput.brand
-        );
+      if (existingSizeIndex > -1) {
+        const updatedSizes = [...prevInput.sizes];
+        updatedSizes[existingSizeIndex] = {
+          ...updatedSizes[existingSizeIndex],
+          [type]: parseInt(value),
+        };
 
-        if (selectedBrand) {
-          updatedInput.price[key] =
-            selectedBrand.price[key] * parseInt(value) || 0;
+        if (type === "quantity") {
+          const selectedBrand = liquorBrandData.find(
+            (brand) => brand.liquor.brandName === currentInput.brand
+          );
+          const selectedSize = selectedBrand.liquor.sizes.find(
+            (s) => s.size === size
+          );
+
+          if (selectedSize) {
+            updatedSizes[existingSizeIndex].price =
+              selectedSize.price * parseInt(value);
+          }
         }
-      }
 
-      return updatedInput;
+        return { ...prevInput, sizes: updatedSizes };
+      } else {
+        const newSize = {
+          size: size,
+          [type]: parseInt(value),
+        };
+
+        if (type === "quantity") {
+          const selectedBrand = liquorBrandData.find(
+            (brand) => brand.liquor.brandName === currentInput.brand
+          );
+          const selectedSize = selectedBrand.liquor.sizes.find(
+            (s) => s.size === size
+          );
+
+          if (selectedSize) {
+            newSize.price = selectedSize.price * parseInt(value);
+          }
+        }
+
+        return { ...prevInput, sizes: [...prevInput.sizes, newSize] };
+      }
     });
   };
 
   const handleAddProduct = (e) => {
     e.preventDefault();
-    setProducts((prevProducts) => {
-      const existingProductIndex = prevProducts.findIndex(
-        (product) => product.brand === currentInput.brand
-      );
+    const existingProductIndex = products.findIndex(
+      (product) => product.brand === currentInput.brand
+    );
 
-      if (existingProductIndex > -1) {
-        const updatedProducts = [...prevProducts];
-        updatedProducts[existingProductIndex] = {
-          brand: currentInput.brand,
-          quantity: {
-            Q:
-              parseInt(currentInput.quantity.Q || 0) +
-              parseInt(updatedProducts[existingProductIndex].quantity.Q || 0),
-            P:
-              parseInt(currentInput.quantity.P || 0) +
-              parseInt(updatedProducts[existingProductIndex].quantity.P || 0),
-            N:
-              parseInt(currentInput.quantity.N || 0) +
-              parseInt(updatedProducts[existingProductIndex].quantity.N || 0),
-          },
-          price: {
-            Q:
-              parseInt(currentInput.price.Q || 0) +
-              parseInt(updatedProducts[existingProductIndex].price.Q || 0),
-            P:
-              parseInt(currentInput.price.P || 0) +
-              parseInt(updatedProducts[existingProductIndex].price.P || 0),
-            N:
-              parseInt(currentInput.price.N || 0) +
-              parseInt(updatedProducts[existingProductIndex].price.N || 0),
-          },
-        };
-        return updatedProducts;
-      }
-
-      return [
+    if (existingProductIndex > -1) {
+      // Update existing product
+      const updatedProducts = [...products];
+      updatedProducts[existingProductIndex].sizes = currentInput.sizes;
+      setProducts(updatedProducts);
+    } else {
+      // Add new product
+      setProducts((prevProducts) => [
         ...prevProducts,
         {
-          brand: currentInput?.brand,
-          quantity: { ...currentInput?.quantity },
-          price: { ...currentInput?.price },
+          brand: currentInput.brand,
+          sizes: currentInput.sizes,
         },
-      ];
-    });
-
-    setCurrentInput(() => ({
-      brand: "",
-      quantity: {
-        Q: "",
-        P: "",
-        N: "",
-      },
-      price: {
-        Q: "",
-        P: "",
-        N: "",
-      },
-    }));
+      ]);
+    }
+    setCurrentInput({ brand: "", sizes: [] });
   };
 
   const handleDeleteProduct = (index) => {
@@ -196,64 +183,42 @@ const LiquorBillForm = () => {
     setCurrentInput((prevInput) => ({
       ...prevInput,
       brand: brand,
-      quantity: {},
-      price: {},
+      sizes: [],
     }));
   };
 
-  // All taxes calculation
-  const total = products.reduce(
-    (acc, p) =>
-      acc +
-      parseInt(p.price.Q || 0) +
-      parseInt(p.price.P || 0) +
-      parseInt(p.price.N || 0),
-    0
+  // Preprocess products to create a sizes object
+  const processedProducts = products.map((product) => {
+    const sizesObject = {};
+    product.sizes.forEach((size) => {
+      sizesObject[size.size] = { quantity: size.quantity, price: size.price };
+    });
+    return { ...product, sizes: sizesObject };
+  });
+
+  // Extract all unique sizes
+  const allSizes = Array.from(
+    new Set(
+      products.flatMap((product) => product.sizes.map((size) => size.size))
+    )
   );
-  console.log(total);
+
+  // All taxes calculation
+  const total = products.reduce((acc, p) => acc + p.price, 0);
   const vatTax = 12 / 100;
   const cess = 2 / 100;
-  const wecp =
-    products.reduce(
-      (acc, p) =>
-        acc +
-        parseInt(p.quantity.Q || 0) +
-        parseInt(p.quantity.P || 0) +
-        parseInt(p.quantity.N || 0),
-      0
-    ) * 36;
+  const wecp = products.reduce((acc, p) => acc + p.quantity, 0) * 36;
 
-  // const holoQ =
-  //   holoQ + parseInt(p.hologram.Q || 0) * parseInt(p.quantity.Q || 0);
-  // const holoP =
-  //   holoP + parseInt(p.hologram.P || 0) * parseInt(p.quantity.P || 0);
-  // const holoN =
-  //   holoN + parseInt(p.hologram.N || 0) * parseInt(p.quantity.N || 0);
-
-  const profit =
-    products.reduce(
-      (acc, p) =>
-        acc +
-        parseInt(p.quantity.Q || 0) +
-        parseInt(p.quantity.P || 0) +
-        parseInt(p.quantity.N || 0),
-      0
-    ) * 50;
-
-  // const pratifal=
+  const profit = products.reduce((acc, p) => acc + p.quantity, 0) * 50;
 
   const taxTotal =
     total + total * vatTax + (total + total * vatTax) * cess + wecp + profit;
   const tcs = (taxTotal * 1) / 100;
   const grandTotal = taxTotal + tcs;
 
-  console.log("Total: " + total);
-  console.log("Vat: " + total * vatTax);
-  console.log("cess: " + (total + vatTax) * cess);
-  console.log("Women: : " + wecp);
-  console.log("Proft:  " + profit);
-  console.log("Tax Totlal:  : " + taxTotal);
-  console.log("Tcs: " + taxTotal);
+  useEffect(() => {
+    console.log(products);
+  }, [products.length]);
 
   return (
     <Box
@@ -329,10 +294,27 @@ const LiquorBillForm = () => {
       <Box className="w-full " component="form" onSubmit={handleAddProduct}>
         <Box className="w-full">
           <h1 className="md:text-3xl px-2 py-2 m-4 font-semibold text-2xl">
+            Supplier
+          </h1>
+          <Box className="px-3 grid grid-cols-1 sm:grid-cols-3 gap-10">
+            <FormControl sx={{ m: 1, minWidth: 120 }}>
+              <TextField
+                value={comp}
+                label="Supplier"
+                required
+                variant="outlined"
+                inputProps={{
+                  readOnly: true,
+                }}
+              />
+            </FormControl>
+          </Box>
+        </Box>
+        <Box className="w-full">
+          <h1 className="md:text-3xl px-2 py-2 m-4 font-semibold text-2xl">
             Select Brand
           </h1>
           <Box className="px-3 grid grid-cols-1 sm:grid-cols-3 gap-10">
-            {/* <InputLabel id="demo-simple-select-helper-label">Age</InputLabel> */}
             <FormControl sx={{ m: 1, minWidth: 120 }}>
               <InputLabel id="demo-simple-select-helper-label">
                 Brand Name
@@ -347,132 +329,86 @@ const LiquorBillForm = () => {
                 className="w-full"
                 onChange={handleBrandChange}
               >
-                {liquorBrandData.map((brand) => (
-                  <MenuItem key={brand.brandName} value={brand.brandName}>
-                    {brand.brandName}
-                  </MenuItem>
-                ))}
+                {liquorBrandData.length > 0 &&
+                  liquorBrandData?.map((brand) => (
+                    <MenuItem key={brand._id} value={brand?.liquor?.brandName}>
+                      {brand?.liquor?.brandName}
+                    </MenuItem>
+                  ))}
               </Select>
-            </FormControl>
-            <FormControl sx={{ m: 1, minWidth: 120 }}>
-              <TextField
-                value={comp}
-                label="Supplier"
-                required
-                variant="outlined"
-                aria-readonly
-              />
             </FormControl>
           </Box>
         </Box>
-        <h1 className="md:text-3xl px-2 py-2 m-4 font-semibold text-2xl">
-          Select Quantities
-        </h1>
-        <Box className="px-3 grid md:grid-cols-3 sm:grid-cols-2 gap-10">
-          <TextField
-            required
-            id="outlined-basic"
-            label="Quarts(Q)"
-            name="quantity-Q"
-            variant="outlined"
-            type="number"
-            inputProps={{ min: 0 }}
-            value={
-              currentInput?.quantity?.Q !== undefined
-                ? currentInput.quantity?.Q
-                : ""
-            }
-            onChange={handleInputChange}
-          />
-          <TextField
-            required
-            id="outlined-basic"
-            label="Pints(P)"
-            name="quantity-P"
-            variant="outlined"
-            type="number"
-            inputProps={{ min: 0 }}
-            value={
-              currentInput?.quantity?.P !== undefined
-                ? currentInput.quantity?.P
-                : ""
-            }
-            onChange={handleInputChange}
-          />
-          <TextField
-            required
-            id="outlined-basic"
-            label="Nips(N)"
-            name="quantity-N"
-            variant="outlined"
-            type="number"
-            inputProps={{ min: 0 }}
-            value={
-              currentInput?.quantity?.N !== undefined
-                ? currentInput.quantity?.N
-                : ""
-            }
-            onChange={handleInputChange}
-          />
-          <TextField
-            required
-            id="outlined-basic"
-            label="Price for Q"
-            name="price-Q"
-            variant="outlined"
-            type="number"
-            inputProps={{ min: 0 }}
-            disabled
-            value={currentInput?.price?.Q || ""}
-          />
-          <TextField
-            required
-            id="outlined-basic"
-            label="Price for P"
-            name="price-P"
-            variant="outlined"
-            type="number"
-            inputProps={{ min: 0 }}
-            disabled
-            value={currentInput?.price?.P || ""}
-          />
-          <TextField
-            required
-            id="outlined-basic"
-            label="Price for N"
-            name="price-N"
-            variant="outlined"
-            type="number"
-            inputProps={{ min: 0 }}
-            disabled
-            value={currentInput?.price?.N || ""}
-          />
-        </Box>
-        <Box className="py-2 px-2 flex justify-end mt-4 gap-5">
-          <TextField
-            required
-            id="outlined-read-only-input"
-            label="Total"
-            InputProps={{
-              readOnly: true,
-            }}
-            disabled
-            value={
-              (currentInput?.price?.Q || 0) +
-              (currentInput?.price?.P || 0) +
-              (currentInput?.price?.N || 0)
-            }
-          />
-
-          <Button variant="contained" type="submit">
-            Add
-          </Button>
-        </Box>
+        {currentInput?.brand && (
+          <>
+            <h1 className="md:text-3xl px-2 py-2 m-4 font-semibold text-2xl">
+              Select Quantities
+            </h1>
+            <Box className="px-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
+              {currentInput?.brand &&
+                liquorBrandData
+                  .find(
+                    (brand) => brand?.liquor?.brandName === currentInput?.brand
+                  )
+                  ?.liquor?.sizes?.map((size) => (
+                    <Box key={size?.size} className="flex flex-col gap-5">
+                      <TextField
+                        fullWidth
+                        value={
+                          currentInput?.sizes.find((s) => s.size === size?.size)
+                            ?.quantity || ""
+                        }
+                        label={`Quantity ${
+                          size?.size === "750ml"
+                            ? size?.size + " (Q)"
+                            : size?.size === "375ml"
+                            ? size?.size + " (P)"
+                            : size?.size === "180ml"
+                            ? size?.size + " (N)"
+                            : size?.size
+                        }`}
+                        name={`quantity-${size?.size}`}
+                        onChange={handleInputChange}
+                        variant="outlined"
+                        type="number"
+                      />
+                      <TextField
+                        fullWidth
+                        value={
+                          currentInput?.sizes.find((s) => s.size === size?.size)
+                            ?.price || ""
+                        }
+                        label={`Price ${
+                          size?.size === "750ml"
+                            ? size?.size + " (Q)"
+                            : size?.size === "375ml"
+                            ? size?.size + " (P)"
+                            : size?.size === "180ml"
+                            ? size?.size + " (N)"
+                            : size?.size
+                        }`}
+                        name={`price-${size?.size}`}
+                        onChange={handleInputChange}
+                        variant="outlined"
+                        type="number"
+                        focused={false}
+                        inputProps={{ readOnly: true }}
+                      />
+                    </Box>
+                  ))}
+            </Box>
+            <Box className="px-2 py-2 m-4 flex justify-end">
+              <Button variant="contained" type="submit">
+                Add Product
+              </Button>
+            </Box>
+          </>
+        )}
       </Box>
 
-      {/* Table creation for adding bills */}
+      {/* Product Details */}
 
-      <TableContainer className="py-12">
+      {/* <TableContainer className="py-12">
         <h1 className="md:text-3xl text-2xl font-semibold text-slate-700 py-5">
           Added Products
         </h1>
@@ -481,26 +417,28 @@ const LiquorBillForm = () => {
             <TableRow>
               <TableCell>S.No.</TableCell>
               <TableCell>Brand Name</TableCell>
-              <TableCell align="center" colSpan={3}>
-                Quantity (In Case)
+              <TableCell align="center" colSpan={allSizes.length}>
+                Quantity
               </TableCell>
-              <TableCell align="center" colSpan={3}>
-                Rate (In Case)
+              <TableCell align="center" colSpan={allSizes.length}>
+                Price
               </TableCell>
-              <TableCell></TableCell>
+              <TableCell align="center">Action</TableCell>
             </TableRow>
             <TableRow>
               <TableCell></TableCell>
               <TableCell></TableCell>
-              <TableCell align="right">Q</TableCell>
-              <TableCell align="right">P</TableCell>
-              <TableCell align="right">N</TableCell>
-              <TableCell align="right">Q</TableCell>
-              <TableCell align="right">P</TableCell>
-              <TableCell align="right">N</TableCell>
-              <TableCell align="right" className="w-0">
-                Action
-              </TableCell>
+              {allSizes.map((size) => (
+                <TableCell key={`qty-${size}`} align="right">
+                  {size}
+                </TableCell>
+              ))}
+              {allSizes.map((size) => (
+                <TableCell key={`price-${size}`} align="right">
+                  {size}
+                </TableCell>
+              ))}
+              <TableCell></TableCell>
             </TableRow>
           </TableHead>
 
@@ -510,12 +448,16 @@ const LiquorBillForm = () => {
                 <TableRow key={i}>
                   <TableCell>{i + 1}</TableCell>
                   <TableCell>{p.brand}</TableCell>
-                  <TableCell align="right">{p.quantity.Q}</TableCell>
-                  <TableCell align="right">{p.quantity.P}</TableCell>
-                  <TableCell align="right">{p.quantity.N}</TableCell>
-                  <TableCell align="right">{p.price.Q}</TableCell>
-                  <TableCell align="right">{p.price.P}</TableCell>
-                  <TableCell align="right">{p.price.N}</TableCell>
+                  {allSizes.map((size) => (
+                    <TableCell key={`qty-${size}-${i}`} align="right">
+                      {p.sizes[size]?.quantity || "-"}
+                    </TableCell>
+                  ))}
+                  {allSizes.map((size) => (
+                    <TableCell key={`price-${size}-${i}`} align="right">
+                      {p.sizes[size]?.price || "-"}
+                    </TableCell>
+                  ))}
                   <TableCell align="right" className="w-0">
                     <Button
                       className="text-red-500 hover:text-red-700"
@@ -530,64 +472,129 @@ const LiquorBillForm = () => {
               <TableCell colSpan={2} sx={{ fontWeight: 700 }}>
                 Total
               </TableCell>
-              <TableCell align="right">
-                {products.reduce(
-                  (acc, p) => parseInt(acc) + parseInt(p.quantity.Q || 0),
-                  0
-                ) || 0}
+              {allSizes.map((size) => (
+                <TableCell key={`qty-total-${size}`} align="right">
+                  {processedProducts.reduce(
+                    (acc, p) => acc + (p.sizes[size]?.quantity || 0),
+                    0
+                  )}
+                </TableCell>
+              ))}
+              {allSizes.map((size) => (
+                <TableCell key={`price-total-${size}`} align="right">
+                  {processedProducts.reduce(
+                    (acc, p) => acc + (p.sizes[size]?.price || 0),
+                    0
+                  )}
+                </TableCell>
+              ))}
+              <TableCell></TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </TableContainer> */}
+      <TableContainer className="py-12">
+        <h1 className="md:text-3xl text-2xl font-semibold text-slate-700 py-5">
+          Added Products
+        </h1>
+        <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+          <TableHead>
+            <TableRow>
+              <TableCell>S.No.</TableCell>
+              <TableCell>Brand Name</TableCell>
+              <TableCell align="center" colSpan={allSizes.length}>
+                Quantity
               </TableCell>
-              <TableCell align="right">
-                {products.reduce(
-                  (acc, p) => parseInt(acc) + parseInt(p.quantity.P || 0),
-                  0
-                ) || 0}
+              <TableCell align="center" colSpan={allSizes.length}>
+                Price
               </TableCell>
-              <TableCell align="right">
-                {products.reduce(
-                  (acc, p) => parseInt(acc) + parseInt(p.quantity.N || 0),
-                  0
-                ) || 0}
+              <TableCell align="center">Action</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+              {allSizes.map((size) => (
+                <TableCell key={`qty-${size}`} align="right">
+                  {size === "750ml"
+                    ? size + " (Q)"
+                    : size === "375ml"
+                    ? size + " (P)"
+                    : size === "180ml"
+                    ? size + " (N)"
+                    : size}
+                </TableCell>
+              ))}
+              {allSizes.map((size) => (
+                <TableCell key={`price-${size}`} align="right">
+                  {size === "750ml"
+                    ? size + " (Q)"
+                    : size === "375ml"
+                    ? size + " (P)"
+                    : size === "180ml"
+                    ? size + " (N)"
+                    : size}
+                </TableCell>
+              ))}
+              <TableCell></TableCell>
+            </TableRow>
+          </TableHead>
+
+          <TableBody>
+            {processedProducts.length > 0 &&
+              processedProducts.map((p, i) => (
+                <TableRow key={i}>
+                  <TableCell>{i + 1}</TableCell>
+                  <TableCell>{p.brand}</TableCell>
+                  {allSizes.map((size) => (
+                    <TableCell key={`qty-${size}-${i}`} align="right">
+                      {p.sizes[size]?.quantity || "-"}
+                    </TableCell>
+                  ))}
+                  {allSizes.map((size) => (
+                    <TableCell key={`price-${size}-${i}`} align="right">
+                      {p.sizes[size]?.price || "-"}
+                    </TableCell>
+                  ))}
+                  <TableCell align="right" className="w-0">
+                    <Button
+                      className="text-red-500 hover:text-red-700"
+                      onClick={() => handleDeleteProduct(i)}
+                    >
+                      <Delete />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            <TableRow>
+              <TableCell colSpan={2} sx={{ fontWeight: 700 }}>
+                Total
               </TableCell>
-              <TableCell align="right">
-                {products.reduce(
-                  (acc, p) => parseInt(acc) + parseInt(p.price.Q || 0),
-                  0
-                ) || 0}
-              </TableCell>
-              <TableCell align="right">
-                {products.reduce(
-                  (acc, p) => parseInt(acc) + parseInt(p.price.P || 0),
-                  0
-                ) || 0}
-              </TableCell>
-              <TableCell align="right">
-                {products.reduce(
-                  (acc, p) => parseInt(acc) + parseInt(p.price.N || 0),
-                  0
-                ) || 0}
-              </TableCell>
+              {allSizes.map((size) => (
+                <TableCell key={`qty-total-${size}`} align="right">
+                  {processedProducts.reduce(
+                    (acc, p) => acc + (p.sizes[size]?.quantity || 0),
+                    0
+                  )}
+                </TableCell>
+              ))}
+              {allSizes.map((size) => (
+                <TableCell key={`price-total-${size}`} align="right">
+                  {processedProducts.reduce(
+                    (acc, p) => acc + (p.sizes[size]?.price || 0),
+                    0
+                  )}
+                </TableCell>
+              ))}
               <TableCell></TableCell>
             </TableRow>
           </TableBody>
         </Table>
       </TableContainer>
+      {/* Total Calculation */}
 
-      <Box className="py-2 px-2 flex justify-end mt-4 gap-5">
-        <TextField
-          required
-          id="outlined-read-only-input"
-          label="Grand Total"
-          InputProps={{
-            readOnly: true,
-          }}
-          variant="filled"
-          value={grandTotal.toFixed(2)}
-        />
-      </Box>
-      {/* Final submit button */}
-      <Box className="py-2 px-2 flex md:justify-end mt-1 gap-5 justify-center">
+      <Box className="px-2 py-2 m-4 flex justify-end">
         <Button variant="contained" onClick={handleBillSubmit}>
-          SUBMIT {"  "}
+          Submit
         </Button>
       </Box>
     </Box>

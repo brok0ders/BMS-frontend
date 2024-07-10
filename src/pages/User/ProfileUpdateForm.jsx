@@ -13,7 +13,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { toast } from "react-toastify";
 import UserContext from "../../context/user/userContext";
 
-const ProfileUpdateForm = ({ open, onClose }) => {
+const ProfileUpdateForm = ({ open, onClose, setUserData }) => {
   const [emails, setEmails] = useState([""]);
   const { userUpdate, getUser } = useContext(UserContext);
   const handleSubmit = async (e) => {
@@ -22,7 +22,8 @@ const ProfileUpdateForm = ({ open, onClose }) => {
       const res = await userUpdate({ email: emails });
       console.log(res);
       if (res?.success) {
-        await getUser();
+        const data = await getUser();
+        setUserData(data?.user);
         toast.success(`Emails added successfully`);
       }
       setEmails([""]); // Reset form
@@ -43,6 +44,7 @@ const ProfileUpdateForm = ({ open, onClose }) => {
   };
 
   const handleDeleteEmail = (index) => {
+    if (index === 0) return;
     const newEmails = emails.filter((_, i) => i !== index);
     setEmails(newEmails);
   };
