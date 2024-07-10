@@ -1,62 +1,47 @@
 import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import { Button, TextField } from "@mui/material";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import BeerContext from "../../context/beer/beerContext";
+import CompanyContext from "../../context/company/companyContext";
 const UpdateBeerForm = () => {
   const [brandName, setBrandName] = useState("");
-  const [stock500ml, setStock500ml] = useState("");
-  const [stock650ml, setStock650ml] = useState("");
-  const [price650ml, setPrice650ml] = useState("");
-  const [price500ml, setPrice500ml] = useState("");
   const [companyName, setCompanyName] = useState("");
-
+  const [stock, setStock] = useState([]);
+  const [compId, setCompId] = useState("");
+  const { getBeer, updateBeer } = useContext(BeerContext);
+  const { getCompany } = useContext(CompanyContext);
+  const navigate = useNavigate();
   const { id } = useParams();
-  console.log(id);
-  const getBeerData = async () => {
+
+   const handleQuantityChange = (index, value) => {
+    const newStock = [...stock];
+    newStock[index].quantity = value;
+    setStock(newStock);
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      const data = {
-        _id: "12313",
-        brandName: "Test brand",
-        stock: {
-          650: 56,
-          500: 56,
-        },
-        price: {
-          650: 5600,
-          500: 5006,
-        },
-        company: "NK traders",
-      };
-      setBrandName(data.brandName);
-      setStock500ml(data.stock[500]);
-      setStock650ml(data.stock[650]);
-      setPrice650ml(data.price[650]);
-      setPrice500ml(data.price[500]);
-      setCompanyName(data.company);
+      const res = await updateBeer({ id, stock });
+      toast.succes("Beer updated succesfully!");
+      setBrandName("");
+      setStock([]);
+      navigate(`/dashboard/beer/${compId}`)
+      // Handle success (e.g., reset form, display success message)
     } catch (error) {
       console.error("Error:", error);
     }
   };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const getBeerData = async () => {
     try {
-      const formdata = {
-        brandName,
-        stock500ml,
-        stock650ml,
-        price650ml,
-        price500ml,
-      };
-      console.log(formdata);
+      // Data fetching
+      const res = await getBeer({ id });
+      const res1 = await getCompany({ id: res?.beer?.company?._id });
+      setCompanyName(res1?.company?.company?.name);
+      setCompId(res?.beer?.company?.company?._id);
 
-      // Reset the states
-
-      setBrandName("");
-      setStock500ml("");
-      setStock650ml("");
-      setPrice650ml("");
-      setPrice500ml("");
+      setBrandName(res.beer.beer?.brandName);
+      setStock(res.beer.stock);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -99,58 +84,32 @@ const UpdateBeerForm = () => {
           />
         </Box>
       </Box>
-      <h1 className="text-2xl font-semibold mb-5">500 ML</h1>
-      <Box className="pb-10 grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-10">
-        <TextField
-          required
-          onChange={(e) => setStock500ml(e.target.value)}
-          value={stock500ml}
-          type="number"
-          id="outlined-basic"
-          label="Stock 500ml"
-          variant="outlined"
-          inputProps={{ min: 0 }}
-        />
+      {stock?.map((s, index) => (
+        <>
+          <h1 className="text-2xl font-semibold mb-3">{s.size}</h1>
+          <Box className="pb-10 grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-10">
+            <TextField
+              onChange={(e) => handleQuantityChange(index, e.target.value)}
+              value={s?.quantity}
+              type="number"
+              inputProps={{ min: 0 }}
+              required
+              label={`Quantity ${s?.size}`}
+              variant="outlined"
+            />
+            <TextField
+              value={s.price}
+              label={`Price ${s.size}`}
+              variant="outlined"
+            />
+          </Box>
+        </>
+      ))}
 
-        <TextField
-          required
-          onChange={(e) => setPrice500ml(e.target.value)}
-          value={price500ml}
-          type="number"
-          id="outlined-basic"
-          label="Price 500ml"
-          variant="outlined"
-          inputProps={{ min: 0 }}
-        />
-      </Box>
-      <h1 className="text-2xl font-semibold mb-5">650 ML</h1>
-      <Box className="pb-10 grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-10">
-        <TextField
-          required
-          onChange={(e) => setStock650ml(e.target.value)}
-          value={stock650ml}
-          type="number"
-          id="outlined-basic"
-          label="Stock 650ml"
-          variant="outlined"
-          inputProps={{ min: 0 }}
-        />
-        <TextField
-          required
-          onChange={(e) => setPrice650ml(e.target.value)}
-          value={price650ml}
-          type="number"
-          id="outlined-basic"
-          label="Price 650ml"
-          variant="outlined"
-          inputProps={{ min: 0 }}
-        />
-      </Box>
       <Box
         sx={{
           display: "flex",
           justifyContent: "end",
-          gap: 2,
         }}
       >
         <Link to={-1}>
@@ -168,12 +127,10 @@ const UpdateBeerForm = () => {
           </Button>
         </Link>
         <Button
-          sx={{
-            fontSize: "1rem",
-          }}
+          sx={{ fontSize: "1rem" }}
           type="submit"
           variant="contained"
-          className="p-4 !px-6"
+          className=" p-4 !px-6"
         >
           Update
         </Button>

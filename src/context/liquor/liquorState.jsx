@@ -280,7 +280,7 @@ const LiquorState = (props) => {
     }
   };
 
-  const updateLiquor = async ({ id, brandName, stock, price, company }) => {
+  const updateLiquor = async ({ id, stock }) => {
     try {
       const config = {
         headers: {
@@ -290,7 +290,7 @@ const LiquorState = (props) => {
       };
       const { data } = await API.put(
         `/liquor/edit/${id}`,
-        { brandName, stock, price, company },
+        { stock },
         config
       );
       if (data.success) {

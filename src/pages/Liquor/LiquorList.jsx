@@ -17,14 +17,13 @@ import LiquorContext from "../../context/liquor/liquorContext";
 
 const LiquorList = () => {
   const { company } = useParams();
-  const { getAllLiquor } = useContext(LiquorContext);
+  const { getAllLiquor, deleteLiquor } = useContext(LiquorContext);
   const [liquor, setLiquor] = useState([]);
   const headers = ["750ml", "180ml", "375ml", "700ml"];
 
   const getLiquor = async () => {
     try {
       const res = await getAllLiquor();
-      console.log(res);
       setLiquor(res.liquors);
     } catch (e) {}
   };
@@ -50,9 +49,10 @@ const LiquorList = () => {
   // getTotalData();
 
   // temporary delete for testing purposes
-  const handleDelete = (id) => {
-    const updatedLiquor = liquor.filter((liquor) => liquor._id !== id);
-    setLiquor(updatedLiquor);
+  const handleDelete = async(id) => {
+    const res = await deleteLiquor({id});
+    toast.success("Liquor deleted succesfully!");
+    getLiquor();
   };
 
   useEffect(() => {

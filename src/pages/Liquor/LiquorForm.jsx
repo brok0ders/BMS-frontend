@@ -105,8 +105,11 @@ const LiquorForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await createLiquor({ liquorId: brandName._id, stock, company });
-      console.log(res);
+      const res = await createLiquor({
+        liquorId: brandName._id,
+        stock,
+        company,
+      });
       if (res.success) {
         toast.success(res.message);
       }
@@ -193,7 +196,7 @@ const LiquorForm = () => {
                     {b.brandName}
                   </MenuItem>
                 ))}
-              </Select>
+              </Select> 
             </FormControl>
           </div>
         </Box>

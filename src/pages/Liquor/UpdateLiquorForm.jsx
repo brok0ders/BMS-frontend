@@ -1,15 +1,19 @@
 import React, { useContext, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import { Button, TextField } from "@mui/material";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import LiquorContext from "../../context/liquor/liquorContext";
+import CompanyContext from "../../context/company/companyContext";
 
 const UpdateLiquorForm = () => {
   const [brandName, setBrandName] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [stock, setStock] = useState([]);
   const { id } = useParams();
-  const { getLiquor } = useContext(LiquorContext);
+  const [compId, setCompId] = useState("");
+  const { getLiquor, updateLiquor } = useContext(LiquorContext);
+  const { getCompany } = useContext(CompanyContext);
+  const navigate = useNavigate();
 
   const handleQuantityChange = (index, value) => {
     const newStock = [...stock];
@@ -19,17 +23,11 @@ const UpdateLiquorForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const formdata = {
-        brandName,
-        stock,
-        price,
-        company: "", // Replace with actual company ID
-      };
-      console.log(formdata);
-
+      const res = await updateLiquor({ id, stock });
+      toast.succes("Liquor updated succesfully!");
       setBrandName("");
-      setPrice({});
-      setStock({});
+      setStock([]);
+      navigate(`/dashboard/liquor/${compId}`)
       // Handle success (e.g., reset form, display success message)
     } catch (error) {
       console.error("Error:", error);
@@ -42,11 +40,12 @@ const UpdateLiquorForm = () => {
     try {
       // Data fetching
       const res = await getLiquor({ id });
-      console.log(res);
+      const res1 = await getCompany({ id: res?.liquor?.company?._id });
+      setCompanyName(res1?.company?.company?.name);
+      setCompId(res?.liquor?.company?.company?._id);
 
       setBrandName(res.liquor.liquor?.brandName);
       setStock(res.liquor.stock);
-      setCompanyName(res.liquor.liquor.company);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -104,10 +103,7 @@ const UpdateLiquorForm = () => {
             />
             <TextField
               value={s.price}
-              type="number"
-              inputProps={{ min: 0 }}
-              required
-              label="Price Q"
+              label={`Price ${s?.size}`}
               variant="outlined"
             />
           </Box>
