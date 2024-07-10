@@ -13,7 +13,7 @@ const CompanySelection = () => {
     // Data fetching
     const res = await getAllCompany();
     const filteredCompanies = res.company.filter(
-      (company) => company.companyType === companyType
+      (company) => company.company.companyType === companyType
     );
     setCompanyData(filteredCompanies);
   };
@@ -26,9 +26,10 @@ const CompanySelection = () => {
       {companyData.map((company) => (
         <SelectCompanyCard
           url={`${companyType}${page ? "/bill/" + page : ""}`}
-          key={company._id}
-          name={company.name}
+          key={company.company._id}
+          name={company.company.name}
           id={company._id}
+          companyType={company.company.companyType}
         />
       ))}
     </div>

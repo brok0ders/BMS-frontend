@@ -15,11 +15,12 @@ const Companies = () => {
   const getAllCompanies = async () => {
     try {
       const res = await getAllCompany();
+      console.log(res);
       if (tab === "all" || tab === null) {
         // setCompanyData(res.company);
       } else {
-        const filteredCompanies = res.company.filter(
-          (company) => company.companyType === tab
+        const filteredCompanies = res?.company.filter(
+          (company) => company.company.companyType === tab
         );
         setCompanyData(filteredCompanies);
       }
@@ -30,8 +31,9 @@ const Companies = () => {
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 my-10">
       {companyData?.map((company) => (
         <CompanyCard
-          key={company._id}
-          name={company.name}
+          key={company.company._id}
+          name={company.company.name}
+          companyType={company.company.companyType}
           id={company._id}
         />
       ))}

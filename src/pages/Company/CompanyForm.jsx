@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import {
   Button,
@@ -18,17 +18,25 @@ import { toast } from "react-toastify";
 const CompanyForm = ({ open, onClose }) => {
   const [name, setName] = useState("");
   const [companyType, setCompanyType] = useState("");
-  const {createCompany, getAllCompany} = useContext(CompanyContext);
+  const [data, setData] = useState([]);
+  const [comps, setComps] = useState([]);
+  const { createCompany, getAllCompany, allGlobalCompany, getCompany } =
+    useContext(CompanyContext);
+
   const handleChange = (event) => {
-    setCompanyType(event.target.value);
+    setName(event.target.value);
   };
+
+  const filterByCompanyType = async(compType) => {
+    const filtered = comps.filter((c) => c.companyType===compType);
+    setData(filtered);
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const formdata = { name, companyType };
-      // Send the form data to the server
-      const res = await createCompany(formdata);
+      const res = await createCompany({compId: name});
+      console.log(res);
       if (res?.success) {
         await getAllCompany();
         toast.success(`New Company created successfully`);
@@ -40,6 +48,17 @@ const CompanyForm = ({ open, onClose }) => {
       console.error("Error:", error);
     }
   };
+
+  const getGlobalCompany = async () => {
+    try {
+      const res = await allGlobalCompany();
+      console.log(res);
+      setComps(res.data);
+    } catch (e) {}
+  };
+  useEffect(() => {
+    getGlobalCompany();
+  }, []);
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
@@ -68,6 +87,26 @@ const CompanyForm = ({ open, onClose }) => {
           }}
         >
           <FormControl sx={{ minWidth: "100%" }}>
+            <InputLabel id="comapny-label">Company Type</InputLabel>
+            <Select
+              required
+              labelId="company-label"
+              id="company-select"
+              value={companyType}
+              label="Company Type"
+              name="companyType"
+              className="w-full"
+              onChange={(event) =>{
+                setCompanyType(event.target.value);
+                filterByCompanyType(event.target.value);
+              }}
+            >
+              <MenuItem value="beer">Beer</MenuItem>
+              <MenuItem value="liquor">Liquor</MenuItem>
+            </Select>
+          </FormControl>
+
+          <FormControl sx={{ minWidth: "100%", marginTop: 3 }}>
             <InputLabel id="comapny-label">Company Name</InputLabel>
             <Select
               required
@@ -79,26 +118,13 @@ const CompanyForm = ({ open, onClose }) => {
               className="w-full"
               onChange={handleChange}
             >
-              <MenuItem
-                value='beer'
-              >Beer</MenuItem>
-              <MenuItem
-                value='liquor'
-              >Liquor</MenuItem>
+              {data.map((company) => (
+                <MenuItem key={company._id} value={company._id}>
+                  {company.name}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
-
-          <TextField
-          sx={{ minWidth: "100%", marginTop: 3 }}
-            onChange={(e) => setName(e.target.value)}
-            value={companyType}
-            id="outlined-basic"
-            label="Company Type"
-            variant="outlined"
-            fullWidth
-            className="mb-0"
-
-          />
         </DialogContent>
         <DialogActions
           sx={{

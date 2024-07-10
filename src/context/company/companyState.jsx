@@ -33,6 +33,7 @@ const CompanyState = (props) => {
         },
       };
       const { data } = await API.get(`/company/${id}`, config);
+      console.log(data);
       if (data.success) {
         setCompany(data.company);
       }
@@ -43,7 +44,7 @@ const CompanyState = (props) => {
     }
   };
 
-  const createCompany = async ({ name, companyType }) => {
+  const createCompany = async ({ compId }) => {
     try {
       const config = {
         headers: {
@@ -53,13 +54,11 @@ const CompanyState = (props) => {
       };
       const { data } = await API.post(
         "/company/create",
-        { name, companyType },
+        { company: compId },
         config
       );
-      if (data.success) {
-        setCompany(data.company);
-      }
-      console.log(data.message);
+      setCompany(data?.company?.company);
+      // console.log(data?.company?.company);
       return data;
     } catch (e) {
       toast.error(e.response.data.message);
@@ -94,15 +93,29 @@ const CompanyState = (props) => {
         },
       };
       const { data } = await API.delete(`/company/delete/${id}`, config);
-      if (data.success) {
-        setCompany(data.company);
-      }
-      console.log(data.message);
+      console.log(data);
       return data;
     } catch (e) {
       toast.error(e.response.data.message);
     }
   };
+
+  // MASTER COMPANY CONTROLLERS
+  const allGlobalCompany = async() => {
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: localStorage.getItem("token"),
+        },
+      };
+      const {data} = await API.get("/master-company/all", config);
+      return data;
+    }
+    catch (e) {
+      toast.error(e.response.data.message);
+    }
+  }
 
   return (
     <CompanyContext.Provider
@@ -115,6 +128,7 @@ const CompanyState = (props) => {
         updateCompany,
         createCompany,
         deleteCompany,
+        allGlobalCompany,
       }}
     >
       {props.children}
