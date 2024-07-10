@@ -87,7 +87,7 @@ const UserState = (props) => {
     return data;
   };
 
-  const userUpdate = async ({ email, password }) => {
+  const userUpdate = async ({ email }) => {
     try {
       const config = {
         headers: {
@@ -95,11 +95,7 @@ const UserState = (props) => {
           authorization: localStorage.getItem("token"),
         },
       };
-      const { data } = await API.put(
-        "/user/update",
-        { email, password },
-        config
-      );
+      const { data } = await API.put("/user/update", { email }, config);
       if (data.success) {
         setUser(data.user);
       }
@@ -118,18 +114,13 @@ const UserState = (props) => {
           authorization: localStorage.getItem("token"),
         },
       };
-      const { data } = await API.delete(
-        "/user/email/delete",
-        { email },
-        config
-      );
+      const { data } = await API.put("/user/email/delete", { email }, config);
       if (data.success) {
         setUser(data.user);
       }
-      console.log(data.message);
       return data;
     } catch (e) {
-      toast.error(e.response.data.message);
+      // toast.error(e.response.data.message);
     }
   };
 
