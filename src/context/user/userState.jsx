@@ -8,19 +8,21 @@ const UserState = (props) => {
   const [user, setUser] = useState(null);
 
   const getUser = async () => {
-    const config = {
-      headers: {
-        authorization: localStorage.getItem("token"),
-      },
-    };
-    const { data } = await API.get("/user/details", config);
-    if (data.success) {
-      setUser(data.user);
+    try {
+      const config = {
+        headers: {
+          authorization: localStorage.getItem("token"),
+        },
+      };
+      const { data } = await API.get("/user/details", config);
+      if (data.success) {
+        setUser(data.user);
+      }
       console.log(data.message);
-      return data.user;
+      return data;
+    } catch (e) {
+      toast.error(e.response.data.message);
     }
-    console.log(data.message);
-    return undefined;
   };
 
   const userLogin = async ({ username, password }) => {
@@ -86,33 +88,49 @@ const UserState = (props) => {
   };
 
   const userUpdate = async ({ email, password }) => {
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        authorization: localStorage.getItem("token"),
-      },
-    };
-    const { data } = await API.put("/user/update", { email, password }, config);
-    if (data.success) {
-      setUser(data.user);
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: localStorage.getItem("token"),
+        },
+      };
+      const { data } = await API.put(
+        "/user/update",
+        { email, password },
+        config
+      );
+      if (data.success) {
+        setUser(data.user);
+      }
+      console.log(data.message);
+      return data;
+    } catch (e) {
+      toast.error(e.response.data.message);
     }
-    console.log(data.message);
-    return data;
   };
 
   const deleteEmail = async ({ email }) => {
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        authorization: localStorage.getItem("token"),
-      },
-    };
-    const { data } = await API.delete("/user/email/delete", { email }, config);
-    if (data.success) {
-      setUser(data.user);
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: localStorage.getItem("token"),
+        },
+      };
+      const { data } = await API.delete(
+        "/user/email/delete",
+        { email },
+        config
+      );
+      if (data.success) {
+        setUser(data.user);
+      }
+      console.log(data.message);
+      return data;
+    } catch (e) {
+      toast.error(e.response.data.message);
     }
-    console.log(data.message);
-    return data;
   };
 
   return (

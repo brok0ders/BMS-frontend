@@ -6,7 +6,7 @@ import CompanyContext from "../../context/company/companyContext";
 import { toast } from "react-toastify";
 import BeerContext from "../../context/beer/beerContext";
 import LiquorContext from "../../context/liquor/liquorContext";
-const CompanyCard = ({ id, name, totalBrands }) => {
+const CompanyCard = ({ id, name }) => {
   const [open, setOpen] = useState(false);
   const [brands, setBrands] = useState(0);
   const handleOpen = () => {
@@ -44,7 +44,6 @@ const CompanyCard = ({ id, name, totalBrands }) => {
       <h2 className="text-xl text-center font-semibold">{name}</h2>
       <p className="text-[1.1rem]  text-center font-semibold">
         Total Brands : {brands}
-        <span className="text-[1rem]  text-gray-500">{totalBrands}</span>
       </p>
       <Box
         sx={{

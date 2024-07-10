@@ -31,7 +31,7 @@ const CompanyForm = ({ open, onClose }) => {
       const res = await createCompany(formdata);
       if (res?.success) {
         await getAllCompany();
-        toast.success(`${res.company.name} is created successfully`);
+        toast.success(`New Company created successfully`);
       }
       setName(""); // Reset form
       setCompanyType("");
@@ -67,22 +67,13 @@ const CompanyForm = ({ open, onClose }) => {
             py: 1,
           }}
         >
-          <TextField
-            onChange={(e) => setName(e.target.value)}
-            value={name}
-            id="outlined-basic"
-            label="Company Name"
-            variant="outlined"
-            fullWidth
-            className="mb-0"
-          />
-          <FormControl sx={{ minWidth: "50%", marginTop: 3 }}>
-            <InputLabel id="comapny-label">Company Type</InputLabel>
+          <FormControl sx={{ minWidth: "100%" }}>
+            <InputLabel id="comapny-label">Company Name</InputLabel>
             <Select
               required
               labelId="company-label"
               id="company-select"
-              value={companyType}
+              value={name}
               label="Company Type"
               name="companyType"
               className="w-full"
@@ -96,6 +87,18 @@ const CompanyForm = ({ open, onClose }) => {
               >Liquor</MenuItem>
             </Select>
           </FormControl>
+
+          <TextField
+          sx={{ minWidth: "100%", marginTop: 3 }}
+            onChange={(e) => setName(e.target.value)}
+            value={companyType}
+            id="outlined-basic"
+            label="Company Type"
+            variant="outlined"
+            fullWidth
+            className="mb-0"
+
+          />
         </DialogContent>
         <DialogActions
           sx={{

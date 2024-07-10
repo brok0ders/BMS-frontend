@@ -13,63 +13,87 @@ import {
   TableRow,
   TextField,
   Typography,
+  useColorScheme,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Delete } from "@mui/icons-material";
-
-const liquorBrandData = [
-  {
-    brandName: "8 PM",
-    stock: {
-      Q: 22,
-      P: 12,
-      N: 7,
-    },
-    price: {
-      Q: 1200,
-      P: 2100,
-      N: 700,
-    },
-  },
-  {
-    brandName: "Black Dog",
-    stock: {
-      Q: 45,
-      P: 75,
-      N: 87,
-    },
-    price: {
-      Q: 12700,
-      P: 12764,
-      N: 4000,
-    },
-  },
-  {
-    brandName: "Brandi",
-    stock: {
-      Q: 16,
-      P: 43,
-      N: 98,
-    },
-    price: {
-      Q: 3244,
-      P: 5256,
-      N: 7900,
-    },
-  },
-];
+import LiquorContext from "../../context/liquor/liquorContext";
+import CustomerContext from "../../context/customer/customerContext";
+import BillContext from "../../context/bill/billContext";
+import UserContext from "../../context/user/userContext";
+import CompanyContext from "../../context/company/companyContext";
+import { useParams } from "react-router-dom";
 
 const LiquorBillForm = () => {
+  const {company} = useParams();
   const [licensee, setLicensee] = useState("");
+  const [liquorBrandData, setLiquorBrandData] = useState([{}]);
   const [shop, setShop] = useState("");
   const [firm, setFirm] = useState("");
   const [pan, setPan] = useState("");
   const [excise, setExcise] = useState("");
   const [pno, setPno] = useState("");
-
+  const { getLiquorCom } = useContext(LiquorContext);
+  const { createCustomer } = useContext(CustomerContext);
+  const { createBill } = useContext(BillContext);
+  const { user } = useContext(UserContext);
+  const { getCompany } = useContext(CompanyContext);
+  const [comp, setComp] = useState("");
   const [products, setProducts] = useState([]);
 
+  let customerId = "";
+
   const [currentInput, setCurrentInput] = useState({});
+
+  const getLiquors = async () => {
+    const res = await getLiquorCom({ id: company });
+    console.log(res);
+    setLiquorBrandData(res.liquor);
+  };
+  const createCustomer2 = async () => {
+    const res = await createCustomer({ licensee, shop, firm, pan });
+    console.log(res);
+    customerId = res.customer._id;
+  };
+  const createBill2 = async () => {
+    const res = await createBill({
+      customer: customerId,
+      seller: user,
+      products,
+      company,
+    });
+    console.log(res);
+  };
+  const getCompany2 = async () => {
+    const res = await getCompany({ id: company });
+    setComp(res?.company?.name);
+  };
+  useEffect(() => {
+    getCompany2();
+    getLiquors();
+  }, []);
+  const handleBillSubmit = (e) => {
+    e.preventDefault();
+    const formData = {
+      licensee,
+      shop,
+      firm,
+      pan,
+      excise,
+      pno,
+      products,
+    };
+    console.log(formData);
+    createCustomer2();
+    createBill2();
+    setLicensee("");
+    setShop("");
+    setFirm("");
+    setPan("");
+    setExcise("");
+    setPno("");
+    setProducts([]);
+  };
 
   const handleInputChange = (e) => {
     e.preventDefault();
@@ -175,22 +199,6 @@ const LiquorBillForm = () => {
       quantity: {},
       price: {},
     }));
-  };
-
-  const handleBillSubmit = (e) => {
-    const formData = {
-      products,
-      excise,
-      pno,
-    };
-    console.log(formData);
-    setLicensee("");
-    setShop("");
-    setFirm("");
-    setPan("");
-    setExcise("");
-    setPno("");
-    setProducts([]);
   };
 
   // All taxes calculation
@@ -345,6 +353,15 @@ const LiquorBillForm = () => {
                   </MenuItem>
                 ))}
               </Select>
+            </FormControl>
+            <FormControl sx={{ m: 1, minWidth: 120 }}>
+              <TextField
+                value={comp}
+                label="Supplier"
+                required
+                variant="outlined"
+                aria-readonly
+              />
             </FormControl>
           </Box>
         </Box>

@@ -14,54 +14,55 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Delete } from "@mui/icons-material";
-
-const beerBrandData = [
-  {
-    brandName: "Tensberg",
-    quantity: {
-      650: 120,
-      500: 200,
-    },
-    price: {
-      650: 200,
-      500: 100,
-    },
-  },
-  {
-    brandName: "Tuborg",
-    quantity: {
-      650: 100,
-      500: 230,
-    },
-    price: {
-      650: 220,
-      500: 140,
-    },
-  },
-  {
-    brandName: "Kingfisher",
-    quantity: {
-      650: 130,
-      500: 540,
-    },
-    price: {
-      650: 180,
-      500: 120,
-    },
-  },
-];
+import CompanyContext from "../../context/company/companyContext";
+import { useParams } from "react-router-dom";
+import BeerContext from "../../context/beer/beerContext";
+import { RiCreativeCommonsByFill } from "react-icons/ri";
+import BillContext from "../../context/bill/billContext";
+import CustomerContext from "../../context/customer/customerContext";
+import UserContext from "../../context/user/userContext";
 
 const BeerBillForm = () => {
+  const {createBill} = useContext(BillContext);
+  const { getCompany } = useContext(CompanyContext);
   const [licensee, setLicensee] = useState("");
   const [shop, setShop] = useState("");
   const [firm, setFirm] = useState("");
   const [pan, setPan] = useState("");
   const [excise, setExcise] = useState("");
   const [pno, setPno] = useState("");
-
   const [products, setProducts] = useState([]);
+  const [comp, setComp] = useState('');
+  const {company} = useParams();
+  const [beerBrandData, setBeerBrandData] = useState([]);
+  const {getBeerCom} = useContext(BeerContext);
+  const {createCustomer} = useContext(CustomerContext);
+  const {user} = useContext(UserContext);
+  let customerId = '';
+  const getCompany2 = async() => {
+    const res = await getCompany({id: company});
+    setComp(res?.company?.name);
+  }
+  const getBeers = async() => {
+    const res = await getBeerCom({id: company});
+    console.log(res);
+    setBeerBrandData(res.beer);
+  }
+  const createCustomer2 = async() => {
+    const res = await createCustomer({licensee, shop, firm, pan});
+    console.log(res);
+    customerId = res.customer._id;
+  }
+  const createBill2 = async() => {
+    const res = await createBill({customer: customerId, seller: user, products, company});
+    console.log(res);
+  }
+  useEffect(() => {
+    getCompany2();
+    getBeers();
+  }, []);
 
   const [currentInput, setCurrentInput] = useState({
     brandName: "",
@@ -191,6 +192,8 @@ const BeerBillForm = () => {
       products,
     };
     console.log(formData);
+    createCustomer2();
+    createBill2();
     setLicensee("");
     setShop("");
     setFirm("");
@@ -316,6 +319,15 @@ const BeerBillForm = () => {
                   </MenuItem>
                 ))}
               </Select>
+            </FormControl>
+            <FormControl sx={{ m: 1, minWidth: 120 }}>
+              <TextField
+                value={comp}
+                label="Supplier"
+                required
+                variant="outlined"
+                aria-readonly
+              />
             </FormControl>
           </Box>
         </Box>
