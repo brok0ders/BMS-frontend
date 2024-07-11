@@ -6,7 +6,6 @@ import { toast } from "react-toastify";
 
 const BillState = ({ children }) => {
   const [bill, setBill] = useState({});
-
   const getAllBills = async ({ id }) => {
     try {
       const config = {
@@ -39,6 +38,57 @@ const BillState = ({ children }) => {
       }
       console.log(data.message);
       return data;
+    } catch (e) {
+      toast.error(e.response.data.message);
+    }
+  };
+  // Revenue chart
+
+  const getRevenueChart = async () => {
+    try {
+      const config = {
+        headers: {
+          authorization: localStorage.getItem("token"),
+        },
+      };
+      const { data } = await API.get(`/bill/chart/revenue`, config);
+
+      console.log(data.message);
+      return data?.data;
+    } catch (e) {
+      toast.error(e.response.data.message);
+    }
+  };
+
+  // TOp -5 liquors
+
+  const getLiquorChart = async () => {
+    try {
+      const config = {
+        headers: {
+          authorization: localStorage.getItem("token"),
+        },
+      };
+      const { data } = await API.get(`/bill/chart/top-liquors`, config);
+
+      console.log(data.message);
+      return data?.data;
+    } catch (e) {
+      toast.error(e.response.data.message);
+    }
+  };
+
+  const getBeerChart = async () => {
+    try {
+      const config = {
+        headers: {
+          authorization: localStorage.getItem("token"),
+        },
+      };
+      const { data } = await API.get(`/bill/chart/top-beers`, config);
+
+      console.log(data.message);
+      return data?.data;
     } catch (e) {
       toast.error(e.response.data.message);
     }
@@ -97,6 +147,9 @@ const BillState = ({ children }) => {
         getBill,
         createBill,
         updateBill,
+        getRevenueChart,
+        getLiquorChart,
+        getBeerChart,
       }}
     >
       {children}

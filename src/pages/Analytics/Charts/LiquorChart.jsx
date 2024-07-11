@@ -1,20 +1,36 @@
 // src/components/LiquorChart.js
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import { Box } from "@mui/material";
-
-const data = [
-  { Liquor: "Liquor A", sales: 120 },
-  { Liquor: "Liquor B", sales: 95 },
-  { Liquor: "Liquor C", sales: 80 },
-  { Liquor: "Liquor D", sales: 75 },
-  { Liquor: "Liquor E", sales: 60 },
-];
+import BillContext from "../../../context/bill/billContext";
 
 const LiquorChart = () => {
   // Map data to extract Liquor names and sales
-  const Liquors = data.map((item) => item.Liquor);
-  const sales = data.map((item) => item.sales);
+
+  const [liquorChartData, setliquorChartData] = useState([]);
+  const { getLiquorChart } = useContext(BillContext);
+  // get the chart data
+
+  const getliquorChartData = async () => {
+    try {
+      const data = await getLiquorChart();
+      setliquorChartData(data);
+    } catch (error) {
+      console.log(error);
+      setliquorChartData();
+    }
+  };
+
+  let sales;
+  let Liquors;
+  if (liquorChartData && liquorChartData.length > 0) {
+    sales = liquorChartData?.map((item) => item.totalQuantity);
+    Liquors = liquorChartData?.map((item) => item.brand);
+  }
+
+  useEffect(() => {
+    getliquorChartData();
+  }, []);
 
   const options = {
     chart: {

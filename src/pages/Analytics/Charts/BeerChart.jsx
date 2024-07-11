@@ -1,7 +1,8 @@
 // src/components/BeerChart.js
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import { Box } from "@mui/material";
+import BillContext from "../../../context/bill/billContext";
 
 const data = [
   { beer: "Beer A", sales: 120 },
@@ -13,8 +14,30 @@ const data = [
 
 const BeerChart = () => {
   // Map data to extract beer names and sales
-  const beers = data.map((item) => item.beer);
-  const sales = data.map((item) => item.sales);
+  const [beerChartData, setbeerChartData] = useState([]);
+  const { getBeerChart } = useContext(BillContext);
+  // get the chart data
+
+  const getbeerChartData = async () => {
+    try {
+      const data = await getBeerChart();
+      setbeerChartData(data);
+    } catch (error) {
+      console.log(error);
+      setbeerChartData();
+    }
+  };
+
+  let sales;
+  let beers;
+  if (beerChartData && beerChartData.length > 0) {
+    sales = beerChartData?.map((item) => item.totalQuantity);
+    beers = beerChartData?.map((item) => item.brand);
+  }
+
+  useEffect(() => {
+    getbeerChartData();
+  }, []);
 
   const options = {
     chart: {
