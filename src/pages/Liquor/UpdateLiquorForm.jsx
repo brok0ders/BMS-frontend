@@ -4,6 +4,7 @@ import { Button, TextField } from "@mui/material";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import LiquorContext from "../../context/liquor/liquorContext";
 import CompanyContext from "../../context/company/companyContext";
+import { toast } from "react-toastify";
 
 const UpdateLiquorForm = () => {
   const [brandName, setBrandName] = useState("");
@@ -24,7 +25,7 @@ const UpdateLiquorForm = () => {
     e.preventDefault();
     try {
       const res = await updateLiquor({ id, stock });
-      toast.succes("Liquor updated succesfully!");
+      toast.success("Liquor updated succesfully!");
       setBrandName("");
       setStock([]);
       navigate(`/dashboard/liquor/${compId}`)
