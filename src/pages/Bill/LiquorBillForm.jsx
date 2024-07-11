@@ -73,6 +73,7 @@ const LiquorBillForm = () => {
       customer: customerId,
       seller: user?._id,
       company,
+      total: grandTotal,
     });
     setLicensee("");
     setShop("");
@@ -81,6 +82,7 @@ const LiquorBillForm = () => {
     setExcise("");
     setPno("");
     setProducts([]);
+    setGrandTotal(0);
     // console.log(res);
   };
   const getCompany2 = async () => {
@@ -183,7 +185,7 @@ const LiquorBillForm = () => {
         p -= size.quantity * sizes[i].pratifal;
         w -= size.quantity * sizes[i].wep;
         q -= size.quantity;
-        t -= size.quantity * size.price;
+        t -= size.price;
       });
 
       // Update existing product
@@ -208,7 +210,7 @@ const LiquorBillForm = () => {
       p += size.quantity * sizes[i].pratifal;
       w += size.quantity * sizes[i].wep;
       q += size.quantity;
-      t += size.quantity * size.price;
+      t += size.price;
     });
 
     setCurrentInput({ brand: "", sizes: [] });
@@ -219,20 +221,25 @@ const LiquorBillForm = () => {
     setTotalQuantity(q);
     setTotal(t);
 
-    console.log("final holo is: " + h);
-    console.log("final pratifal is: " + p);
-    console.log("final wep is: " + w);
     console.log("total quantity: " + q);
-    console.log("toal price: " + t);
 
     // All taxes calculation
-    const vatTax = 12 / 100;
-    const cess = 2 / 100;
+    const vatTax = t * (12 / 100);
+    const cess = ((t + vatTax) * 2) / 100;
 
-    const profit = totalQuantity * 50;
+    const profit = q * 50;
+    console.log("total price: " + t);
+    console.log("vatTax: " + vatTax);
+    console.log("cess: " + cess);
+    console.log("final wep is: " + w);
+    console.log("final holo is: " + h);
+    console.log("Profit: " + profit);
+    console.log("final pratifal is: " + p);
 
-    const taxTotal = t + t * vatTax + (t + t * vatTax) * cess + fwep + profit;
+    const taxTotal = t + vatTax + cess + w + h + profit + p;
+    console.log("Total tax: " + taxTotal);
     const tcs = (taxTotal * 1) / 100;
+    console.log("tcs: " + tcs);
     setGrandTotal(taxTotal + tcs);
   };
 
