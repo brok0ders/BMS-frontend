@@ -7,14 +7,15 @@ import { toast } from "react-toastify";
 const BillState = ({ children }) => {
   const [bill, setBill] = useState({});
 
-  const getAllBills = async ({ id }) => {
+  const getAllBills = async () => {
     try {
       const config = {
         headers: {
           authorization: localStorage.getItem("token"),
         },
       };
-      const { data } = await API.get(`/bill/all/${id}`, config);
+      const { data } = await API.get(`/bill/all/`, config);
+      console.log(data);
       if (data.success) {
         console.log(data.message);
         return data.bills;

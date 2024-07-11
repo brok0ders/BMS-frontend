@@ -17,13 +17,13 @@ import LiquorContext from "../../context/liquor/liquorContext";
 
 const LiquorList = () => {
   const { company } = useParams();
-  const { getAllLiquor, deleteLiquor } = useContext(LiquorContext);
+  const { getLiquorCom, deleteLiquor } = useContext(LiquorContext);
   const [liquor, setLiquor] = useState([]);
   const headers = ["750ml", "700ml", "375ml", "180ml"];
 
   const getLiquor = async () => {
     try {
-      const res = await getAllLiquor();
+      const res = await getLiquorCom({id: company});
       setLiquor(res.liquors);
     } catch (e) {}
   };
