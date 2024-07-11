@@ -37,6 +37,7 @@ import BillSelection from "./pages/Bill/BillSelection.jsx";
 import CompanySelection from "./components/Company/CompanySelection.jsx";
 import AnalyticsPage from "./pages/Analytics/AnalyticsPage.jsx";
 import ProfilePage from "./pages/User/ProfilePage.jsx";
+import About from "./pages/About/About.jsx";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -46,6 +47,7 @@ const App = () => {
           <Route path="" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/about" element={<About/>}/>
           <Route path="/dashboard">
             <Route index element={<AdminHome />} />
             <Route path="profile/:id" element={<ProfilePage />} />
