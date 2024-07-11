@@ -48,17 +48,25 @@ const LiquorBillForm = () => {
     const res = await getLiquorCom({ id: company });
     setLiquorBrandData(res.liquor);
   };
-  const createCustomer2 = async () => {
-    const res = await createCustomer({ licensee, shop, firm, pan });
-    customerId = res.customer._id;
-  };
+
   const createBill2 = async () => {
+    const customerData = await createCustomer({ licensee, shop, firm, pan });
+    customerId = customerData.customer._id;
     const res = await createBill({
-      customer: customerId,
-      seller: user,
+      excise,
+      pno,
       products,
+      customer: customerId,
+      seller: user?._id,
       company,
     });
+    setLicensee("");
+    setShop("");
+    setFirm("");
+    setPan("");
+    setExcise("");
+    setPno("");
+    setProducts([]);
     console.log(res);
   };
   const getCompany2 = async () => {
@@ -71,25 +79,7 @@ const LiquorBillForm = () => {
   }, []);
   const handleBillSubmit = (e) => {
     e.preventDefault();
-    const formData = {
-      licensee,
-      shop,
-      firm,
-      pan,
-      excise,
-      pno,
-      products,
-    };
-    console.log(formData);
-    createCustomer2();
     createBill2();
-    setLicensee("");
-    setShop("");
-    setFirm("");
-    setPan("");
-    setExcise("");
-    setPno("");
-    setProducts([]);
   };
 
   const handleInputChange = (e) => {

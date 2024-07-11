@@ -44,7 +44,14 @@ const BillState = ({ children }) => {
     }
   };
 
-  const createBill = async ({ customer, seller, products, company }) => {
+  const createBill = async ({
+    excise,
+    pno,
+    customer,
+    seller,
+    products,
+    company,
+  }) => {
     try {
       const config = {
         headers: {
@@ -54,10 +61,11 @@ const BillState = ({ children }) => {
       };
       const { data } = await API.post(
         "/bill/new",
-        { customer, seller, products, company },
+        { customer, seller, products, company, excise, pno },
         config
       );
       if (data.success) {
+        toast.success(data.message);
         setBill(data.bill);
       }
       console.log(data.message);
