@@ -170,6 +170,8 @@ const BeerBillForm = () => {
     return words + " only";
   };
 
+  console.log(NumberToWordsConverter(12.00));
+
   const createBill2 = async () => {
     setSpinner(true);
     try {

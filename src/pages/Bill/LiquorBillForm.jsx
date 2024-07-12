@@ -58,39 +58,43 @@ const LiquorBillForm = () => {
   let customerId = "";
 
   const NumberToWordsConverter = (n) => {
+    if (isNaN(n)) {
+      return "Invalid number";
+    }
     // Ensuring the number has two decimal places
-    n = n.toFixed(2);
+    n = parseFloat(n).toFixed(2);
 
     const one = [
-      "one",
-      "two",
-      "three",
-      "four",
-      "five",
-      "six",
-      "seven",
-      "eight",
-      "nine",
-      "ten",
-      "eleven",
-      "twelve",
-      "thirteen",
-      "fourteen",
-      "fifteen",
-      "sixteen",
-      "seventeen",
-      "eighteen",
-      "nineteen",
+      "Zero", // Add zero to handle digits after decimal
+      "One",
+      "Two",
+      "Three",
+      "Four",
+      "Five",
+      "Six",
+      "Seven",
+      "Eight",
+      "Nine",
+      "Ten",
+      "Eleven",
+      "Twelve",
+      "Thirteen",
+      "Fourteen",
+      "Fifteen",
+      "Sixteen",
+      "Seventeen",
+      "Eighteen",
+      "Nineteen",
     ];
     const ten = [
-      "twenty",
-      "thirty",
-      "forty",
-      "fifty",
-      "sixty",
-      "seventy",
-      "eighty",
-      "ninety",
+      "Twenty",
+      "Thirty",
+      "Forty",
+      "Fifty",
+      "Sixty",
+      "Seventy",
+      "Eighty",
+      "Ninety",
     ];
 
     const numToWords = (num, suffix) => {
@@ -98,10 +102,10 @@ const LiquorBillForm = () => {
       if (num > 19) {
         str += ten[Math.floor(num / 10) - 2];
         if (num % 10 > 0) {
-          str += " " + one[(num % 10) - 1];
+          str += " " + one[num % 10];
         }
       } else if (num > 0) {
-        str += one[num - 1];
+        str += one[num];
       }
 
       if (num !== 0) {
@@ -148,14 +152,17 @@ const LiquorBillForm = () => {
     if (decimalPart > 0) {
       words += " point";
       for (const digit of parts[1]) {
-        words += ` ${one[digit - 1]}`;
+        words += ` ${one[digit]}`;
       }
     }
+
     if (!words) {
-      return "zero";
+      return "zero only";
     }
     return words + " only";
   };
+
+  console.log(NumberToWordsConverter(12.01)); // "twelve point zero one only"
 
   const [currentInput, setCurrentInput] = useState({ brand: "", sizes: [] });
 
@@ -223,6 +230,10 @@ const LiquorBillForm = () => {
     e.preventDefault();
     const { name, value } = e.target;
     const [type, size] = name.split("-");
+    // value = parseFloat(value);
+    // Prevent negative values and non-numeric inputs
+    if (value === "" || isNaN(value) || parseInt(value) < 0) {
+    }
     for (let i = 0; i < stocks.length; i++) {
       if (stocks[i].size === size) {
         if (stocks[i].quantity < value) {
@@ -230,9 +241,6 @@ const LiquorBillForm = () => {
         }
       }
     }
-
-    // Prevent negative values and non-numeric inputs
-    if (value !== "" && (isNaN(value) || parseInt(value) < 0)) return;
 
     setCurrentInput((prevInput) => {
       const existingSizeIndex = prevInput.sizes.findIndex(
@@ -243,7 +251,7 @@ const LiquorBillForm = () => {
         const updatedSizes = [...prevInput.sizes];
         updatedSizes[existingSizeIndex] = {
           ...updatedSizes[existingSizeIndex],
-          [type]: value === "" ? "" : parseInt(value),
+          [type]: value === "" ? 0 : parseInt(value),
         };
 
         if (type === "quantity") {
@@ -256,7 +264,8 @@ const LiquorBillForm = () => {
           );
 
           if (selectedSize) {
-            const basePrice = selectedSize.price * parseInt(value);
+            const basePrice =
+              selectedSize.price * isNaN(parseInt(value)) ? 0 : parseInt(value);
             updatedSizes[existingSizeIndex].price = basePrice;
           }
         }
@@ -265,7 +274,7 @@ const LiquorBillForm = () => {
       } else {
         const newSize = {
           size: size,
-          [type]: value === "" ? "" : parseInt(value),
+          [type]: value === "" ? 0 : parseInt(value),
         };
 
         if (type === "quantity") {
@@ -389,8 +398,12 @@ const LiquorBillForm = () => {
   const processedProducts = products.map((product) => {
     const sizesObject = {};
     product.sizes.forEach((size) => {
-      sizesObject[size.size] = { quantity: size.quantity, price: size.price };
+      sizesObject[size.size] = {
+        quantity: size.quantity,
+        price: isNaN(size.price) ? 0 : size.price,
+      };
     });
+    // console.log({ ...product, sizes: sizesObject });
     return { ...product, sizes: sizesObject };
   });
 
@@ -691,7 +704,9 @@ const LiquorBillForm = () => {
                                 key={`price-${size}-${i}`}
                                 align="center"
                               >
-                                {p.sizes[size]?.price.toFixed(2) || "-"}
+                                {isNaN(p.sizes[size]?.price.toFixed(2))
+                                  ? 0
+                                  : p.sizes[size]?.price.toFixed(2) || "-"}
                               </TableCell>
                             ))}
                             <TableCell align="center" className="w-0">
@@ -704,6 +719,7 @@ const LiquorBillForm = () => {
                             </TableCell>
                           </TableRow>
                         ))}
+
                       <TableRow>
                         <TableCell colSpan={2} sx={{ fontWeight: 700 }}>
                           Total
@@ -718,11 +734,12 @@ const LiquorBillForm = () => {
                         ))}
                         {allSizes.map((size) => (
                           <TableCell key={`price-total-${size}`} align="center">
-                            {processedProducts.reduce(
-                              (acc, p) =>
-                                acc + (p.sizes[size]?.price.toFixed(2) || 0),
-                              0
-                            )}
+                            {processedProducts
+                              .reduce(
+                                (acc, p) => acc + (p.sizes[size]?.price || 0),
+                                0
+                              )
+                              .toFixed(2)}
                           </TableCell>
                         ))}
                         <TableCell></TableCell>
