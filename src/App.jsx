@@ -40,11 +40,13 @@ import ProfilePage from "./pages/User/ProfilePage.jsx";
 import About from "./pages/About/About.jsx";
 import Contact from "./pages/Contact/Contact.jsx";
 import BillComponent from "./pages/Bill/BillComponent.jsx";
+import BillDetails from "./pages/Bill/BillDetails.jsx";
 
 const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route>
+        <Route path="/dashboard/bill/details/:id" element={<BillDetails />} />
         <Route path="/" element={<Layout />}>
           <Route path="/home" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
@@ -52,7 +54,6 @@ const App = () => {
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/dashboard">
-            <Route path="bill/details/:id" element={<BillComponent />} />
             <Route index element={<AdminHome />} />
             <Route path="profile/:id" element={<ProfilePage />} />
             <Route path="bill/records" element={<BillRecords />} />

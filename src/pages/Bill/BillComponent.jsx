@@ -4,89 +4,12 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  Paper,
   TableRow,
 } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import API from "../../utils/API";
 import { useParams } from "react-router-dom";
-
-const data2 = {
-  _id: "668f914ca5f1139e5c130f1b",
-  customer: {
-    _id: "668f914ca5f1139e5c130f18",
-    licensee: "gopal",
-    shop: "shop1",
-    firm: "firm1",
-    pan: "PAN27632",
-    user: "668bd6b472896619da3bb4ed",
-    createdAt: "2024-07-11T08:01:16.015Z",
-    updatedAt: "2024-07-11T08:01:16.015Z",
-    __v: 0,
-  },
-  seller: {
-    _id: "668bd6b472896619da3bb4ed",
-    name: "M/S Maa Banari Devi",
-    email: ["brokoders@gmail.com", "sumitkandpal@gmail.com"],
-    username: "2024202510993",
-    mobile: "9058044318",
-    password: "$2a$10$75T0.6Od9FvLw/ompMQIVOq2YtNAuqzHg9Czuk3axtYeUp/k.SQ5m",
-    addressGodown: "kathayadi",
-    FLliscensee: "Sumit Kandpal",
-    address: "almora",
-    TINno: "394839649323",
-    PANno: "NDKPT3487",
-    role: "user",
-    createdAt: "2024-07-08T12:08:20.482Z",
-    updatedAt: "2024-07-10T18:49:58.111Z",
-    __v: 0,
-  },
-  products: [
-    {
-      brand: "ALCOBREW SINGLE OAK SELECT GRAIN WHISKY",
-      sizes: [
-        {
-          size: "750ml",
-          quantity: 12,
-          price: 52309.200000000004,
-          _id: "668f914ca5f1139e5c130f1d",
-        },
-        {
-          size: "375ml",
-          quantity: 2,
-          price: 8738.2,
-          _id: "668f914ca5f1139e5c130f1e",
-        },
-        {
-          size: "180ml",
-          quantity: 0,
-          price: 0,
-          _id: "668f914ca5f1139e5c130f1f",
-        },
-      ],
-      _id: "668f914ca5f1139e5c130f1c",
-    },
-  ],
-  company: {
-    _id: "668e4a97338754464d9c5ca5",
-    company: {
-      _id: "668d95e1f70a14edd49f919c",
-      name: "Alcobrew Distilleries India Ltd",
-      companyType: "liquor",
-      __v: 0,
-    },
-    user: "668bd6b472896619da3bb4ed",
-    createdAt: "2024-07-10T08:47:19.213Z",
-    updatedAt: "2024-07-10T08:47:19.213Z",
-    __v: 0,
-  },
-  excise: "pullUps",
-  pno: "T8743",
-  total: 10000,
-  createdAt: "2024-06-11T08:01:16.240Z",
-  updatedAt: "2024-06-11T08:01:16.240Z",
-  __v: 0,
-  billType: "liquor",
-};
 
 const BillComponent = () => {
   const [basePrices, setBasePrices] = useState({});
@@ -199,16 +122,28 @@ const BillComponent = () => {
     const fetchBasePrices = async () => {
       setLoading(true);
       try {
-        const { data: data1 } = await API.get(`/bill/${id}`);
+        const config = {
+          headers: {
+            "Content-Type": "application/json",
+            authorization: localStorage.getItem("token"),
+          },
+        };
+        const { data: data1 } = await API.get(`/bill/${id}`, config);
         setData(data1?.bill);
         console.log(data1);
         const basePricesTemp = {};
         for (const product of data1?.bill.products) {
           let response;
           if (data1.bill.billType === "liquor") {
-            response = await API.get(`/master-liquor/brand/${product.brand}`);
+            response = await API.get(
+              `/master-liquor/brand/${product.brand}`,
+              config
+            );
           } else {
-            response = await API.get(`/master-beer/brand/${product.brand}`);
+            response = await API.get(
+              `/master-beer/brand/${product.brand}`,
+              config
+            );
           }
           basePricesTemp[product.brand] = response.data.data[0].sizes;
         }
@@ -309,14 +244,16 @@ const BillComponent = () => {
 
   const tableCellStyle = {
     border: "1px solid black",
-    backgroundColor: "#f5f5f5",
+    fontWeight: "bold",
+    fontSize: "12px",
+    background: "#FFFFFF",
     color: "black",
   };
 
   return (
     <>
       {loading && (
-        <div className="flex h-screen justify-center items-center">
+        <div className="flex h-screen text-2xl justify-center items-center">
           Loading...
         </div>
       )}
@@ -326,104 +263,194 @@ const BillComponent = () => {
         </div>
       )}
       {data && data.seller && (
-        <div className="p-4">
-          {/* Seller Details */}
+        <div className="p-1">
+          {/* Old tabular Structure */}
 
-          <div className="text-center lg:px-10 px-2 ">
-            <h1 className="text-2xl mb-5 font-bold">{data?.seller?.name}</h1>
-            <p className="text-[1rem] font-semibold">
-              Address:{" "}
-              <span className="font-normal">{data?.seller?.address} </span>
-            </p>
-            <p className="text-[1rem] font-semibold">
-              FL-2 Licensee:{" "}
-              <span className="font-normal">{data?.seller?.FLliscensee} </span>
-            </p>
-            <p className="text-[1rem] font-semibold">
-              FL-2 GODOWN:{" "}
-              <span className="font-normal">
-                {data?.seller?.addressGodown}{" "}
-              </span>
-            </p>
-            <p className="text-[1rem] md:text-right font-semibold">
-              TIN No.:{" "}
-              <span className="font-normal">{data?.seller?.TINno} </span>
-            </p>
-            <p className="text-[1rem] md:text-right font-semibold">
-              PAN No. :{" "}
-              <span className="font-normal">{data?.seller?.PANno} </span>
-            </p>
-          </div>
-
-          {/* Customer || Buyer details */}
-
-          <div className="flex flex-row justify-between flex-wrap items-end lg:px-10 px-2 ">
-            <div className="text-left ">
-              <h1 className="text-xl mt-10 mb-5 md:mt-0 font-bold">
-                Bill No.: {data?.bill ?? "FLV0001"}
-              </h1>
-              <p className="text-[1rem] font-semibold">
-                Licensee:{" "}
-                <span className="ml-1 font-normal">
-                  {data?.customer.licensee}{" "}
-                </span>
-              </p>
-              <p className="text-[1rem] font-semibold">
-                Shop:{" "}
-                <span className="ml-1 font-normal">
-                  {data?.customer?.shop}{" "}
-                </span>
-              </p>
-              <p className="text-[1rem] font-semibold">
-                Firm:{" "}
-                <span className="ml-1 font-normal">
-                  {data?.customer?.firm}{" "}
-                </span>
-              </p>
-
-              <p className="text-[1rem] font-semibold">
-                PAN No.:{" "}
-                <span className="ml-1 font-normal">{data?.customer?.pan} </span>
-              </p>
-            </div>
-            <div className="text-left ">
-              <p className="text-[1rem] font-semibold">
-                Excise FL 36 No.:{" "}
-                <span className="font-normal">{data?.excise} </span>
-              </p>
-              <p className="text-[1rem] font-semibold">
-                P.No.: <span className="font-normal">{data?.pno} </span>
-              </p>
-            </div>
-            <div className="text-left ">
-              <p className="text-[1rem] font-semibold">
-                Date:{" "}
-                <span className="font-normal">
-                  {new Date(data?.createdAt).toLocaleDateString("en-GB", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                  })}
-                </span>
-              </p>
-            </div>
-          </div>
-
-          <TableContainer className="py-5">
-            <h1 className="md:text-3xl text-2xl font-semibold text-slate-700 py-5">
-              Added Products
-            </h1>
+          <TableContainer className="">
             <Table
               borderAxis="both"
               sx={{
                 minWidth: 650,
+                maxWidth: 1000,
+                mx: "auto",
                 border: "1px solid black",
-                backgroundColor: "#f5f5f5",
                 color: "black",
               }}
               size="small"
               aria-label="a dense table"
             >
+              <TableHead>
+                <TableRow>
+                  <TableCell
+                    className="!font-bold"
+                    colSpan={allSizes.length * 3 + 3}
+                    sx={tableCellStyle}
+                    align="center"
+                  >
+                    <h1 className="text-2xl !font-bold">
+                      {data?.seller?.name}{" "}
+                    </h1>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell
+                    className="!font-bold"
+                    colSpan={allSizes.length * 3 + 3}
+                    sx={tableCellStyle}
+                    align="center"
+                  >
+                    Address: <span className="">{data?.seller?.address} </span>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell
+                    className="!font-bold"
+                    colSpan={allSizes.length * 3 + 3}
+                    sx={tableCellStyle}
+                    align="center"
+                  >
+                    FL-2 Licensee:{" "}
+                    <span className="">{data?.seller?.FLliscensee} </span>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell
+                    className="!font-bold"
+                    colSpan={allSizes.length * 3 + 3}
+                    sx={tableCellStyle}
+                    align="center"
+                  >
+                    FL-2 GODOWN:{" "}
+                    <span className="">{data?.seller?.addressGodown} </span>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell
+                    className="!font-bold"
+                    colSpan={allSizes.length * 3}
+                    sx={tableCellStyle}
+                    align="center"
+                  ></TableCell>
+                  <TableCell
+                    className="!font-bold"
+                    colSpan={4}
+                    sx={tableCellStyle}
+                    align="center"
+                  >
+                    TIN No.: <span className="">{data?.seller?.TINno} </span>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell
+                    sx={tableCellStyle}
+                    colSpan={allSizes.length * 3}
+                  ></TableCell>
+                  <TableCell
+                    className="!font-bold"
+                    colSpan={4}
+                    sx={tableCellStyle}
+                    align="center"
+                  >
+                    PAN No. : <span className="">{data?.seller?.PANno} </span>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell
+                    className="!font-bold"
+                    colSpan={allSizes.length * 1 + 2}
+                    sx={tableCellStyle}
+                    align="left"
+                  >
+                    Bill No.: {data?.bill ?? "FLV0001"}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell
+                    className="!font-bold"
+                    colSpan={allSizes.length * 1 + 2}
+                    sx={tableCellStyle}
+                    align="left"
+                  >
+                    Licensee:{" "}
+                    <span className="ml-1 ">{data?.customer.licensee} </span>
+                  </TableCell>
+                  <TableCell
+                    className="!font-bold"
+                    colSpan={allSizes.length * 2 + 1}
+                    sx={tableCellStyle}
+                    align="left"
+                  >
+                    Excise FL 36 No.: <span className="">{data?.excise} </span>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell
+                    className="!font-bold"
+                    colSpan={allSizes.length * 1 + 2}
+                    sx={tableCellStyle}
+                    align="left"
+                  >
+                    Shop: <span className="ml-1 ">{data?.customer?.shop} </span>
+                  </TableCell>
+                  <TableCell
+                    className="!font-bold"
+                    colSpan={allSizes.length * 1 + 1}
+                    sx={tableCellStyle}
+                    align="left"
+                  >
+                    P.No.: <span className="ml-1 ">{data?.pno} </span>
+                  </TableCell>
+                  <TableCell
+                    className="!font-bold"
+                    colSpan={allSizes.length * 1}
+                    sx={tableCellStyle}
+                    align="center"
+                  >
+                    Date:{" "}
+                    <span className="">
+                      {new Date(data?.createdAt).toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                      })}
+                    </span>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell
+                    className="!font-bold"
+                    colSpan={allSizes.length * 1 + 2}
+                    sx={tableCellStyle}
+                    align="left"
+                  >
+                    Firm: <span className="ml-1 ">{data?.customer?.firm} </span>
+                  </TableCell>
+                  <TableCell
+                    className="!font-bold"
+                    colSpan={allSizes.length * 2 + 1}
+                    sx={tableCellStyle}
+                    align="center"
+                  ></TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell
+                    className="!font-bold"
+                    colSpan={allSizes.length * 1 + 2}
+                    sx={tableCellStyle}
+                    align="left"
+                  >
+                    PAN No.:{" "}
+                    <span className="ml-1 ">{data?.customer?.pan} </span>
+                  </TableCell>
+                  <TableCell
+                    className="!font-bold"
+                    colSpan={allSizes.length * 2 + 1}
+                    sx={tableCellStyle}
+                    align="center"
+                  ></TableCell>
+                </TableRow>
+              </TableHead>
+              {/* Table */}
               <TableHead>
                 <TableRow scope="row">
                   <TableCell sx={tableCellStyle}>S.No.</TableCell>
