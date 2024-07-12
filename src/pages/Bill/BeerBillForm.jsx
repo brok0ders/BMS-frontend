@@ -14,20 +14,21 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Delete } from "@mui/icons-material";
-import beerContext from "../../context/beer/beerContext";
+
 import CustomerContext from "../../context/customer/customerContext";
+import BeerContext from "../../context/beer/beerContext";
 import BillContext from "../../context/bill/billContext";
 import UserContext from "../../context/user/userContext";
 import CompanyContext from "../../context/company/companyContext";
 import { useParams } from "react-router-dom";
-import BeerContext from "../../context/beer/beerContext";
+import { toast } from "react-toastify";
 
 const BeerBillForm = () => {
   const { company } = useParams();
   const [licensee, setLicensee] = useState("");
-  const [beerBrandData, setbeerBrandData] = useState([{}]);
+  const [beerBrandData, setBeerBrandData] = useState([{}]);
   const [shop, setShop] = useState("");
   const [firm, setFirm] = useState("");
   const [pan, setPan] = useState("");
@@ -40,50 +41,39 @@ const BeerBillForm = () => {
   const { getCompany } = useContext(CompanyContext);
   const [comp, setComp] = useState("");
   const [products, setProducts] = useState([]);
+  const [sizes, setSizes] = useState([]);
+  const [totalQuantity, setTotalQuantity] = useState(0);
+  const [fholo, setFholo] = useState(0);
+  const [fpratifal, setFpratifal] = useState(0);
+  const [fwep, setFwep] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [grandTotal, setGrandTotal] = useState(0);
+  const inputRefs = useRef({});
+  const [stocks, setStocks] = useState([]);
 
   let customerId = "";
-
   const [currentInput, setCurrentInput] = useState({ brand: "", sizes: [] });
 
-  const getbeers = async () => {
+  const getBeers = async () => {
     const res = await getBeerCom({ id: company });
-    setbeerBrandData(res.beer);
+    setBeerBrandData(res.beer);
+    // console.log(res);
+    // calculateQuantity();
   };
-  const createCustomer2 = async () => {
-    const res = await createCustomer({ licensee, shop, firm, pan });
-    customerId = res.customer._id;
-  };
+
   const createBill2 = async () => {
+    const customerData = await createCustomer({ licensee, shop, firm, pan });
+    customerId = customerData.customer._id;
     const res = await createBill({
-      customer: customerId,
-      seller: user,
-      products,
-      company,
-    });
-    console.log(res);
-  };
-  const getCompany2 = async () => {
-    const res = await getCompany({ id: company });
-    setComp(res?.company?.company.name);
-  };
-  useEffect(() => {
-    getCompany2();
-    getbeers();
-  }, []);
-  const handleBillSubmit = (e) => {
-    e.preventDefault();
-    const formData = {
-      licensee,
-      shop,
-      firm,
-      pan,
       excise,
       pno,
       products,
-    };
-    console.log(formData);
-    createCustomer2();
-    createBill2();
+      customer: customerId,
+      seller: user?._id,
+      company,
+      total: grandTotal,
+      billType: "beer"
+    });
     setLicensee("");
     setShop("");
     setFirm("");
@@ -91,14 +81,37 @@ const BeerBillForm = () => {
     setExcise("");
     setPno("");
     setProducts([]);
+    setGrandTotal(0);
+
+    getBeers();
+  };
+  const getCompany2 = async () => {
+    const res = await getCompany({ id: company });
+    setComp(res?.company?.company.name);
+  };
+  useEffect(() => {
+    getCompany2();
+    getBeers();
+  }, []);
+  const handleBillSubmit = (e) => {
+    e.preventDefault();
+    createBill2();
   };
 
   const handleInputChange = (e) => {
     e.preventDefault();
     const { name, value } = e.target;
     const [type, size] = name.split("-");
+    for (let i=0; i<stocks.length; i++ ){
+      if (stocks[i].size === size) {
+        if (stocks[i].quantity < value) {
+          toast.warning(`Stock for ${size} is only ${stocks[i].quantity}`);
+        }    
+      }
+    }
 
-    if (value < 0) return;
+    // Prevent negative values and non-numeric inputs
+    if (value !== "" && (isNaN(value) || parseInt(value) < 0)) return;
 
     setCurrentInput((prevInput) => {
       const existingSizeIndex = prevInput.sizes.findIndex(
@@ -109,10 +122,11 @@ const BeerBillForm = () => {
         const updatedSizes = [...prevInput.sizes];
         updatedSizes[existingSizeIndex] = {
           ...updatedSizes[existingSizeIndex],
-          [type]: parseInt(value),
+          [type]: value === "" ? "" : parseInt(value),
         };
 
         if (type === "quantity") {
+          // Adjust price based on quantity if necessary
           const selectedBrand = beerBrandData.find(
             (brand) => brand.beer.brandName === currentInput.brand
           );
@@ -121,8 +135,8 @@ const BeerBillForm = () => {
           );
 
           if (selectedSize) {
-            updatedSizes[existingSizeIndex].price =
-              selectedSize.price * parseInt(value);
+            const basePrice = selectedSize.price * parseInt(value);
+            updatedSizes[existingSizeIndex].price = basePrice;
           }
         }
 
@@ -130,10 +144,11 @@ const BeerBillForm = () => {
       } else {
         const newSize = {
           size: size,
-          [type]: parseInt(value),
+          [type]: value === "" ? "" : parseInt(value),
         };
 
         if (type === "quantity") {
+          // Adjust price based on quantity if necessary
           const selectedBrand = beerBrandData.find(
             (brand) => brand.beer.brandName === currentInput.brand
           );
@@ -142,7 +157,8 @@ const BeerBillForm = () => {
           );
 
           if (selectedSize) {
-            newSize.price = selectedSize.price * parseInt(value);
+            const basePrice = selectedSize.price * parseInt(value);
+            newSize.price = basePrice;
           }
         }
 
@@ -153,14 +169,35 @@ const BeerBillForm = () => {
 
   const handleAddProduct = (e) => {
     e.preventDefault();
+    console.log(stocks);
+    console.log("current Input: ", currentInput);
+
+    let h = fholo;
+    let p = fpratifal;
+    let w = fwep;
+    let q = totalQuantity;
+    let t = total;
+
     const existingProductIndex = products.findIndex(
       (product) => product.brand === currentInput.brand
     );
 
+
     if (existingProductIndex > -1) {
+      // Subtract previous values
+      const existingProduct = products[existingProductIndex];
+      existingProduct.sizes.forEach((size, i) => {
+        h -= size.quantity * sizes[i].hologram;
+        p -= size.quantity * sizes[i].pratifal;
+        w -= size.quantity * sizes[i].wep;
+        q -= size.quantity;
+        t -= size.price;
+      });
+
       // Update existing product
       const updatedProducts = [...products];
       updatedProducts[existingProductIndex].sizes = currentInput.sizes;
+      console.log("updated products: ", updatedProducts[existingProductIndex]);
       setProducts(updatedProducts);
     } else {
       // Add new product
@@ -172,7 +209,44 @@ const BeerBillForm = () => {
         },
       ]);
     }
+
+    // Add current values
+    currentInput.sizes?.forEach((size, i) => {
+      h += size.quantity * sizes[i].hologram;
+      p += size.quantity * sizes[i].pratifal;
+      w += size.quantity * sizes[i].wep;
+      q += size.quantity;
+      t += size.price;
+    });
+
     setCurrentInput({ brand: "", sizes: [] });
+
+    setFholo(h);
+    setFpratifal(p);
+    setFwep(w);
+    setTotalQuantity(q);
+    setTotal(t);
+
+    console.log("total quantity: " + q);
+
+    // All taxes calculation
+    const vatTax = t * (12 / 100);
+    const cess = ((t + vatTax) * 2) / 100;
+
+    const profit = q * 50;
+    console.log("total price: " + t);
+    console.log("vatTax: " + vatTax);
+    console.log("cess: " + cess);
+    console.log("final wep is: " + w);
+    console.log("final holo is: " + h);
+    console.log("Profit: " + profit);
+    console.log("final pratifal is: " + p);
+
+    const taxTotal = t + vatTax + cess + w + h + profit + p;
+    console.log("Total tax: " + taxTotal);
+    const tcs = (taxTotal * 1) / 100;
+    console.log("tcs: " + tcs);
+    setGrandTotal(taxTotal + tcs);
   };
 
   const handleDeleteProduct = (index) => {
@@ -181,6 +255,7 @@ const BeerBillForm = () => {
 
   const handleBrandChange = (e) => {
     const brand = e.target.value;
+    console.log(brand);
     setCurrentInput((prevInput) => ({
       ...prevInput,
       brand: brand,
@@ -204,18 +279,15 @@ const BeerBillForm = () => {
     )
   );
 
-  // All taxes calculation
-  const total = products.reduce((acc, p) => acc + p.price, 0);
-  const vatTax = 12 / 100;
-  const cess = 2 / 100;
-  const wecp = products.reduce((acc, p) => acc + p.quantity, 0) * 36;
+  const handleFocus = (size) => {
+    if (inputRefs.current[size]) {
+      inputRefs.current[size].select();
+    }
+  };
 
-  const profit = products.reduce((acc, p) => acc + p.quantity, 0) * 50;
-
-  const taxTotal =
-    total + total * vatTax + (total + total * vatTax) * cess + wecp + profit;
-  const tcs = (taxTotal * 1) / 100;
-  const grandTotal = taxTotal + tcs;
+  useEffect(() => {
+    console.log(products);
+  }, [products.length]);
 
   return (
     <Box
@@ -327,8 +399,16 @@ const BeerBillForm = () => {
                 onChange={handleBrandChange}
               >
                 {beerBrandData.length > 0 &&
-                  beerBrandData?.map((brand) => (
-                    <MenuItem key={brand._id} value={brand?.beer?.brandName}>
+                  beerBrandData?.map((brand, i) => (
+                    <MenuItem
+                      key={brand._id}
+                      value={brand?.beer?.brandName}
+                      onClick={() => {
+                        console.log(brand.beer);
+                        setStocks(brand.stock);
+                        setSizes(brand.beer.sizes);
+                      }}
+                    >
                       {brand?.beer?.brandName}
                     </MenuItem>
                   ))}
@@ -353,9 +433,17 @@ const BeerBillForm = () => {
                         fullWidth
                         value={
                           currentInput?.sizes.find((s) => s.size === size?.size)
-                            ?.quantity || ""
+                            ?.quantity ?? ""
                         }
-                        label={`Quantity ${size?.size}`}
+                        label={`Quantity ${
+                          size?.size === "750ml"
+                            ? size?.size + " (Q)"
+                            : size?.size === "375ml"
+                            ? size?.size + " (P)"
+                            : size?.size === "180ml"
+                            ? size?.size + " (N)"
+                            : size?.size
+                        }`}
                         name={`quantity-${size?.size}`}
                         onChange={handleInputChange}
                         variant="outlined"
@@ -365,9 +453,17 @@ const BeerBillForm = () => {
                         fullWidth
                         value={
                           currentInput?.sizes.find((s) => s.size === size?.size)
-                            ?.price || ""
+                            ?.price.toFixed(2) || ""
                         }
-                        label={`Price ${size?.size}`}
+                        label={`Price ${
+                          size?.size === "750ml"
+                            ? size?.size + " (Q)"
+                            : size?.size === "375ml"
+                            ? size?.size + " (P)"
+                            : size?.size === "180ml"
+                            ? size?.size + " (N)"
+                            : size?.size
+                        }`}
                         name={`price-${size?.size}`}
                         onChange={handleInputChange}
                         variant="outlined"
@@ -389,6 +485,91 @@ const BeerBillForm = () => {
 
       {/* Product Details */}
 
+      {/* <TableContainer className="py-12">
+        <h1 className="md:text-3xl text-2xl font-semibold text-slate-700 py-5">
+          Added Products
+        </h1>
+        <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+          <TableHead>
+            <TableRow>
+              <TableCell>S.No.</TableCell>
+              <TableCell>Brand Name</TableCell>
+              <TableCell align="center" colSpan={allSizes.length}>
+                Quantity
+              </TableCell>
+              <TableCell align="center" colSpan={allSizes.length}>
+                Price
+              </TableCell>
+              <TableCell align="center">Action</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+              {allSizes.map((size) => (
+                <TableCell key={`qty-${size}`} align="right">
+                  {size}
+                </TableCell>
+              ))}
+              {allSizes.map((size) => (
+                <TableCell key={`price-${size}`} align="right">
+                  {size}
+                </TableCell>
+              ))}
+              <TableCell></TableCell>
+            </TableRow>
+          </TableHead>
+
+          <TableBody>
+            {products.length > 0 &&
+              products.map((p, i) => (
+                <TableRow key={i}>
+                  <TableCell>{i + 1}</TableCell>
+                  <TableCell>{p.brand}</TableCell>
+                  {allSizes.map((size) => (
+                    <TableCell key={`qty-${size}-${i}`} align="right">
+                      {p.sizes[size]?.quantity || "-"}
+                    </TableCell>
+                  ))}
+                  {allSizes.map((size) => (
+                    <TableCell key={`price-${size}-${i}`} align="right">
+                      {p.sizes[size]?.price || "-"}
+                    </TableCell>
+                  ))}
+                  <TableCell align="right" className="w-0">
+                    <Button
+                      className="text-red-500 hover:text-red-700"
+                      onClick={() => handleDeleteProduct(i)}
+                    >
+                      <Delete />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            <TableRow>
+              <TableCell colSpan={2} sx={{ fontWeight: 700 }}>
+                Total
+              </TableCell>
+              {allSizes.map((size) => (
+                <TableCell key={`qty-total-${size}`} align="right">
+                  {processedProducts.reduce(
+                    (acc, p) => acc + (p.sizes[size]?.quantity || 0),
+                    0
+                  )}
+                </TableCell>
+              ))}
+              {allSizes.map((size) => (
+                <TableCell key={`price-total-${size}`} align="right">
+                  {processedProducts.reduce(
+                    (acc, p) => acc + (p.sizes[size]?.price || 0),
+                    0
+                  )}
+                </TableCell>
+              ))}
+              <TableCell></TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </TableContainer> */}
       <TableContainer className="py-12">
         <h1 className="md:text-3xl text-2xl font-semibold text-slate-700 py-5">
           Added Products
@@ -410,13 +591,25 @@ const BeerBillForm = () => {
               <TableCell></TableCell>
               <TableCell></TableCell>
               {allSizes.map((size) => (
-                <TableCell key={`qty-${size}`} align="center">
-                  {size}
+                <TableCell key={`qty-${size}`} align="right">
+                  {size === "750ml"
+                    ? size + " (Q)"
+                    : size === "375ml"
+                    ? size + " (P)"
+                    : size === "180ml"
+                    ? size + " (N)"
+                    : size}
                 </TableCell>
               ))}
               {allSizes.map((size) => (
-                <TableCell key={`price-${size}`} align="center">
-                  {size}
+                <TableCell key={`price-${size}`} align="right">
+                  {size === "750ml"
+                    ? size + " (Q)"
+                    : size === "375ml"
+                    ? size + " (P)"
+                    : size === "180ml"
+                    ? size + " (N)"
+                    : size}
                 </TableCell>
               ))}
               <TableCell></TableCell>
@@ -430,12 +623,12 @@ const BeerBillForm = () => {
                   <TableCell>{i + 1}</TableCell>
                   <TableCell>{p.brand}</TableCell>
                   {allSizes.map((size) => (
-                    <TableCell key={`qty-${size}-${i}`} align="center">
+                    <TableCell key={`qty-${size}-${i}`} align="right">
                       {p.sizes[size]?.quantity || "-"}
                     </TableCell>
                   ))}
                   {allSizes.map((size) => (
-                    <TableCell key={`price-${size}-${i}`} align="center">
+                    <TableCell key={`price-${size}-${i}`} align="right">
                       {p.sizes[size]?.price || "-"}
                     </TableCell>
                   ))}
@@ -454,7 +647,7 @@ const BeerBillForm = () => {
                 Total
               </TableCell>
               {allSizes.map((size) => (
-                <TableCell key={`qty-total-${size}`} align="center">
+                <TableCell key={`qty-total-${size}`} align="right">
                   {processedProducts.reduce(
                     (acc, p) => acc + (p.sizes[size]?.quantity || 0),
                     0
@@ -462,7 +655,7 @@ const BeerBillForm = () => {
                 </TableCell>
               ))}
               {allSizes.map((size) => (
-                <TableCell key={`price-total-${size}`} align="center">
+                <TableCell key={`price-total-${size}`} align="right">
                   {processedProducts.reduce(
                     (acc, p) => acc + (p.sizes[size]?.price || 0),
                     0
@@ -475,6 +668,19 @@ const BeerBillForm = () => {
         </Table>
       </TableContainer>
       {/* Total Calculation */}
+
+      <Box className="px-2 py-2 m-4 flex justify-end">
+        <TextField
+          id="filled-read-only-input"
+          label="Grand Total"
+          defaultValue="0"
+          value={grandTotal}
+          InputProps={{
+            readOnly: true,
+          }}
+          variant="filled"
+        />
+      </Box>
 
       <Box className="px-2 py-2 m-4 flex justify-end">
         <Button variant="contained" onClick={handleBillSubmit}>

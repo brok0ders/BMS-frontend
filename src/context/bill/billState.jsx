@@ -103,6 +103,7 @@ const BillState = ({ children }) => {
     products,
     company,
     total,
+    billType
   }) => {
     try {
       const config = {
@@ -121,7 +122,7 @@ const BillState = ({ children }) => {
           excise,
           pno,
           total,
-          billType: "liquor",
+          billType,
         },
         config
       );

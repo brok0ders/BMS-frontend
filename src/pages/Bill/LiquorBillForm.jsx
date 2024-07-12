@@ -22,6 +22,7 @@ import BillContext from "../../context/bill/billContext";
 import UserContext from "../../context/user/userContext";
 import CompanyContext from "../../context/company/companyContext";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const LiquorBillForm = () => {
   const { company } = useParams();
@@ -47,13 +48,9 @@ const LiquorBillForm = () => {
   const [total, setTotal] = useState(0);
   const [grandTotal, setGrandTotal] = useState(0);
   const inputRefs = useRef({});
+  const [stocks, setStocks] = useState([]);
 
   let customerId = "";
-
-  const calculateQuantity = async () => {
-    console.log(liquorBrandData);
-  };
-
   const [currentInput, setCurrentInput] = useState({ brand: "", sizes: [] });
 
   const getLiquors = async () => {
@@ -74,6 +71,7 @@ const LiquorBillForm = () => {
       seller: user?._id,
       company,
       total: grandTotal,
+      billType: "liquor"
     });
     setLicensee("");
     setShop("");
@@ -83,7 +81,6 @@ const LiquorBillForm = () => {
     setPno("");
     setProducts([]);
     setGrandTotal(0);
-    // console.log(res);
   };
   const getCompany2 = async () => {
     const res = await getCompany({ id: company });
@@ -104,6 +101,13 @@ const LiquorBillForm = () => {
     e.preventDefault();
     const { name, value } = e.target;
     const [type, size] = name.split("-");
+    for (let i=0; i<stocks.length; i++ ){
+      if (stocks[i].size === size) {
+        if (stocks[i].quantity < value) {
+          toast.warning(`Stock for ${size} is only ${stocks[i].quantity}`);
+        }    
+      }
+    }
 
     // Prevent negative values and non-numeric inputs
     if (value !== "" && (isNaN(value) || parseInt(value) < 0)) return;
@@ -164,7 +168,7 @@ const LiquorBillForm = () => {
 
   const handleAddProduct = (e) => {
     e.preventDefault();
-    console.log(sizes);
+    console.log(stocks);
     console.log("current Input: ", currentInput);
 
     let h = fholo;
@@ -176,6 +180,7 @@ const LiquorBillForm = () => {
     const existingProductIndex = products.findIndex(
       (product) => product.brand === currentInput.brand
     );
+
 
     if (existingProductIndex > -1) {
       // Subtract previous values
@@ -393,11 +398,13 @@ const LiquorBillForm = () => {
                 onChange={handleBrandChange}
               >
                 {liquorBrandData.length > 0 &&
-                  liquorBrandData?.map((brand) => (
+                  liquorBrandData?.map((brand, i) => (
                     <MenuItem
                       key={brand._id}
                       value={brand?.liquor?.brandName}
                       onClick={() => {
+                        console.log(brand.liquor);
+                        setStocks(brand.stock);
                         setSizes(brand.liquor.sizes);
                       }}
                     >
@@ -445,7 +452,7 @@ const LiquorBillForm = () => {
                         fullWidth
                         value={
                           currentInput?.sizes.find((s) => s.size === size?.size)
-                            ?.price || ""
+                            ?.price.toFixed(2) || ""
                         }
                         label={`Price ${
                           size?.size === "750ml"
