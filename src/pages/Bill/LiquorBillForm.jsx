@@ -21,7 +21,7 @@ import CustomerContext from "../../context/customer/customerContext";
 import BillContext from "../../context/bill/billContext";
 import UserContext from "../../context/user/userContext";
 import CompanyContext from "../../context/company/companyContext";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import Loader from "../../components/Layout/Loader";
 import Spinner from "../../components/Layout/Spinner";
@@ -54,7 +54,7 @@ const LiquorBillForm = () => {
   const [loading, setLoading] = useState(false);
   const [spinner, setSpinner] = useState(false);
   const [spinner2, setSpinner2] = useState(false);
-
+  const navigate = useNavigate();
   let customerId = "";
 
   const NumberToWordsConverter = (n) => {
@@ -194,6 +194,7 @@ const LiquorBillForm = () => {
       setProducts([]);
       setGrandTotal(0);
       getLiquors();
+      navigate(`dashboard/bill/details/${res.bill}`);
     } catch (e) {
     } finally {
       setSpinner(false);

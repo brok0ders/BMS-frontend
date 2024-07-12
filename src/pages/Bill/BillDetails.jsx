@@ -4,62 +4,61 @@ import html2pdf from "html2pdf.js";
 import { Button } from "@mui/material";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-// import { PDFExport, savePDF } from "@progress/kendo-react-pdf";
+import { savePDF } from "@progress/kendo-react-pdf";
+import { useNavigate } from "react-router-dom";
+import { Add } from "@mui/icons-material";
 
 const BillDetails = () => {
   const printRef = useRef();
+  const navigate = useNavigate();
+  const handleGeneratePdf = () => {
+    const element = printRef.current;
+    const opt = {
+      margin: 10,
+      pagebreak: {
+        mode: ["avoid-all"],
+      },
+      filename: "document.pdf",
+      image: { type: "jpeg", quality: 1 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: "mm", format: "a3", orientation: "portrait" },
+    };
 
-  const handleDownload = () => {
-    const input = document.getElementById("bill-content");
-
-    html2canvas(input)
-      .then((canvas) => {
-        const imgData = canvas.toDataURL("image/png");
-        const pdf = new jsPDF("p", "mm", "a4");
-        const imgProps = pdf.getImageProperties(imgData);
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-        pdf.addImage(imgData, "WEBP", 0, 0, pdfWidth, pdfHeight);
-        pdf.save("bill.pdf");
-      })
-      .catch((error) => {
-        console.error("Error generating PDF:", error);
-      });
+    // New Promise-based usage:
+    html2pdf().set(opt).from(element).save();
   };
-  // const handleGeneratePdf = () => {
-  //   const element = printRef.current;
-  //   const opt = {
-  //     margin: 10,
-  //     pagebreak: {
-  //       mode: ["avoid-all", "css", "legacy"],
-  //     },
-  //     filename: "document.pdf",
-  //     image: { type: "jpeg", quality: 1 },
-  //     html2canvas: { scale: 2 },
-  //     jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-  //   };
 
-  //   // New Promise-based usage:
-  //   html2pdf().set(opt).from(element).save();
-  // };
+  const exportPDFWithMethod = () => {
+    let element = printRef.current || document.body;
+    savePDF(element, {
+      paperSize: "auto",
+      margin: 60,
+      fileName: `Bill`,
+    });
+  };
+
   return (
-    <>
-      {/* <PDFExport
-        ref={pdfExportComponent}
-        paperSize="auto"
-        margin={40}
-        fileName={`Report for ${new Date().getFullYear()}`}
-        author="KendoReact Team"
-      > */}
-      <div ref={printRef} className="bg-white" id="bill-content">
+    <div className="bg-white py-5">
+      <div ref={printRef} id="bill-content">
         <BillComponent />
       </div>
-      {/* </PDFExport> */}
-      <div className="flex justify-end mt-20">
-        <Button onClick={handleDownload}>Generate PDF</Button>
+
+      <div className="flex gap-10 justify-end   pb-20 px-20 mt-10">
+        <Button
+          startIcon={<Add />}
+          variant="contained"
+          onClick={() => navigate("/dashboard/select")}
+        >
+          New Bill
+        </Button>
+        <Button variant="contained" onClick={exportPDFWithMethod}>
+          Download PDF
+        </Button>
+        <Button variant="contained" onClick={handleGeneratePdf}>
+          Download PDF V2
+        </Button>
       </div>
-    </>
+    </div>
   );
 };
 

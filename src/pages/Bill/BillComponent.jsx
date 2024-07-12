@@ -244,8 +244,8 @@ const BillComponent = () => {
 
   const tableCellStyle = {
     border: "1px solid black",
-    fontWeight: "bold",
-    fontSize: "12px",
+    fontWeight: "700",
+    fontSize: "15px",
     background: "#FFFFFF",
     color: "black",
   };
@@ -271,8 +271,6 @@ const BillComponent = () => {
               borderAxis="both"
               sx={{
                 minWidth: 650,
-                maxWidth: 1000,
-                mx: "auto",
                 border: "1px solid black",
                 color: "black",
               }}
@@ -299,7 +297,7 @@ const BillComponent = () => {
                     sx={tableCellStyle}
                     align="center"
                   >
-                    Address: <span className="">{data?.seller?.address} </span>
+                    Address: {data?.seller?.address}
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -309,8 +307,7 @@ const BillComponent = () => {
                     sx={tableCellStyle}
                     align="center"
                   >
-                    FL-2 Licensee:{" "}
-                    <span className="">{data?.seller?.FLliscensee} </span>
+                    FL-2 Licensee: {data?.seller?.FLliscensee}
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -320,8 +317,7 @@ const BillComponent = () => {
                     sx={tableCellStyle}
                     align="center"
                   >
-                    FL-2 GODOWN:{" "}
-                    <span className="">{data?.seller?.addressGodown} </span>
+                    FL-2 GODOWN: {data?.seller?.addressGodown}
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -337,7 +333,7 @@ const BillComponent = () => {
                     sx={tableCellStyle}
                     align="center"
                   >
-                    TIN No.: <span className="">{data?.seller?.TINno} </span>
+                    TIN No.: {data?.seller?.TINno}
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -351,7 +347,7 @@ const BillComponent = () => {
                     sx={tableCellStyle}
                     align="center"
                   >
-                    PAN No. : <span className="">{data?.seller?.PANno} </span>
+                    PAN No. : {data?.seller?.PANno}
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -371,8 +367,7 @@ const BillComponent = () => {
                     sx={tableCellStyle}
                     align="left"
                   >
-                    Licensee:{" "}
-                    <span className="ml-1 ">{data?.customer.licensee} </span>
+                    Licensee: {data?.customer.licensee}
                   </TableCell>
                   <TableCell
                     className="!font-bold"
@@ -380,7 +375,7 @@ const BillComponent = () => {
                     sx={tableCellStyle}
                     align="left"
                   >
-                    Excise FL 36 No.: <span className="">{data?.excise} </span>
+                    Excise FL 36 No.: {data?.excise}
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -390,7 +385,7 @@ const BillComponent = () => {
                     sx={tableCellStyle}
                     align="left"
                   >
-                    Shop: <span className="ml-1 ">{data?.customer?.shop} </span>
+                    Shop: {data?.customer?.shop}
                   </TableCell>
                   <TableCell
                     className="!font-bold"
@@ -398,7 +393,7 @@ const BillComponent = () => {
                     sx={tableCellStyle}
                     align="left"
                   >
-                    P.No.: <span className="ml-1 ">{data?.pno} </span>
+                    P.No.: {data?.pno}
                   </TableCell>
                   <TableCell
                     className="!font-bold"
@@ -407,13 +402,11 @@ const BillComponent = () => {
                     align="center"
                   >
                     Date:{" "}
-                    <span className="">
-                      {new Date(data?.createdAt).toLocaleDateString("en-GB", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                      })}
-                    </span>
+                    {new Date(data?.createdAt).toLocaleDateString("en-GB", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    })}
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -423,7 +416,7 @@ const BillComponent = () => {
                     sx={tableCellStyle}
                     align="left"
                   >
-                    Firm: <span className="ml-1 ">{data?.customer?.firm} </span>
+                    Firm: {data?.customer?.firm}
                   </TableCell>
                   <TableCell
                     className="!font-bold"
@@ -439,8 +432,7 @@ const BillComponent = () => {
                     sx={tableCellStyle}
                     align="left"
                   >
-                    PAN No.:{" "}
-                    <span className="ml-1 ">{data?.customer?.pan} </span>
+                    PAN No.: {data?.customer?.pan}
                   </TableCell>
                   <TableCell
                     className="!font-bold"
