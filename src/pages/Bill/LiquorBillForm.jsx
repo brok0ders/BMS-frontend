@@ -56,8 +56,6 @@ const LiquorBillForm = () => {
   const getLiquors = async () => {
     const res = await getLiquorCom({ id: company });
     setLiquorBrandData(res.liquor);
-    // console.log(res);
-    // calculateQuantity();
   };
 
   const createBill2 = async () => {
@@ -71,7 +69,7 @@ const LiquorBillForm = () => {
       seller: user?._id,
       company,
       total: grandTotal,
-      billType: "liquor"
+      billType: "liquor",
     });
     setLicensee("");
     setShop("");
@@ -81,6 +79,7 @@ const LiquorBillForm = () => {
     setPno("");
     setProducts([]);
     setGrandTotal(0);
+    getLiquors();
   };
   const getCompany2 = async () => {
     const res = await getCompany({ id: company });
@@ -90,8 +89,7 @@ const LiquorBillForm = () => {
     getCompany2();
     getLiquors();
   }, []);
-  let holo = 0;
-  let pratifal = 0;
+
   const handleBillSubmit = (e) => {
     e.preventDefault();
     createBill2();
@@ -101,11 +99,11 @@ const LiquorBillForm = () => {
     e.preventDefault();
     const { name, value } = e.target;
     const [type, size] = name.split("-");
-    for (let i=0; i<stocks.length; i++ ){
+    for (let i = 0; i < stocks.length; i++) {
       if (stocks[i].size === size) {
         if (stocks[i].quantity < value) {
           toast.warning(`Stock for ${size} is only ${stocks[i].quantity}`);
-        }    
+        }
       }
     }
 
@@ -168,8 +166,6 @@ const LiquorBillForm = () => {
 
   const handleAddProduct = (e) => {
     e.preventDefault();
-    console.log(stocks);
-    console.log("current Input: ", currentInput);
 
     let h = fholo;
     let p = fpratifal;
@@ -180,7 +176,6 @@ const LiquorBillForm = () => {
     const existingProductIndex = products.findIndex(
       (product) => product.brand === currentInput.brand
     );
-
 
     if (existingProductIndex > -1) {
       // Subtract previous values
@@ -196,7 +191,7 @@ const LiquorBillForm = () => {
       // Update existing product
       const updatedProducts = [...products];
       updatedProducts[existingProductIndex].sizes = currentInput.sizes;
-      console.log("updated products: ", updatedProducts[existingProductIndex]);
+
       setProducts(updatedProducts);
     } else {
       // Add new product
@@ -226,25 +221,25 @@ const LiquorBillForm = () => {
     setTotalQuantity(q);
     setTotal(t);
 
-    console.log("total quantity: " + q);
+    // console.log("total quantity: " + q);
 
     // All taxes calculation
     const vatTax = t * (12 / 100);
     const cess = ((t + vatTax) * 2) / 100;
 
     const profit = q * 50;
-    console.log("total price: " + t);
-    console.log("vatTax: " + vatTax);
-    console.log("cess: " + cess);
-    console.log("final wep is: " + w);
-    console.log("final holo is: " + h);
-    console.log("Profit: " + profit);
-    console.log("final pratifal is: " + p);
+    // console.log("total price: " + t);
+    // console.log("vatTax: " + vatTax);
+    // console.log("cess: " + cess);
+    // console.log("final wep is: " + w);
+    // console.log("final holo is: " + h);
+    // console.log("Profit: " + profit);
+    // console.log("final pratifal is: " + p);
 
     const taxTotal = t + vatTax + cess + w + h + profit + p;
-    console.log("Total tax: " + taxTotal);
+    // console.log("Total tax: " + taxTotal);
     const tcs = (taxTotal * 1) / 100;
-    console.log("tcs: " + tcs);
+    // console.log("tcs: " + tcs);
     setGrandTotal(taxTotal + tcs);
   };
 
@@ -254,7 +249,6 @@ const LiquorBillForm = () => {
 
   const handleBrandChange = (e) => {
     const brand = e.target.value;
-    console.log(brand);
     setCurrentInput((prevInput) => ({
       ...prevInput,
       brand: brand,
@@ -284,9 +278,7 @@ const LiquorBillForm = () => {
     }
   };
 
-  useEffect(() => {
-    console.log(products);
-  }, [products.length]);
+  useEffect(() => {}, [products.length]);
 
   return (
     <Box
@@ -403,7 +395,6 @@ const LiquorBillForm = () => {
                       key={brand._id}
                       value={brand?.liquor?.brandName}
                       onClick={() => {
-                        console.log(brand.liquor);
                         setStocks(brand.stock);
                         setSizes(brand.liquor.sizes);
                       }}
@@ -451,7 +442,8 @@ const LiquorBillForm = () => {
                       <TextField
                         fullWidth
                         value={
-                          currentInput?.sizes.find((s) => s.size === size?.size)
+                          currentInput?.sizes
+                            .find((s) => s.size === size?.size)
                             ?.price.toFixed(2) || ""
                         }
                         label={`Price ${
@@ -482,93 +474,6 @@ const LiquorBillForm = () => {
         )}
       </Box>
 
-      {/* Product Details */}
-
-      {/* <TableContainer className="py-12">
-        <h1 className="md:text-3xl text-2xl font-semibold text-slate-700 py-5">
-          Added Products
-        </h1>
-        <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-          <TableHead>
-            <TableRow>
-              <TableCell>S.No.</TableCell>
-              <TableCell>Brand Name</TableCell>
-              <TableCell align="center" colSpan={allSizes.length}>
-                Quantity
-              </TableCell>
-              <TableCell align="center" colSpan={allSizes.length}>
-                Price
-              </TableCell>
-              <TableCell align="center">Action</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
-              {allSizes.map((size) => (
-                <TableCell key={`qty-${size}`} align="right">
-                  {size}
-                </TableCell>
-              ))}
-              {allSizes.map((size) => (
-                <TableCell key={`price-${size}`} align="right">
-                  {size}
-                </TableCell>
-              ))}
-              <TableCell></TableCell>
-            </TableRow>
-          </TableHead>
-
-          <TableBody>
-            {products.length > 0 &&
-              products.map((p, i) => (
-                <TableRow key={i}>
-                  <TableCell>{i + 1}</TableCell>
-                  <TableCell>{p.brand}</TableCell>
-                  {allSizes.map((size) => (
-                    <TableCell key={`qty-${size}-${i}`} align="right">
-                      {p.sizes[size]?.quantity || "-"}
-                    </TableCell>
-                  ))}
-                  {allSizes.map((size) => (
-                    <TableCell key={`price-${size}-${i}`} align="right">
-                      {p.sizes[size]?.price || "-"}
-                    </TableCell>
-                  ))}
-                  <TableCell align="right" className="w-0">
-                    <Button
-                      className="text-red-500 hover:text-red-700"
-                      onClick={() => handleDeleteProduct(i)}
-                    >
-                      <Delete />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            <TableRow>
-              <TableCell colSpan={2} sx={{ fontWeight: 700 }}>
-                Total
-              </TableCell>
-              {allSizes.map((size) => (
-                <TableCell key={`qty-total-${size}`} align="right">
-                  {processedProducts.reduce(
-                    (acc, p) => acc + (p.sizes[size]?.quantity || 0),
-                    0
-                  )}
-                </TableCell>
-              ))}
-              {allSizes.map((size) => (
-                <TableCell key={`price-total-${size}`} align="right">
-                  {processedProducts.reduce(
-                    (acc, p) => acc + (p.sizes[size]?.price || 0),
-                    0
-                  )}
-                </TableCell>
-              ))}
-              <TableCell></TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </TableContainer> */}
       <TableContainer className="py-12">
         <h1 className="md:text-3xl text-2xl font-semibold text-slate-700 py-5">
           Added Products

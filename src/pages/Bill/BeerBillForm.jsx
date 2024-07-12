@@ -72,7 +72,7 @@ const BeerBillForm = () => {
       seller: user?._id,
       company,
       total: grandTotal,
-      billType: "beer"
+      billType: "beer",
     });
     setLicensee("");
     setShop("");
@@ -102,11 +102,11 @@ const BeerBillForm = () => {
     e.preventDefault();
     const { name, value } = e.target;
     const [type, size] = name.split("-");
-    for (let i=0; i<stocks.length; i++ ){
+    for (let i = 0; i < stocks.length; i++) {
       if (stocks[i].size === size) {
         if (stocks[i].quantity < value) {
           toast.warning(`Stock for ${size} is only ${stocks[i].quantity}`);
-        }    
+        }
       }
     }
 
@@ -181,7 +181,6 @@ const BeerBillForm = () => {
     const existingProductIndex = products.findIndex(
       (product) => product.brand === currentInput.brand
     );
-
 
     if (existingProductIndex > -1) {
       // Subtract previous values
@@ -435,15 +434,7 @@ const BeerBillForm = () => {
                           currentInput?.sizes.find((s) => s.size === size?.size)
                             ?.quantity ?? ""
                         }
-                        label={`Quantity ${
-                          size?.size === "750ml"
-                            ? size?.size + " (Q)"
-                            : size?.size === "375ml"
-                            ? size?.size + " (P)"
-                            : size?.size === "180ml"
-                            ? size?.size + " (N)"
-                            : size?.size
-                        }`}
+                        label={`Quantity ${size?.size}`}
                         name={`quantity-${size?.size}`}
                         onChange={handleInputChange}
                         variant="outlined"
@@ -452,18 +443,11 @@ const BeerBillForm = () => {
                       <TextField
                         fullWidth
                         value={
-                          currentInput?.sizes.find((s) => s.size === size?.size)
+                          currentInput?.sizes
+                            .find((s) => s.size === size?.size)
                             ?.price.toFixed(2) || ""
                         }
-                        label={`Price ${
-                          size?.size === "750ml"
-                            ? size?.size + " (Q)"
-                            : size?.size === "375ml"
-                            ? size?.size + " (P)"
-                            : size?.size === "180ml"
-                            ? size?.size + " (N)"
-                            : size?.size
-                        }`}
+                        label={`Price ${size?.size}`}
                         name={`price-${size?.size}`}
                         onChange={handleInputChange}
                         variant="outlined"
