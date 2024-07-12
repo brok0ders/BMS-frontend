@@ -17,7 +17,7 @@ const CompanyList = () => {
     <Box
       sx={{
         py: { sm: "1rem", md: "2rem", lg: "2rem" },
-        px: { sm: "1rem", md: "2rem", lg: "3rem" },
+        px: { sm: "1rem", md: "2rem", lg: "3rem" }, 
       }}
     >
       <h1 className="text-center text-5xl font-bold text-slate-700 mb-5">

@@ -3,12 +3,9 @@ import BillContext from "../../context/bill/billContext";
 import { DataGrid } from "@mui/x-data-grid";
 import "./bill.css";
 import CompanyContext from "../../context/company/companyContext";
+import Loader from "../../components/Layout/Loader";
 
 const BillRecords = () => {
-  const { getAllBills } = useContext(BillContext);
-  const {getCompany} = useContext(CompanyContext);
-  const [bills, setBills] = useState([]);
-  const [rows, setRows] = useState([]);
   const columns = [
     {
       field: "sno",
@@ -61,10 +58,15 @@ const BillRecords = () => {
       headerAlign: "center",
     },
   ];
+  const { getAllBills } = useContext(BillContext);
+  const { getCompany } = useContext(CompanyContext);
+  const [bills, setBills] = useState([]);
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const getBills = async () => {
+    setLoading(true);
     const data = await getAllBills();
-    console.log(data);
     if (data) {
       setBills(data);
       if (rows.length == 0) {
@@ -74,12 +76,13 @@ const BillRecords = () => {
           date: bill.createdAt.split("T")[0],
           billno: `BST${index + 1}`,
           lincensee: bill.customer.licensee,
-          Company: bill.company.company?.name,
+          Company: bill?.company?.company?.name,
           total: bill.total,
         }));
         setRows((prevRows) => [...prevRows, ...newRows]);
       }
     }
+    setLoading(false);
   };
   useEffect(() => {
     getBills();
@@ -87,23 +90,43 @@ const BillRecords = () => {
 
   return (
     <>
-      <div className="mt-5 w-[95%] m-auto">
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          initialState={{
-            pagination: {
-              paginationModel: { page: 0, pageSize: 5 },
-            },
-          }}
-          disableColumnResize
-          disableColumnMenu
-          disableColumnSorting
-          pageSizeOptions={[5, 10]}
-          onRowClick={(params) => {console.log(params.row.sno)}}
-        />
-      </div>
-      
+      {loading ? (
+        <Loader />
+      ) : (
+        <>
+          {!bills || bills.length < 0 ? (
+            <>
+              <div className="w-[25vw] m-auto text-center mt-[5rem]">
+                <img
+                  src="/images/no-data.png"
+                  alt=""
+                  className="w-[25vw] m-auto"
+                />
+                <p>NO BILLS RECORDS FOUND!</p>
+              </div>
+            </>
+          ) : (
+            <div className="mt-5 w-[95%] m-auto">
+              <DataGrid
+                rows={rows}
+                columns={columns}
+                initialState={{
+                  pagination: {
+                    paginationModel: { page: 0, pageSize: 5 },
+                  },
+                }}
+                disableColumnResize
+                disableColumnMenu
+                disableColumnSorting
+                pageSizeOptions={[5, 10]}
+                onRowClick={(params) => {
+                  console.log(params.row.sno);
+                }}
+              />
+            </div>
+          )}
+        </>
+      )}
     </>
   );
 };
