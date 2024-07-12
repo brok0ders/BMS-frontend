@@ -16,8 +16,9 @@ import Pricing from "./components/Pricing";
 import Features from "./components/Features";
 import Testimonials from "./components/Testimonials";
 import FAQ from "./components/FAQ";
-import Footer from "./components/Footer";
+
 import getLPTheme from "./getLPTheme.jsx";
+import Footer from "../components/Layout/Footer.jsx";
 
 function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {
   return (
@@ -76,27 +77,18 @@ export default function HomePage() {
   };
 
   return (
-    <ThemeProvider theme={showCustomTheme ? LPtheme : defaultTheme}>
-      <CssBaseline />
-      <Hero />
-      <Box sx={{ bgcolor: "background.default" }}>
-        <LogoCollection />
-        <Features />
-        <Divider />
-        <Testimonials />
-        <Divider />
-        <Highlights />
-        <Divider />
-        <Pricing />
-        <Divider />
-        <FAQ />
-        <Divider />
-        <Footer />
-      </Box>
-      <ToggleCustomTheme
-        showCustomTheme={showCustomTheme}
-        toggleCustomTheme={toggleCustomTheme}
-      />
-    </ThemeProvider>
+    <>
+      <ThemeProvider theme={showCustomTheme ? LPtheme : defaultTheme}>
+        <CssBaseline />
+        <Hero />
+        <Box sx={{ bgcolor: "background.default" }}>
+          <Highlights />
+
+          <FAQ />
+          <Divider />
+          <Footer />
+        </Box>
+      </ThemeProvider>
+    </>
   );
 }

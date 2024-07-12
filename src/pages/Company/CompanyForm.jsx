@@ -14,12 +14,16 @@ import {
 } from "@mui/material";
 import CompanyContext from "../../context/company/companyContext";
 import { toast } from "react-toastify";
+import Spinner from "../../components/Layout/Spinner";
+import Loader from "../../components/Layout/Loader";
 
 const CompanyForm = ({ open, onClose }) => {
   const [name, setName] = useState("");
   const [companyType, setCompanyType] = useState("");
   const [data, setData] = useState([]);
   const [comps, setComps] = useState([]);
+  const [spinner, setSpinner] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { createCompany, getAllCompany, allGlobalCompany, getCompany } =
     useContext(CompanyContext);
 
@@ -27,15 +31,16 @@ const CompanyForm = ({ open, onClose }) => {
     setName(event.target.value);
   };
 
-  const filterByCompanyType = async(compType) => {
-    const filtered = comps.filter((c) => c.companyType===compType);
+  const filterByCompanyType = async (compType) => {
+    const filtered = comps.filter((c) => c.companyType === compType);
     setData(filtered);
-  }
+  };
 
   const handleSubmit = async (e) => {
+    setSpinner(true);
     e.preventDefault();
     try {
-      const res = await createCompany({compId: name});
+      const res = await createCompany({ compId: name });
       console.log(res);
       if (res?.success) {
         await getAllCompany();
@@ -46,101 +51,124 @@ const CompanyForm = ({ open, onClose }) => {
       onClose(); // Close the modal
     } catch (error) {
       console.error("Error:", error);
+    } finally {
+      setSpinner(false);
     }
   };
 
   const getGlobalCompany = async () => {
+    setLoading(true);
     try {
       const res = await allGlobalCompany();
-      console.log(res);
       setComps(res.data);
-    } catch (e) {}
+    } catch (e) {
+    } finally {
+      setLoading(false);
+    }
   };
   useEffect(() => {
     getGlobalCompany();
   }, []);
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle
-        className="text-center"
-        sx={{
-          fontWeight: "semibold",
-          fontSize: { xs: "1.5rem", md: "2rem" },
-          my: 0,
-        }}
-      >
-        Create Company
-      </DialogTitle>
-      <Box
-        component="form"
-        onSubmit={handleSubmit}
-        sx={{
-          px: { xs: 2, sm: 3, md: 4 },
-          py: { xs: 1, sm: 1 },
-        }}
-      >
-        <DialogContent
-          sx={{
-            my: 0,
-            py: 1,
-          }}
-        >
-          <FormControl sx={{ minWidth: "100%" }}>
-            <InputLabel id="comapny-label">Company Type</InputLabel>
-            <Select
-              required
-              labelId="company-label"
-              id="company-select"
-              value={companyType}
-              label="Company Type"
-              name="companyType"
-              className="w-full"
-              onChange={(event) =>{
-                setCompanyType(event.target.value);
-                filterByCompanyType(event.target.value);
+    <>
+      {loading ? (
+        <Loader />
+      ) : (
+        <>
+          <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+            <DialogTitle
+              className="text-center"
+              sx={{
+                fontWeight: "semibold",
+                fontSize: { xs: "1.5rem", md: "2rem" },
+                my: 0,
               }}
             >
-              <MenuItem value="beer">Beer</MenuItem>
-              <MenuItem value="liquor">Liquor</MenuItem>
-            </Select>
-          </FormControl>
-
-          <FormControl sx={{ minWidth: "100%", marginTop: 3 }}>
-            <InputLabel id="comapny-label">Company Name</InputLabel>
-            <Select
-              required
-              labelId="company-label"
-              id="company-select"
-              value={name}
-              label="Company Type"
-              name="companyType"
-              className="w-full"
-              onChange={handleChange}
+              Create Company
+            </DialogTitle>
+            <Box
+              component="form"
+              onSubmit={handleSubmit}
+              sx={{
+                px: { xs: 2, sm: 3, md: 4 },
+                py: { xs: 1, sm: 1 },
+              }}
             >
-              {data.map((company) => (
-                <MenuItem key={company._id} value={company._id}>
-                  {company.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </DialogContent>
-        <DialogActions
-          sx={{
-            mt: 4,
-            mb: 1,
-          }}
-        >
-          <Button onClick={onClose} color="inherit">
-            Cancel
-          </Button>
-          <Button type="submit" variant="contained" className=" p-2 !px-4">
-            Create
-          </Button>
-        </DialogActions>
-      </Box>
-    </Dialog>
+              <DialogContent
+                sx={{
+                  my: 0,
+                  py: 1,
+                }}
+              >
+                <FormControl sx={{ minWidth: "100%" }}>
+                  <InputLabel id="comapny-label">Company Type</InputLabel>
+                  <Select
+                    required
+                    labelId="company-label"
+                    id="company-select"
+                    value={companyType}
+                    label="Company Type"
+                    name="companyType"
+                    className="w-full"
+                    onChange={(event) => {
+                      setCompanyType(event.target.value);
+                      filterByCompanyType(event.target.value);
+                    }}
+                  >
+                    <MenuItem value="beer">Beer</MenuItem>
+                    <MenuItem value="liquor">Liquor</MenuItem>
+                  </Select>
+                </FormControl>
+
+                <FormControl sx={{ minWidth: "100%", marginTop: 3 }}>
+                  <InputLabel id="comapny-label">Company Name</InputLabel>
+                  <Select
+                    required
+                    labelId="company-label"
+                    id="company-select"
+                    value={name}
+                    label="Company Type"
+                    name="companyType"
+                    className="w-full"
+                    onChange={handleChange}
+                  >
+                    {data.map((company) => (
+                      <MenuItem key={company._id} value={company._id}>
+                        {company.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </DialogContent>
+              <DialogActions
+                sx={{
+                  mt: 4,
+                  mb: 1,
+                }}
+              >
+                <Button onClick={onClose} color="inherit">
+                  Cancel
+                </Button>
+                {spinner ? (
+                  <Button variant="contained" className=" p-2 !px-4">
+                    {<Spinner />}
+                  </Button>
+                ) : (
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    className=" p-2 !px-4"
+                  >
+                    Create
+                  </Button>
+                )}
+              </DialogActions>
+            </Box>
+          </Dialog>
+        </>
+      )}
+    </>
   );
 };
 

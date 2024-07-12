@@ -7,28 +7,36 @@ const BeerState = (props) => {
   const [beer, setBeer] = useState({});
 
   const getAllBeer = async () => {
-    const config = {
-      headers: {
-        authorization: localStorage.getItem("token"),
-      },
-    };
-    const { data } = await API.get(`/beer/all`, config);
-    console.log(data.message);
-    return data;
+    try {
+      const config = {
+        headers: {
+          authorization: localStorage.getItem("token"),
+        },
+      };
+      const { data } = await API.get(`/beer/all`, config);
+      console.log(data.message);
+      return data;
+    } catch (e) {
+      toast.error(e.response.data.message);
+    }
   };
 
   const getBeer = async ({ id }) => {
-    const config = {
-      headers: {
-        authorization: localStorage.getItem("token"),
-      },
-    };
-    const { data } = await API.get(`/beer/${id}`, config);
-    if (data.success) {
-      setBeer(data.beer);
+    try {
+      const config = {
+        headers: {
+          authorization: localStorage.getItem("token"),
+        },
+      };
+      const { data } = await API.get(`/beer/${id}`, config);
+      if (data.success) {
+        setBeer(data.beer);
+      }
+      console.log(data.message);
+      return data;
+    } catch (e) {
+      toast.error(e.response.data.message);
     }
-    console.log(data.message);
-    return data;
   };
 
   const getBeerCom = async ({ id }) => {
@@ -50,49 +58,61 @@ const BeerState = (props) => {
   };
 
   const createBeer = async ({ beerId, stock, company }) => {
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        authorization: localStorage.getItem("token"),
-      },
-    };
-    const { data } = await API.post(
-      "/beer/create",
-      { beerId, stock, company },
-      config
-    );
-    if (data.success) {
-      setBeer(data.beer);
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: localStorage.getItem("token"),
+        },
+      };
+      const { data } = await API.post(
+        "/beer/create",
+        { beerId, stock, company },
+        config
+      );
+      if (data.success) {
+        setBeer(data.beer);
+      }
+      console.log(data.message);
+      return data;
+    } catch (e) {
+      toast.error(e.response.data.message);
     }
-    console.log(data.message);
-    return data;
   };
 
   const updateBeer = async ({ id, stock }) => {
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        authorization: localStorage.getItem("token"),
-      },
-    };
-    const { data } = await API.put(`/beer/update/${id}`, { stock }, config);
-    if (data.success) {
-      setBeer(data.beer);
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: localStorage.getItem("token"),
+        },
+      };
+      const { data } = await API.put(`/beer/update/${id}`, { stock }, config);
+      if (data.success) {
+        setBeer(data.beer);
+      }
+      console.log(data.message);
+      return data;
+    } catch (e) {
+      toast.error(e.response.data.message);
     }
-    console.log(data.message);
-    return data;
   };
 
   const deleteBeer = async ({ id }) => {
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        authorization: localStorage.getItem("token"),
-      },
-    };
-    const { data } = await API.delete(`/beer/delete/${id}`, config);
-    console.log(data.message);
-    return data;
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: localStorage.getItem("token"),
+        },
+      };
+      const { data } = await API.delete(`/beer/delete/${id}`, config);
+      console.log(data.message);
+      return data;
+    } catch (e) {
+      toast.error(e.response.data.message);
+    }
   };
 
   const allGlobalBeer = async () => {

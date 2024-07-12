@@ -21,10 +21,10 @@ import AdminHome from "./pages/Home/AdminHome.jsx";
 
 const Layout = () => {
   return (
-    <>
+    <div className="pt-24">
       <Navbar />
       <Outlet />
-    </>
+    </div>
   );
 };
 import BeerBillForm from "./pages/Bill/BeerBillForm.jsx";
@@ -46,9 +46,17 @@ const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route>
+        <Route
+          path="/home"
+          element={
+            <>
+              <Navbar />
+              <HomePage />
+            </>
+          }
+        />
         <Route path="/dashboard/bill/details/:id" element={<BillDetails />} />
         <Route path="/" element={<Layout />}>
-          <Route path="/home" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/about" element={<About />} />
