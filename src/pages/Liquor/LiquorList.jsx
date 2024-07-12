@@ -24,7 +24,8 @@ const LiquorList = () => {
   const getLiquor = async () => {
     try {
       const res = await getLiquorCom({id: company});
-      setLiquor(res.liquors);
+      console.log(res);
+      setLiquor(res.liquor);
     } catch (e) {}
   };
 
@@ -96,17 +97,17 @@ const LiquorList = () => {
 
               <TableCell
                 align="center"
-                colSpan={3}
+                colSpan={4}
                 sx={{ border: 1.34, borderColor: "grey.400", py: 1.2 }}
               >
                 <Typography fontWeight="bold">Stock</Typography>
               </TableCell>
               <TableCell
                 align="center"
-                colSpan={3}
+                colSpan={4}
                 sx={{ border: 1.34, borderColor: "grey.400", py: 1.2 }}
               >
-                <Typography fontWeight="bold">Rate (In Case)</Typography>
+                <Typography fontWeight="bold">Rate</Typography>
               </TableCell>
               <TableCell
                 align="center"

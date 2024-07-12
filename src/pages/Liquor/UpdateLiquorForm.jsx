@@ -11,7 +11,6 @@ const UpdateLiquorForm = () => {
   const [companyName, setCompanyName] = useState("");
   const [stock, setStock] = useState([]);
   const { id } = useParams();
-  const [compId, setCompId] = useState("");
   const { getLiquor, updateLiquor } = useContext(LiquorContext);
   const { getCompany } = useContext(CompanyContext);
   const navigate = useNavigate();
@@ -28,7 +27,7 @@ const UpdateLiquorForm = () => {
       toast.success("Liquor updated succesfully!");
       setBrandName("");
       setStock([]);
-      navigate(`/dashboard/liquor/${compId}`)
+      navigate(-1);
       // Handle success (e.g., reset form, display success message)
     } catch (error) {
       console.error("Error:", error);
@@ -43,7 +42,6 @@ const UpdateLiquorForm = () => {
       const res = await getLiquor({ id });
       const res1 = await getCompany({ id: res?.liquor?.company?._id });
       setCompanyName(res1?.company?.company?.name);
-      setCompId(res?.liquor?.company?.company?._id);
 
       setBrandName(res.liquor.liquor?.brandName);
       setStock(res.liquor.stock);

@@ -116,6 +116,8 @@ const BillState = ({ children }) => {
     seller,
     products,
     company,
+    total,
+    billType
   }) => {
     try {
       const config = {
@@ -126,7 +128,16 @@ const BillState = ({ children }) => {
       };
       const { data } = await API.post(
         "/bill/new",
-        { customer, seller, products, company, excise, pno },
+        {
+          customer,
+          seller,
+          products,
+          company,
+          excise,
+          pno,
+          total,
+          billType,
+        },
         config
       );
       if (data.success) {
