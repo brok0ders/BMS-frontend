@@ -15,9 +15,9 @@ import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
 const items = [
   {
     icon: <SettingsSuggestRoundedIcon />,
-    title: 'Adaptable performance',
+    title: 'Streamlined Calculations',
     description:
-      'Our product effortlessly adjusts to your needs, boosting efficiency and simplifying your tasks.',
+      'It significantly reduces the complexity of calculations for FL2/CL2, saving you valuable time and effort.',
   },
   {
     icon: <ConstructionRoundedIcon />,
@@ -27,27 +27,27 @@ const items = [
   },
   {
     icon: <ThumbUpAltRoundedIcon />,
-    title: 'Great user experience',
+    title: 'User-Friendly Interface',
     description:
-      'Integrate our product into your routine with an intuitive and easy-to-use interface.',
+      'Designed with the user in mind, our intuitive interface makes it easy to navigate and utilize all features effectively.',
   },
   {
     icon: <AutoFixHighRoundedIcon />,
-    title: 'Innovative functionality',
+    title: 'Paperwork Reduction',
     description:
-      'Stay ahead with features that set new standards, addressing your evolving needs better than the rest.',
+      'By minimizing the need for extensive paperwork, our product helps you focus on more critical tasks, enhancing overall productivity.',
   },
   {
     icon: <SupportAgentRoundedIcon />,
-    title: 'Reliable support',
+    title: 'Enhanced Accuracy',
     description:
-      'Count on our responsive customer support, offering assistance that goes beyond the purchase.',
+      'Our product ensures precise calculations, reducing the risk of errors and ensuring reliable results.',
   },
   {
     icon: <QueryStatsRoundedIcon />,
-    title: 'Precision in every detail',
+    title: 'Systematic Structure',
     description:
-      'Enjoy a meticulously crafted product where small touches make a significant impact on your overall experience.',
+      'We provide a well-organized, systematic structure that simplifies the process and ensures that all necessary steps are followed efficiently.',
   },
 ];
 
@@ -77,7 +77,7 @@ export default function Highlights() {
             textAlign: { sm: 'left', md: 'center' },
           }}
         >
-          <Typography component="h2" variant="h4">
+          <Typography component="h2" variant="h4" className="text-white">
             Highlights
           </Typography>
           <Typography variant="body1" sx={{ color: 'grey.400' }}>
@@ -106,7 +106,7 @@ export default function Highlights() {
               >
                 <Box sx={{ opacity: '50%' }}>{item.icon}</Box>
                 <div>
-                  <Typography fontWeight="medium" gutterBottom>
+                  <Typography fontWeight="medium" gutterBottom className='text-white'>
                     {item.title}
                   </Typography>
                   <Typography variant="body2" sx={{ color: 'grey.400' }}>
