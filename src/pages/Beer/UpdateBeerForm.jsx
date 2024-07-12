@@ -9,13 +9,12 @@ const UpdateBeerForm = () => {
   const [brandName, setBrandName] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [stock, setStock] = useState([]);
-  const [compId, setCompId] = useState("");
   const { getBeer, updateBeer } = useContext(BeerContext);
   const { getCompany } = useContext(CompanyContext);
   const navigate = useNavigate();
   const { id } = useParams();
 
-   const handleQuantityChange = (index, value) => {
+  const handleQuantityChange = (index, value) => {
     const newStock = [...stock];
     newStock[index].quantity = value;
     setStock(newStock);
@@ -27,7 +26,7 @@ const UpdateBeerForm = () => {
       toast.success("Beer updated succesfully!");
       setBrandName("");
       setStock([]);
-      navigate(`/dashboard/beer/${compId}`)
+      navigate(-1);
       // Handle success (e.g., reset form, display success message)
     } catch (error) {
       console.error("Error:", error);
@@ -40,7 +39,6 @@ const UpdateBeerForm = () => {
       console.log(res);
       const res1 = await getCompany({ id: res?.beer?.company });
       setCompanyName(res1?.company?.company?.name);
-      setCompId(res?.beer?.company?.company?._id);
 
       setBrandName(res.beer.beer?.brandName);
       setStock(res.beer.stock);

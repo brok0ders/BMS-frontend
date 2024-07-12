@@ -22,7 +22,6 @@ import BillContext from "../../context/bill/billContext";
 import UserContext from "../../context/user/userContext";
 import CompanyContext from "../../context/company/companyContext";
 import { useParams } from "react-router-dom";
-import { toast } from "react-toastify";
 
 const LiquorBillForm = () => {
   const { company } = useParams();
@@ -48,9 +47,194 @@ const LiquorBillForm = () => {
   const [total, setTotal] = useState(0);
   const [grandTotal, setGrandTotal] = useState(0);
   const inputRefs = useRef({});
-  const [stocks, setStocks] = useState([]);
 
   let customerId = "";
+
+  const NumberToWordsConverter = () => {
+    const [num, setNum] = useState("");
+    const [words, setWords] = useState("");
+
+    const one = [
+      "",
+      "one",
+      "two",
+      "three",
+      "four",
+      "five",
+      "six",
+      "seven",
+      "eight",
+      "nine",
+      "ten",
+      "eleven",
+      "twelve",
+      "thirteen",
+      "fourteen",
+      "fifteen",
+      "sixteen",
+      "seventeen",
+      "eighteen",
+      "nineteen",
+    ];
+    const ten = [
+      "",
+      "",
+      "twenty",
+      "thirty",
+      "forty",
+      "fifty",
+      "sixty",
+      "seventy",
+      "eighty",
+      "ninety",
+    ];
+
+    const numToWords = (n, s) => {
+      let str = "";
+      if (n > 19) {
+        str += ten[Math.floor(n / 10)] + " " + one[n % 10];
+      } else {
+        str += one[n];
+      }
+
+      if (n !== 0) {
+        str += " " + s;
+      }
+
+      return str.trim();
+    };
+
+    const convertToWords = (n) => {
+      let output = "";
+
+      if (Math.floor(n / 100000) > 0) {
+        output += numToWords(Math.floor(n / 100000), "lakh");
+        n %= 100000;
+      }
+
+      if (Math.floor(n / 1000) > 0) {
+        output += " " + numToWords(Math.floor(n / 1000), "thousand");
+        n %= 1000;
+      }
+
+      if (Math.floor(n / 100) > 0) {
+        output += " " + numToWords(Math.floor(n / 100), "hundred");
+        n %= 100;
+      }
+
+      if (n > 0) {
+        output += " and " + numToWords(n, "");
+      }
+
+      return output.trim();
+    };
+  };
+
+  const numberToWords = (num) => {
+    if (isNaN(num)) return "Not a number";
+
+    // Separate integer and decimal parts
+    const numStr = num.toString();
+    const parts = numStr.split(".");
+    let integerPart = parts[0];
+    let decimalPart = parts.length > 1 ? parts[1] : "";
+
+    // Function to convert a number less than 1000 into words
+    const convertLessThan1000 = (number) => {
+      const units = [
+        "",
+        "one",
+        "two",
+        "three",
+        "four",
+        "five",
+        "six",
+        "seven",
+        "eight",
+        "nine",
+      ];
+      const teens = [
+        "ten",
+        "eleven",
+        "twelve",
+        "thirteen",
+        "fourteen",
+        "fifteen",
+        "sixteen",
+        "seventeen",
+        "eighteen",
+        "nineteen",
+      ];
+      const tens = [
+        "",
+        "",
+        "twenty",
+        "thirty",
+        "forty",
+        "fifty",
+        "sixty",
+        "seventy",
+        "eighty",
+        "ninety",
+      ];
+
+      let words = "";
+
+      if (number < 10) {
+        words += units[number];
+      } else if (number < 20) {
+        words += teens[number - 10];
+      } else if (number < 100) {
+        words += tens[Math.floor(number / 10)];
+        if (number % 10 > 0) {
+          words += " " + units[number % 10];
+        }
+      } else {
+        words += units[Math.floor(number / 100)] + " hundred";
+        if (number % 100 > 0) {
+          words += " " + convertLessThan1000(number % 100);
+        }
+      }
+
+      return words;
+    };
+    // Function to handle large numbers
+    const convertLargeNumber = (number) => {
+      const powers = ["", "thousand", "million", "billion"]; // Extend as needed
+
+      let words = "";
+      let count = 0;
+
+      while (number > 0) {
+        if (number % 1000 !== 0) {
+          words =
+            convertLessThan1000(number % 1000) +
+            " " +
+            powers[count] +
+            " " +
+            words;
+        }
+        number = Math.floor(number / 1000);
+        count++;
+      }
+
+      return words.trim();
+    };
+
+    // Convert the integer part
+    let words = convertLargeNumber(parseInt(integerPart, 10));
+
+    // Convert the decimal part
+    if (decimalPart !== "") {
+      words += " point";
+      for (let i = 0; i < decimalPart.length; i++) {
+        words += " " + convertLessThan1000(parseInt(decimalPart[i], 10));
+      }
+    }
+
+    return words;
+  };
+
   const [currentInput, setCurrentInput] = useState({ brand: "", sizes: [] });
 
   const getLiquors = async () => {
@@ -71,7 +255,6 @@ const LiquorBillForm = () => {
       seller: user?._id,
       company,
       total: grandTotal,
-      billType: "liquor"
     });
     setLicensee("");
     setShop("");
@@ -81,6 +264,7 @@ const LiquorBillForm = () => {
     setPno("");
     setProducts([]);
     setGrandTotal(0);
+    // console.log(res);
   };
   const getCompany2 = async () => {
     const res = await getCompany({ id: company });
@@ -101,13 +285,6 @@ const LiquorBillForm = () => {
     e.preventDefault();
     const { name, value } = e.target;
     const [type, size] = name.split("-");
-    for (let i=0; i<stocks.length; i++ ){
-      if (stocks[i].size === size) {
-        if (stocks[i].quantity < value) {
-          toast.warning(`Stock for ${size} is only ${stocks[i].quantity}`);
-        }    
-      }
-    }
 
     // Prevent negative values and non-numeric inputs
     if (value !== "" && (isNaN(value) || parseInt(value) < 0)) return;
@@ -168,7 +345,7 @@ const LiquorBillForm = () => {
 
   const handleAddProduct = (e) => {
     e.preventDefault();
-    console.log(stocks);
+    console.log(sizes);
     console.log("current Input: ", currentInput);
 
     let h = fholo;
@@ -180,7 +357,6 @@ const LiquorBillForm = () => {
     const existingProductIndex = products.findIndex(
       (product) => product.brand === currentInput.brand
     );
-
 
     if (existingProductIndex > -1) {
       // Subtract previous values
@@ -398,13 +574,11 @@ const LiquorBillForm = () => {
                 onChange={handleBrandChange}
               >
                 {liquorBrandData.length > 0 &&
-                  liquorBrandData?.map((brand, i) => (
+                  liquorBrandData?.map((brand) => (
                     <MenuItem
                       key={brand._id}
                       value={brand?.liquor?.brandName}
                       onClick={() => {
-                        console.log(brand.liquor);
-                        setStocks(brand.stock);
                         setSizes(brand.liquor.sizes);
                       }}
                     >
@@ -452,7 +626,7 @@ const LiquorBillForm = () => {
                         fullWidth
                         value={
                           currentInput?.sizes.find((s) => s.size === size?.size)
-                            ?.price.toFixed(2) || ""
+                            ?.price || ""
                         }
                         label={`Price ${
                           size?.size === "750ml"
@@ -674,6 +848,20 @@ const LiquorBillForm = () => {
           label="Grand Total"
           defaultValue="0"
           value={grandTotal}
+          InputProps={{
+            readOnly: true,
+          }}
+          variant="filled"
+        />
+      </Box>
+
+      <Box className="px-2 py-2 m-4 flex justify-end">
+        <TextField
+          id="filled-read-only-input"
+          label="Grand Total"
+          defaultValue="0"
+          fullWidth
+          value={numberToWords(grandTotal)}
           InputProps={{
             readOnly: true,
           }}
