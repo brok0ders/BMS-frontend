@@ -10,7 +10,7 @@ import React, { useState, useEffect } from "react";
 import API from "../../utils/API";
 import { useParams } from "react-router-dom";
 
-const data = {
+const data2 = {
   _id: "668f914ca5f1139e5c130f1b",
   customer: {
     _id: "668f914ca5f1139e5c130f18",
@@ -65,30 +65,6 @@ const data = {
       ],
       _id: "668f914ca5f1139e5c130f1c",
     },
-    {
-      brand: "ROYAL STAG BARREL SELECT WHISKY",
-      sizes: [
-        {
-          size: "750ml",
-          quantity: 12,
-          price: 52309.200000000004,
-          _id: "668f914ca5f1139e5c130f1d",
-        },
-        {
-          size: "375ml",
-          quantity: 2,
-          price: 8738.2,
-          _id: "668f914ca5f1139e5c130f1e",
-        },
-        {
-          size: "180ml",
-          quantity: 0,
-          price: 0,
-          _id: "668f914ca5f1139e5c130f1f",
-        },
-      ],
-      _id: "668f914ca5f1139e5c130f1c",
-    },
   ],
   company: {
     _id: "668e4a97338754464d9c5ca5",
@@ -115,58 +91,161 @@ const data = {
 const BillComponent = () => {
   const [basePrices, setBasePrices] = useState({});
   const { id } = useParams();
-  const [billData, setBillData] = useState({});
+  const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
-  const getBillData = () => {
-    try {
-      setLoading(true);
-      const { data } = API.get(`/bill/${id}`);
-      setBillData(data);
-    } catch (error) {
-      setBillData();
-      console.log(error.message);
-    } finally {
-      setLoading(false);
+  const [taxesData, setTaxesData] = useState({});
+
+  const NumberToWordsConverter = (n) => {
+    // Ensuring the number has two decimal places
+    n = n.toFixed(2);
+
+    const one = [
+      "one",
+      "two",
+      "three",
+      "four",
+      "five",
+      "six",
+      "seven",
+      "eight",
+      "nine",
+      "ten",
+      "eleven",
+      "twelve",
+      "thirteen",
+      "fourteen",
+      "fifteen",
+      "sixteen",
+      "seventeen",
+      "eighteen",
+      "nineteen",
+    ];
+    const ten = [
+      "twenty",
+      "thirty",
+      "forty",
+      "fifty",
+      "sixty",
+      "seventy",
+      "eighty",
+      "ninety",
+    ];
+
+    const numToWords = (num, suffix) => {
+      let str = "";
+      if (num > 19) {
+        str += ten[Math.floor(num / 10) - 2];
+        if (num % 10 > 0) {
+          str += " " + one[(num % 10) - 1];
+        }
+      } else if (num > 0) {
+        str += one[num - 1];
+      }
+
+      if (num !== 0) {
+        str += " " + suffix;
+      }
+
+      return str.trim();
+    };
+
+    const convertToWords = (num) => {
+      let output = "";
+
+      if (Math.floor(num / 100000) > 0) {
+        output += numToWords(Math.floor(num / 100000), "lakh");
+        num %= 100000;
+      }
+
+      if (Math.floor(num / 1000) > 0) {
+        output += " " + numToWords(Math.floor(num / 1000), "thousand");
+        num %= 1000;
+      }
+
+      if (Math.floor(num / 100) > 0) {
+        output += " " + numToWords(Math.floor(num / 100), "hundred");
+        num %= 100;
+      }
+
+      if (num > 0) {
+        if (output !== "") {
+          output += " and ";
+        }
+        output += numToWords(num, "");
+      }
+
+      return output.trim();
+    };
+
+    const parts = n.split(".");
+    const integerPart = parseInt(parts[0], 10);
+    const decimalPart = parseInt(parts[1], 10);
+
+    let words = convertToWords(integerPart);
+
+    if (decimalPart > 0) {
+      words += " point";
+      for (const digit of parts[1]) {
+        words += ` ${one[digit - 1]}`;
+      }
     }
+    if (!words) {
+      return "zero";
+    }
+    return words + " only";
   };
 
   useEffect(() => {
     const fetchBasePrices = async () => {
+      setLoading(true);
       try {
+        const { data: data1 } = await API.get(`/bill/${id}`);
+        setData(data1?.bill);
+        console.log(data1);
         const basePricesTemp = {};
-        for (const product of data.products) {
-          const response = await API.get(
-            `/master-liquor/brand/${product.brand}`
-          );
+        for (const product of data1?.bill.products) {
+          let response;
+          if (data1.bill.billType === "liquor") {
+            response = await API.get(`/master-liquor/brand/${product.brand}`);
+          } else {
+            response = await API.get(`/master-beer/brand/${product.brand}`);
+          }
           basePricesTemp[product.brand] = response.data.data[0].sizes;
         }
+        const taxData = recalculateTaxes(data1?.bill.products, basePricesTemp);
+
+        setTaxesData(taxData);
         setBasePrices(basePricesTemp);
       } catch (error) {
-        console.error(error.message);
+        console.log(error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchBasePrices();
   }, []);
 
-  const processedProducts = data?.products.map((product) => {
-    const sizesObject = {};
-    product.sizes.forEach((size) => {
-      sizesObject[size.size] = { quantity: size.quantity, price: size.price };
+  const processedProducts =
+    data &&
+    data?.products?.map((product) => {
+      const sizesObject = {};
+      product.sizes.forEach((size) => {
+        sizesObject[size.size] = { quantity: size.quantity, price: size.price };
+      });
+      return { ...product, sizes: sizesObject };
     });
-    return { ...product, sizes: sizesObject };
-  });
 
   const allSizes = Array.from(
     new Set(
-      data?.products.flatMap((product) =>
+      data?.products?.flatMap((product) =>
         product.sizes.map((size) => size.size)
       )
     )
   );
 
   const calculateTotalAmount = (product) => {
-    console.log(product);
+    // console.log(product);
     return Object.values(product.sizes).reduce((total, size) => {
       return total + size.price;
     }, 0);
@@ -182,6 +261,52 @@ const BillComponent = () => {
     }, 0);
   }
 
+  // calculate the taxes
+
+  const recalculateTaxes = (products, brandsDetails) => {
+    let totalQuantity = 0;
+    let total = 0;
+    let fholo = 0;
+    let fpratifal = 0;
+    let fwep = 0;
+
+    products.forEach((product) => {
+      const brandDetails = brandsDetails[product.brand];
+      product.sizes.forEach((size) => {
+        const sizeDetail = brandDetails.find((s) => s.size === size.size);
+        if (sizeDetail) {
+          fholo += size.quantity * sizeDetail.hologram;
+          fpratifal += size.quantity * sizeDetail.pratifal;
+          fwep += size.quantity * sizeDetail.wep;
+          totalQuantity += size.quantity;
+          total += size.price;
+        }
+      });
+    });
+
+    // Calculate taxes
+    const vatTax = total * (12 / 100);
+    const cess = ((total + vatTax) * 2) / 100;
+    const profit = totalQuantity * 50;
+    const taxTotal = total + vatTax + cess + fwep + fholo + profit + fpratifal;
+    const tcs = (taxTotal * 1) / 100;
+    const grandTotal = taxTotal + tcs;
+
+    return {
+      totalQuantity,
+      total,
+      fholo,
+      fpratifal,
+      fwep,
+      vatTax,
+      cess,
+      profit,
+      taxTotal,
+      tcs,
+      grandTotal,
+    };
+  };
+
   const tableCellStyle = {
     border: "1px solid black",
     backgroundColor: "#f5f5f5",
@@ -195,24 +320,24 @@ const BillComponent = () => {
           Loading...
         </div>
       )}
-      {!loading && !billData && (
+      {!loading && !data && (
         <div className="flex h-screen justify-center items-center">
           Bill Data Not Found
         </div>
       )}
-      {billData && (
+      {data && data.seller && (
         <div className="p-4">
           {/* Seller Details */}
 
           <div className="text-center lg:px-10 px-2 ">
-            <h1 className="text-2xl mb-5 font-bold">{data?.seller.name}</h1>
+            <h1 className="text-2xl mb-5 font-bold">{data?.seller?.name}</h1>
             <p className="text-[1rem] font-semibold">
               Address:{" "}
-              <span className="font-normal">{data?.seller.address} </span>
+              <span className="font-normal">{data?.seller?.address} </span>
             </p>
             <p className="text-[1rem] font-semibold">
               FL-2 Licensee:{" "}
-              <span className="font-normal">{data?.seller.FLliscensee} </span>
+              <span className="font-normal">{data?.seller?.FLliscensee} </span>
             </p>
             <p className="text-[1rem] font-semibold">
               FL-2 GODOWN:{" "}
@@ -263,10 +388,11 @@ const BillComponent = () => {
             </div>
             <div className="text-left ">
               <p className="text-[1rem] font-semibold">
-                Excise FL: <span className="font-normal">{data?.excise} </span>
+                Excise FL 36 No.:{" "}
+                <span className="font-normal">{data?.excise} </span>
               </p>
               <p className="text-[1rem] font-semibold">
-                PAN No.: <span className="font-normal">{data?.pno} </span>
+                P.No.: <span className="font-normal">{data?.pno} </span>
               </p>
             </div>
             <div className="text-left ">
@@ -508,7 +634,7 @@ const BillComponent = () => {
                     Vat Tax 12%
                   </TableCell>
                   <TableCell sx={tableCellStyle} align="center">
-                    76876
+                    {taxesData?.vatTax?.toFixed(2)}
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -521,7 +647,7 @@ const BillComponent = () => {
                     Cess @ 2%
                   </TableCell>
                   <TableCell sx={tableCellStyle} align="center">
-                    76876
+                    {taxesData?.cess?.toFixed(2)}
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -534,7 +660,7 @@ const BillComponent = () => {
                     Women Empowerment/Cow Protection/Sports Activity Cess
                   </TableCell>
                   <TableCell sx={tableCellStyle} align="center">
-                    76876
+                    {taxesData?.fwep?.toFixed(2)}
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -547,7 +673,7 @@ const BillComponent = () => {
                     Hologram & Track and Trace Fee
                   </TableCell>
                   <TableCell sx={tableCellStyle} align="center">
-                    76876
+                    {taxesData?.fholo?.toFixed(2)}
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -560,7 +686,7 @@ const BillComponent = () => {
                     Profit of F.L.-2 License Holder
                   </TableCell>
                   <TableCell sx={tableCellStyle} align="center">
-                    76876
+                    {taxesData?.profit?.toFixed(2)}
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -573,7 +699,7 @@ const BillComponent = () => {
                     Pratifal Fee
                   </TableCell>
                   <TableCell sx={tableCellStyle} align="center">
-                    76876
+                    {taxesData?.fpratifal?.toFixed(2)}
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -586,7 +712,7 @@ const BillComponent = () => {
                     Total
                   </TableCell>
                   <TableCell sx={tableCellStyle} align="center">
-                    76876
+                    {taxesData?.taxTotal?.toFixed(2)}
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -599,7 +725,7 @@ const BillComponent = () => {
                     TCS @ 1%
                   </TableCell>
                   <TableCell sx={tableCellStyle} align="center">
-                    76876
+                    {taxesData?.tcs?.toFixed(2)}
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -612,7 +738,7 @@ const BillComponent = () => {
                     Total
                   </TableCell>
                   <TableCell sx={tableCellStyle} align="center">
-                    76876
+                    {taxesData?.grandTotal?.toFixed(2)}
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -629,7 +755,70 @@ const BillComponent = () => {
                     align="center"
                     className="!font-bold"
                   >
-                    76876
+                    {Math.round(taxesData?.grandTotal)}
+                  </TableCell>
+                </TableRow>
+
+                <TableRow>
+                  <TableCell
+                    className="!font-bold !py-3"
+                    colSpan={allSizes.length * 2 + 2}
+                    sx={tableCellStyle}
+                    align="center"
+                  >
+                    Amounts Chargeable (in words) -{" "}
+                    {NumberToWordsConverter(Math.round(taxesData?.grandTotal))}
+                  </TableCell>
+                  <TableCell
+                    sx={tableCellStyle}
+                    colSpan={allSizes?.length + 1}
+                    align="center"
+                    className="!font-bold !py-3"
+                  >
+                    E.& O.E
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell
+                    className="!font-bold "
+                    colSpan={allSizes.length * 2 + 2}
+                    sx={tableCellStyle}
+                    align="center"
+                  >
+                    Declaration - We declare that this invoice shows the actual
+                    price of the goods described and that all particulars are
+                    true and correct.
+                  </TableCell>
+                  <TableCell
+                    sx={tableCellStyle}
+                    colSpan={allSizes?.length + 1}
+                    align="center"
+                    className="!font-bold "
+                  >
+                    For {data?.seller?.name} <br /> {data?.seller?.FLliscensee}-
+                    FL-2
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell
+                    className="!font-bold "
+                    colSpan={allSizes.length * 2 + 2}
+                    sx={tableCellStyle}
+                    align="center"
+                  >
+                    Important : As per Sec 139(A), Subsection(5C) and (5D) of
+                    Income Tax Act you are required to provide PAN to us. In
+                    case you do not provide PAN any liability, consequence,
+                    penal action etc. taken by Income Tax authorities will be
+                    your sole responsibility.
+                  </TableCell>
+                  <TableCell
+                    sx={tableCellStyle}
+                    colSpan={allSizes?.length + 1}
+                    align="center"
+                    className="!font-bold !text-sm !pt-12"
+                  >
+                    Authorised Signatory
                   </TableCell>
                 </TableRow>
               </TableBody>

@@ -3,10 +3,11 @@ import BillContext from "../../context/bill/billContext";
 import { DataGrid } from "@mui/x-data-grid";
 import "./bill.css";
 import CompanyContext from "../../context/company/companyContext";
+import { useNavigate } from "react-router-dom";
 
 const BillRecords = () => {
   const { getAllBills } = useContext(BillContext);
-  const {getCompany} = useContext(CompanyContext);
+  const { getCompany } = useContext(CompanyContext);
   const [bills, setBills] = useState([]);
   const [rows, setRows] = useState([]);
   const columns = [
@@ -71,6 +72,7 @@ const BillRecords = () => {
         const newRows = data.map((bill, index) => ({
           id: index + 1, // +1 to ensure id is unique and not 0-based
           sno: index + 1,
+          billId: bill._id,
           date: bill.createdAt.split("T")[0],
           billno: `BST${index + 1}`,
           lincensee: bill.customer.licensee,
@@ -84,6 +86,8 @@ const BillRecords = () => {
   useEffect(() => {
     getBills();
   }, []);
+
+  const navigate = useNavigate();
 
   return (
     <>
@@ -100,10 +104,11 @@ const BillRecords = () => {
           disableColumnMenu
           disableColumnSorting
           pageSizeOptions={[5, 10]}
-          onRowClick={(params) => {console.log(params.row.sno)}}
+          onRowClick={(params) => {
+            navigate(`/dashboard/bill/details/${params.row.billId}`);
+          }}
         />
       </div>
-      
     </>
   );
 };
