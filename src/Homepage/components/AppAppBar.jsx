@@ -13,7 +13,6 @@ import Drawer from "@mui/material/Drawer";
 import MenuIcon from "@mui/icons-material/Menu";
 import ToggleColorMode from "./ToggleColorMode";
 import { Link, useNavigate } from "react-router-dom";
-import UserContext from "../../context/user/userContext";
 import { Avatar } from "@mui/material";
 import { Dropdown } from "@mui/base/Dropdown";
 import { Menu } from "@mui/base/Menu";
@@ -27,15 +26,7 @@ const logoStyle = {
 
 function AppAppBar({ mode, toggleColorMode }) {
   const [open, setOpen] = useState(false);
-  const { getUser, user } = useContext(UserContext);
   const navigate = useNavigate();
-
-  const getData = async () => {
-    await getUser();
-  };
-  useEffect(() => {
-    getData();
-  }, []);
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -57,7 +48,7 @@ function AppAppBar({ mode, toggleColorMode }) {
 
   return (
     <AppBar
-      position="sticky"
+      position="fixed"
       sx={{
         boxShadow: 0,
         bgcolor: "transparent",
@@ -107,7 +98,7 @@ function AppAppBar({ mode, toggleColorMode }) {
               onClick={() => {
                 localStorage.getItem("token")
                   ? navigate("/dashboard")
-                  : navigate("home");
+                  : navigate("/home");
               }}
             />
             <Box
@@ -125,7 +116,7 @@ function AppAppBar({ mode, toggleColorMode }) {
                 onClick={() => {
                   localStorage.getItem("token")
                     ? navigate("/dashboard")
-                    : navigate("home");
+                    : navigate("/home");
                 }}
                 sx={{ py: "6px", px: "12px", mx: "1%" }}
               >
@@ -175,7 +166,7 @@ function AppAppBar({ mode, toggleColorMode }) {
             }}
           >
             {/* <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} /> */}
-            {user ? (
+            {localStorage.getItem("token") ? (
               <>
                 <MenuIntroduction />
               </>
