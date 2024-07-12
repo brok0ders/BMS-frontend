@@ -39,6 +39,7 @@ import AnalyticsPage from "./pages/Analytics/AnalyticsPage.jsx";
 import ProfilePage from "./pages/User/ProfilePage.jsx";
 import About from "./pages/About/About.jsx";
 import Contact from "./pages/Contact/Contact.jsx";
+import BillComponent from "./pages/Bill/BillComponent.jsx";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -49,8 +50,9 @@ const App = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact/>} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="/dashboard">
+            <Route path="bill/details/:id" element={<BillComponent />} />
             <Route index element={<AdminHome />} />
             <Route path="profile/:id" element={<ProfilePage />} />
             <Route path="bill/records" element={<BillRecords />} />
@@ -63,6 +65,7 @@ const App = () => {
             <Route path="analytics" element={<AnalyticsPage />} />
 
             <Route path="company/:companyType" element={<CompanySelection />} />
+            <Route path="bill/:id" element={<ProfilePage />} />
 
             <Route path="beer/create/:company" element={<BeerForm />} />
             <Route path="liquor/create/:company" element={<LiquorForm />} />

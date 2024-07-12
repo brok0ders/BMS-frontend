@@ -5,11 +5,8 @@ import { Box } from "@mui/material";
 import BillContext from "../../../context/bill/billContext";
 
 const LiquorChart = () => {
-  // Map data to extract Liquor names and sales
-
   const [liquorChartData, setliquorChartData] = useState([]);
   const { getLiquorChart } = useContext(BillContext);
-  // get the chart data
 
   const getliquorChartData = async () => {
     try {
@@ -17,15 +14,15 @@ const LiquorChart = () => {
       setliquorChartData(data);
     } catch (error) {
       console.log(error);
-      setliquorChartData();
+      setliquorChartData([]);
     }
   };
 
-  let sales;
-  let Liquors;
+  let sales = [];
+  let Liquors = [];
   if (liquorChartData && liquorChartData.length > 0) {
-    sales = liquorChartData?.map((item) => item.totalQuantity);
-    Liquors = liquorChartData?.map((item) => item.brand);
+    sales = liquorChartData.map((item) => item.totalQuantity);
+    Liquors = liquorChartData.map((item) => item.brand);
   }
 
   useEffect(() => {
@@ -41,7 +38,7 @@ const LiquorChart = () => {
         horizontal: false,
         borderRadius: 6,
         borderRadiusApplication: "end",
-        columnWidth: "45%",
+        columnWidth: "60",
         endingShape: "rounded",
       },
     },
@@ -50,6 +47,9 @@ const LiquorChart = () => {
     },
     xaxis: {
       categories: Liquors,
+      labels: {
+        show: false,
+      },
     },
     yaxis: {
       title: {

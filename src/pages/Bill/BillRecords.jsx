@@ -73,6 +73,7 @@ const BillRecords = () => {
         const newRows = data.map((bill, index) => ({
           id: index + 1, // +1 to ensure id is unique and not 0-based
           sno: index + 1,
+          billId: bill._id,
           date: bill.createdAt.split("T")[0],
           billno: `BST${index + 1}`,
           lincensee: bill.customer.licensee,
@@ -87,6 +88,8 @@ const BillRecords = () => {
   useEffect(() => {
     getBills();
   }, []);
+
+  const navigate = useNavigate();
 
   return (
     <>
@@ -120,7 +123,7 @@ const BillRecords = () => {
                 disableColumnSorting
                 pageSizeOptions={[5, 10]}
                 onRowClick={(params) => {
-                  console.log(params.row.sno);
+                  navigate(`/dashboard/bill/details/${params.row.billId}`);
                 }}
               />
             </div>
