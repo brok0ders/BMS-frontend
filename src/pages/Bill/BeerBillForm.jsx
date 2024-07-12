@@ -170,9 +170,11 @@ const BeerBillForm = () => {
     return words + " only";
   };
 
+  console.log(NumberToWordsConverter(12.00));
+
   const createBill2 = async () => {
-    setSpinner(true);
     try {
+      setSpinner(true);
       const customerData = await createCustomer({ licensee, shop, firm, pan });
       customerId = customerData.customer._id;
       const res = await createBill({
@@ -185,6 +187,7 @@ const BeerBillForm = () => {
         total: grandTotal,
         billType: "beer",
       });
+      
       setLicensee("");
       setShop("");
       setFirm("");

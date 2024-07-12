@@ -15,7 +15,7 @@ const MenuList = () => {
         <MenuCard menu={"bill/records"} image={bills} text={"Bills"} />
         <MenuCard menu={"company/beer"} image={beer} text={"Beers"} />
         <MenuCard menu={"company/liquor"} image={liquor} text={"Liquors"} />
-        <MenuCard menu={"company"} image={company} text={"Companies"} />
+        <MenuCard menu={"company?tab=all"} image={company} text={"Companies"} />
         <MenuCard menu={"analytics"} image={analytics} text={"Analytics"} />
       </div>
     </>
