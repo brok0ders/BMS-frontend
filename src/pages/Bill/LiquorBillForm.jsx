@@ -194,7 +194,7 @@ const LiquorBillForm = () => {
       setProducts([]);
       setGrandTotal(0);
       getLiquors();
-      navigate(`dashboard/bill/details/${res.bill}`);
+      navigate(`/dashboard/bill/details/${res.bill}`);
     } catch (e) {
     } finally {
       setSpinner(false);
