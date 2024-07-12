@@ -11,7 +11,9 @@ const AnalyticsCard = ({ name, value, icon }) => {
           <img className="w-full" src={icon} alt="" />
         </div>
       </div>
-      <h1 className="text-3xl font-semibold text-gray-600">{value}</h1>
+      <h1 className="text-xl md:text-3xl font-semibold text-gray-600">
+        {value}
+      </h1>
     </div>
   );
 };

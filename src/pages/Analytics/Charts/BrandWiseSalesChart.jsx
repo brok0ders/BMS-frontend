@@ -1,9 +1,8 @@
 import React from "react";
 import Chart from "react-apexcharts";
 
-const salesData = [283, 94];
-
-const BrandWiseSalesChart = () => {
+const BrandWiseSalesChart = ({ beer, liquor }) => {
+  const salesData = [beer, liquor];
   const series = salesData.map((item) => item);
 
   const options = {
@@ -28,6 +27,9 @@ const BrandWiseSalesChart = () => {
 
   return (
     <div className="py-5 pb-10">
+      <h3 className="text-center text-xl md:text-3xl pb-5">
+        Liquor v/s Beer Sales
+      </h3>
       <Chart options={options} series={series} type="pie" width="350" />
     </div>
   );

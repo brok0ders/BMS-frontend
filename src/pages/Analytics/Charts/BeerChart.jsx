@@ -48,7 +48,7 @@ const BeerChart = () => {
         horizontal: false,
         borderRadius: 6,
         borderRadiusApplication: "end",
-        columnWidth: "45%",
+        columnWidth: "60",
         endingShape: "rounded",
       },
     },

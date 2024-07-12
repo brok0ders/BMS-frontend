@@ -7,7 +7,6 @@ import BillContext from "../../../context/bill/billContext";
 const RevenueChart = () => {
   const [revenueChartData, setRevenueChartData] = useState([]);
   const { getRevenueChart } = useContext(BillContext);
-  // get the chart data
 
   const getrevenueChartData = async () => {
     try {
@@ -15,34 +14,38 @@ const RevenueChart = () => {
       setRevenueChartData(data);
     } catch (error) {
       console.log(error);
-      setRevenueChartData();
+      setRevenueChartData([]);
     }
   };
-  let revenue;
-  let months;
+
+  let revenue = [];
+  let months = [];
   if (revenueChartData && revenueChartData.length > 0) {
-    revenue = revenueChartData?.map((item) => item.revenue);
-    months = revenueChartData?.map((item) => item.month);
+    revenue = revenueChartData.map((item) => item.revenue);
+    months = revenueChartData.map((item) => item.month);
   }
 
   useEffect(() => {
     getrevenueChartData();
   }, []);
 
-  // Map data to extract months and revenue
-
   return (
     <>
       {revenueChartData.length > 0 && (
-        <Box sx={{ width: "100%", height: 400 }}>
+        <Box sx={{ width: "100%", height: 400, padding: "20px" }}>
           <h1 className="text-3xl font-semibold">Sales</h1>
           <LineChart
             borderRadius={6}
             xAxis={[
               {
-                id: "barCategories",
+                id: "months",
                 data: months,
                 scaleType: "band",
+              },
+            ]}
+            yAxis={[
+              {
+                id: "revenue",
               },
             ]}
             series={[
@@ -50,9 +53,9 @@ const RevenueChart = () => {
                 data: revenue,
                 color: "orange",
                 label: "Revenue",
-                barWidth: 0.5, // Reduce the width of the bars
               },
             ]}
+            margin={{ left: 60, right: 10, top: 20, bottom: 50 }}
           />
         </Box>
       )}

@@ -95,6 +95,20 @@ const BillState = ({ children }) => {
     }
   };
 
+  const getAnalyticsData = async () => {
+    try {
+      const config = {
+        headers: {
+          authorization: localStorage.getItem("token"),
+        },
+      };
+      const { data } = await API.get(`/bill/dashboard/analytics`, config);
+      return data?.data;
+    } catch (e) {
+      toast.error(e.response.data.message);
+    }
+  };
+
   const createBill = async ({
     excise,
     pno,
@@ -159,6 +173,7 @@ const BillState = ({ children }) => {
         getRevenueChart,
         getLiquorChart,
         getBeerChart,
+        getAnalyticsData,
       }}
     >
       {children}
