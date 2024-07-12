@@ -4,6 +4,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import "./bill.css";
 import CompanyContext from "../../context/company/companyContext";
 import Loader from "../../components/Layout/Loader";
+import { useNavigate } from "react-router-dom";
 
 const BillRecords = () => {
   const columns = [
