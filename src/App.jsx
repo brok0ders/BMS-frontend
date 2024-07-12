@@ -38,16 +38,18 @@ import CompanySelection from "./components/Company/CompanySelection.jsx";
 import AnalyticsPage from "./pages/Analytics/AnalyticsPage.jsx";
 import ProfilePage from "./pages/User/ProfilePage.jsx";
 import About from "./pages/About/About.jsx";
+import Contact from "./pages/Contact/Contact.jsx";
 
 const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route>
         <Route path="/" element={<Layout />}>
-          <Route path="" element={<HomePage />} />
+          <Route path="/home" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/about" element={<About/>}/>
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact/>} />
           <Route path="/dashboard">
             <Route index element={<AdminHome />} />
             <Route path="profile/:id" element={<ProfilePage />} />
