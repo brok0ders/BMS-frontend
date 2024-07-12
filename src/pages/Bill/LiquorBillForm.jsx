@@ -162,7 +162,6 @@ const LiquorBillForm = () => {
     return words + " only";
   };
 
-  console.log(NumberToWordsConverter(12.01)); // "twelve point zero one only"
 
   const [currentInput, setCurrentInput] = useState({ brand: "", sizes: [] });
 
@@ -178,8 +177,8 @@ const LiquorBillForm = () => {
   };
 
   const createBill2 = async () => {
-    setSpinner(true);
     try {
+      setSpinner(true);
       const customerData = await createCustomer({ licensee, shop, firm, pan });
       customerId = customerData.customer._id;
       const res = await createBill({
