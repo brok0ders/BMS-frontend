@@ -22,6 +22,7 @@ import BillContext from "../../context/bill/billContext";
 import UserContext from "../../context/user/userContext";
 import CompanyContext from "../../context/company/companyContext";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const LiquorBillForm = () => {
   const { company } = useParams();
@@ -47,15 +48,15 @@ const LiquorBillForm = () => {
   const [total, setTotal] = useState(0);
   const [grandTotal, setGrandTotal] = useState(0);
   const inputRefs = useRef({});
+  const [stocks, setStocks] = useState();
 
   let customerId = "";
 
-  const NumberToWordsConverter = () => {
-    const [num, setNum] = useState("");
-    const [words, setWords] = useState("");
+  const NumberToWordsConverter = (n) => {
+    // Ensuring the number has two decimal places
+    n = n.toFixed(2);
 
     const one = [
-      "",
       "one",
       "two",
       "three",
@@ -77,8 +78,6 @@ const LiquorBillForm = () => {
       "nineteen",
     ];
     const ten = [
-      "",
-      "",
       "twenty",
       "thirty",
       "forty",
@@ -89,151 +88,71 @@ const LiquorBillForm = () => {
       "ninety",
     ];
 
-    const numToWords = (n, s) => {
+    const numToWords = (num, suffix) => {
       let str = "";
-      if (n > 19) {
-        str += ten[Math.floor(n / 10)] + " " + one[n % 10];
-      } else {
-        str += one[n];
+      if (num > 19) {
+        str += ten[Math.floor(num / 10) - 2];
+        if (num % 10 > 0) {
+          str += " " + one[(num % 10) - 1];
+        }
+      } else if (num > 0) {
+        str += one[num - 1];
       }
 
-      if (n !== 0) {
-        str += " " + s;
+      if (num !== 0) {
+        str += " " + suffix;
       }
 
       return str.trim();
     };
 
-    const convertToWords = (n) => {
+    const convertToWords = (num) => {
       let output = "";
 
-      if (Math.floor(n / 100000) > 0) {
-        output += numToWords(Math.floor(n / 100000), "lakh");
-        n %= 100000;
+      if (Math.floor(num / 100000) > 0) {
+        output += numToWords(Math.floor(num / 100000), "lakh");
+        num %= 100000;
       }
 
-      if (Math.floor(n / 1000) > 0) {
-        output += " " + numToWords(Math.floor(n / 1000), "thousand");
-        n %= 1000;
+      if (Math.floor(num / 1000) > 0) {
+        output += " " + numToWords(Math.floor(num / 1000), "thousand");
+        num %= 1000;
       }
 
-      if (Math.floor(n / 100) > 0) {
-        output += " " + numToWords(Math.floor(n / 100), "hundred");
-        n %= 100;
+      if (Math.floor(num / 100) > 0) {
+        output += " " + numToWords(Math.floor(num / 100), "hundred");
+        num %= 100;
       }
 
-      if (n > 0) {
-        output += " and " + numToWords(n, "");
+      if (num > 0) {
+        if (output !== "") {
+          output += " and ";
+        }
+        output += numToWords(num, "");
       }
 
       return output.trim();
     };
-  };
 
-  const numberToWords = (num) => {
-    if (isNaN(num)) return "Not a number";
+    const parts = n.split(".");
+    const integerPart = parseInt(parts[0], 10);
+    const decimalPart = parseInt(parts[1], 10);
 
-    // Separate integer and decimal parts
-    const numStr = num.toString();
-    const parts = numStr.split(".");
-    let integerPart = parts[0];
-    let decimalPart = parts.length > 1 ? parts[1] : "";
+    let words = convertToWords(integerPart);
 
-    // Function to convert a number less than 1000 into words
-    const convertLessThan1000 = (number) => {
-      const units = [
-        "",
-        "one",
-        "two",
-        "three",
-        "four",
-        "five",
-        "six",
-        "seven",
-        "eight",
-        "nine",
-      ];
-      const teens = [
-        "ten",
-        "eleven",
-        "twelve",
-        "thirteen",
-        "fourteen",
-        "fifteen",
-        "sixteen",
-        "seventeen",
-        "eighteen",
-        "nineteen",
-      ];
-      const tens = [
-        "",
-        "",
-        "twenty",
-        "thirty",
-        "forty",
-        "fifty",
-        "sixty",
-        "seventy",
-        "eighty",
-        "ninety",
-      ];
-
-      let words = "";
-
-      if (number < 10) {
-        words += units[number];
-      } else if (number < 20) {
-        words += teens[number - 10];
-      } else if (number < 100) {
-        words += tens[Math.floor(number / 10)];
-        if (number % 10 > 0) {
-          words += " " + units[number % 10];
-        }
-      } else {
-        words += units[Math.floor(number / 100)] + " hundred";
-        if (number % 100 > 0) {
-          words += " " + convertLessThan1000(number % 100);
-        }
-      }
-
-      return words;
-    };
-    // Function to handle large numbers
-    const convertLargeNumber = (number) => {
-      const powers = ["", "thousand", "million", "billion"]; // Extend as needed
-
-      let words = "";
-      let count = 0;
-
-      while (number > 0) {
-        if (number % 1000 !== 0) {
-          words =
-            convertLessThan1000(number % 1000) +
-            " " +
-            powers[count] +
-            " " +
-            words;
-        }
-        number = Math.floor(number / 1000);
-        count++;
-      }
-
-      return words.trim();
-    };
-
-    // Convert the integer part
-    let words = convertLargeNumber(parseInt(integerPart, 10));
-
-    // Convert the decimal part
-    if (decimalPart !== "") {
+    if (decimalPart > 0) {
       words += " point";
-      for (let i = 0; i < decimalPart.length; i++) {
-        words += " " + convertLessThan1000(parseInt(decimalPart[i], 10));
+      for (const digit of parts[1]) {
+        words += ` ${one[digit - 1]}`;
       }
     }
-
-    return words;
+    if (!words) {
+      return "zero";
+    }
+    return words + " only";
   };
+
+
 
   const [currentInput, setCurrentInput] = useState({ brand: "", sizes: [] });
 
@@ -462,8 +381,6 @@ const LiquorBillForm = () => {
     }
   };
 
-  useEffect(() => {}, [products.length]);
-
   return (
     <Box
       noValidate
@@ -679,7 +596,7 @@ const LiquorBillForm = () => {
               <TableCell></TableCell>
               <TableCell></TableCell>
               {allSizes.map((size) => (
-                <TableCell key={`qty-${size}`} align="right">
+                <TableCell key={`qty-${size}`} align="center">
                   {size === "750ml"
                     ? size + " (Q)"
                     : size === "375ml"
@@ -690,7 +607,7 @@ const LiquorBillForm = () => {
                 </TableCell>
               ))}
               {allSizes.map((size) => (
-                <TableCell key={`price-${size}`} align="right">
+                <TableCell key={`price-${size}`} align="center">
                   {size === "750ml"
                     ? size + " (Q)"
                     : size === "375ml"
@@ -711,16 +628,16 @@ const LiquorBillForm = () => {
                   <TableCell>{i + 1}</TableCell>
                   <TableCell>{p.brand}</TableCell>
                   {allSizes.map((size) => (
-                    <TableCell key={`qty-${size}-${i}`} align="right">
+                    <TableCell key={`qty-${size}-${i}`} align="center">
                       {p.sizes[size]?.quantity || "-"}
                     </TableCell>
                   ))}
                   {allSizes.map((size) => (
-                    <TableCell key={`price-${size}-${i}`} align="right">
-                      {p.sizes[size]?.price || "-"}
+                    <TableCell key={`price-${size}-${i}`} align="center">
+                      {p.sizes[size]?.price.toFixed(2) || "-"}
                     </TableCell>
                   ))}
-                  <TableCell align="right" className="w-0">
+                  <TableCell align="center" className="w-0">
                     <Button
                       className="text-red-500 hover:text-red-700"
                       onClick={() => handleDeleteProduct(i)}
@@ -735,7 +652,7 @@ const LiquorBillForm = () => {
                 Total
               </TableCell>
               {allSizes.map((size) => (
-                <TableCell key={`qty-total-${size}`} align="right">
+                <TableCell key={`qty-total-${size}`} align="center">
                   {processedProducts.reduce(
                     (acc, p) => acc + (p.sizes[size]?.quantity || 0),
                     0
@@ -743,9 +660,9 @@ const LiquorBillForm = () => {
                 </TableCell>
               ))}
               {allSizes.map((size) => (
-                <TableCell key={`price-total-${size}`} align="right">
+                <TableCell key={`price-total-${size}`} align="center">
                   {processedProducts.reduce(
-                    (acc, p) => acc + (p.sizes[size]?.price || 0),
+                    (acc, p) => acc + (p.sizes[size]?.price.toFixed(2) || 0),
                     0
                   )}
                 </TableCell>
@@ -762,7 +679,7 @@ const LiquorBillForm = () => {
           id="filled-read-only-input"
           label="Grand Total"
           defaultValue="0"
-          value={grandTotal}
+          value={grandTotal.toFixed(2)}
           InputProps={{
             readOnly: true,
           }}
@@ -773,10 +690,10 @@ const LiquorBillForm = () => {
       <Box className="px-2 py-2 m-4 flex justify-end">
         <TextField
           id="filled-read-only-input"
-          label="Grand Total"
-          defaultValue="0"
-          fullWidth
-          value={numberToWords(grandTotal)}
+          label="Grand Total (in words)"
+          defaultValue="zero"
+          sx = {{width: "50vw"}}
+          value={NumberToWordsConverter(grandTotal)}
           InputProps={{
             readOnly: true,
           }}

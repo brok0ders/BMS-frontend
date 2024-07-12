@@ -57,9 +57,109 @@ const BeerBillForm = () => {
   const getBeers = async () => {
     const res = await getBeerCom({ id: company });
     setBeerBrandData(res.beer);
-    // console.log(res);
-    // calculateQuantity();
   };
+
+  const NumberToWordsConverter = (n) => {
+    // Ensuring the number has two decimal places
+    n = n.toFixed(2);
+
+    const one = [
+      "one",
+      "two",
+      "three",
+      "four",
+      "five",
+      "six",
+      "seven",
+      "eight",
+      "nine",
+      "ten",
+      "eleven",
+      "twelve",
+      "thirteen",
+      "fourteen",
+      "fifteen",
+      "sixteen",
+      "seventeen",
+      "eighteen",
+      "nineteen",
+    ];
+    const ten = [
+      "twenty",
+      "thirty",
+      "forty",
+      "fifty",
+      "sixty",
+      "seventy",
+      "eighty",
+      "ninety",
+    ];
+
+    const numToWords = (num, suffix) => {
+      let str = "";
+      if (num > 19) {
+        str += ten[Math.floor(num / 10) - 2];
+        if (num % 10 > 0) {
+          str += " " + one[(num % 10) - 1];
+        }
+      } else if (num > 0) {
+        str += one[num - 1];
+      }
+
+      if (num !== 0) {
+        str += " " + suffix;
+      }
+
+      return str.trim();
+    };
+
+    const convertToWords = (num) => {
+      let output = "";
+
+      if (Math.floor(num / 100000) > 0) {
+        output += numToWords(Math.floor(num / 100000), "lakh");
+        num %= 100000;
+      }
+
+      if (Math.floor(num / 1000) > 0) {
+        output += " " + numToWords(Math.floor(num / 1000), "thousand");
+        num %= 1000;
+      }
+
+      if (Math.floor(num / 100) > 0) {
+        output += " " + numToWords(Math.floor(num / 100), "hundred");
+        num %= 100;
+      }
+
+      if (num > 0) {
+        if (output !== "") {
+          output += " and ";
+        }
+        output += numToWords(num, "");
+      }
+
+      return output.trim();
+    };
+
+    const parts = n.split(".");
+    const integerPart = parseInt(parts[0], 10);
+    const decimalPart = parseInt(parts[1], 10);
+
+    let words = convertToWords(integerPart);
+
+    if (decimalPart > 0) {
+      words += " point";
+      for (const digit of parts[1]) {
+        words += ` ${one[digit - 1]}`;
+      }
+    }
+    if (!words) {
+      return "zero";
+    }
+    return words + " only";
+  };
+
+
 
   const createBill2 = async () => {
     const customerData = await createCustomer({ licensee, shop, firm, pan });
@@ -467,93 +567,7 @@ const BeerBillForm = () => {
         )}
       </Box>
 
-      {/* Product Details */}
-
-      {/* <TableContainer className="py-12">
-        <h1 className="md:text-3xl text-2xl font-semibold text-slate-700 py-5">
-          Added Products
-        </h1>
-        <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-          <TableHead>
-            <TableRow>
-              <TableCell>S.No.</TableCell>
-              <TableCell>Brand Name</TableCell>
-              <TableCell align="center" colSpan={allSizes.length}>
-                Quantity
-              </TableCell>
-              <TableCell align="center" colSpan={allSizes.length}>
-                Price
-              </TableCell>
-              <TableCell align="center">Action</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
-              {allSizes.map((size) => (
-                <TableCell key={`qty-${size}`} align="right">
-                  {size}
-                </TableCell>
-              ))}
-              {allSizes.map((size) => (
-                <TableCell key={`price-${size}`} align="right">
-                  {size}
-                </TableCell>
-              ))}
-              <TableCell></TableCell>
-            </TableRow>
-          </TableHead>
-
-          <TableBody>
-            {products.length > 0 &&
-              products.map((p, i) => (
-                <TableRow key={i}>
-                  <TableCell>{i + 1}</TableCell>
-                  <TableCell>{p.brand}</TableCell>
-                  {allSizes.map((size) => (
-                    <TableCell key={`qty-${size}-${i}`} align="right">
-                      {p.sizes[size]?.quantity || "-"}
-                    </TableCell>
-                  ))}
-                  {allSizes.map((size) => (
-                    <TableCell key={`price-${size}-${i}`} align="right">
-                      {p.sizes[size]?.price || "-"}
-                    </TableCell>
-                  ))}
-                  <TableCell align="right" className="w-0">
-                    <Button
-                      className="text-red-500 hover:text-red-700"
-                      onClick={() => handleDeleteProduct(i)}
-                    >
-                      <Delete />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            <TableRow>
-              <TableCell colSpan={2} sx={{ fontWeight: 700 }}>
-                Total
-              </TableCell>
-              {allSizes.map((size) => (
-                <TableCell key={`qty-total-${size}`} align="right">
-                  {processedProducts.reduce(
-                    (acc, p) => acc + (p.sizes[size]?.quantity || 0),
-                    0
-                  )}
-                </TableCell>
-              ))}
-              {allSizes.map((size) => (
-                <TableCell key={`price-total-${size}`} align="right">
-                  {processedProducts.reduce(
-                    (acc, p) => acc + (p.sizes[size]?.price || 0),
-                    0
-                  )}
-                </TableCell>
-              ))}
-              <TableCell></TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </TableContainer> */}
+     
       <TableContainer className="py-12">
         <h1 className="md:text-3xl text-2xl font-semibold text-slate-700 py-5">
           Added Products
@@ -575,7 +589,7 @@ const BeerBillForm = () => {
               <TableCell></TableCell>
               <TableCell></TableCell>
               {allSizes.map((size) => (
-                <TableCell key={`qty-${size}`} align="right">
+                <TableCell key={`qty-${size}`} align="center">
                   {size === "750ml"
                     ? size + " (Q)"
                     : size === "375ml"
@@ -586,7 +600,7 @@ const BeerBillForm = () => {
                 </TableCell>
               ))}
               {allSizes.map((size) => (
-                <TableCell key={`price-${size}`} align="right">
+                <TableCell key={`price-${size}`} align="center">
                   {size === "750ml"
                     ? size + " (Q)"
                     : size === "375ml"
@@ -607,16 +621,16 @@ const BeerBillForm = () => {
                   <TableCell>{i + 1}</TableCell>
                   <TableCell>{p.brand}</TableCell>
                   {allSizes.map((size) => (
-                    <TableCell key={`qty-${size}-${i}`} align="right">
+                    <TableCell key={`qty-${size}-${i}`} align="center">
                       {p.sizes[size]?.quantity || "-"}
                     </TableCell>
                   ))}
                   {allSizes.map((size) => (
-                    <TableCell key={`price-${size}-${i}`} align="right">
-                      {p.sizes[size]?.price || "-"}
+                    <TableCell key={`price-${size}-${i}`} align="center">
+                      {p.sizes[size]?.price.toFixed(2) || "-"}
                     </TableCell>
                   ))}
-                  <TableCell align="right" className="w-0">
+                  <TableCell align="center" className="w-0">
                     <Button
                       className="text-red-500 hover:text-red-700"
                       onClick={() => handleDeleteProduct(i)}
@@ -631,7 +645,7 @@ const BeerBillForm = () => {
                 Total
               </TableCell>
               {allSizes.map((size) => (
-                <TableCell key={`qty-total-${size}`} align="right">
+                <TableCell key={`qty-total-${size}`} align="center">
                   {processedProducts.reduce(
                     (acc, p) => acc + (p.sizes[size]?.quantity || 0),
                     0
@@ -639,9 +653,9 @@ const BeerBillForm = () => {
                 </TableCell>
               ))}
               {allSizes.map((size) => (
-                <TableCell key={`price-total-${size}`} align="right">
+                <TableCell key={`price-total-${size}`} align="center">
                   {processedProducts.reduce(
-                    (acc, p) => acc + (p.sizes[size]?.price || 0),
+                    (acc, p) => acc + (p.sizes[size]?.price.toFixed(2) || 0),
                     0
                   )}
                 </TableCell>
@@ -658,7 +672,21 @@ const BeerBillForm = () => {
           id="filled-read-only-input"
           label="Grand Total"
           defaultValue="0"
-          value={grandTotal}
+          value={grandTotal.toFixed(2)}
+          InputProps={{
+            readOnly: true,
+          }}
+          variant="filled"
+        />
+      </Box>
+
+      <Box className="px-2 py-2 m-4 flex justify-end">
+        <TextField
+          id="filled-read-only-input"
+          label="Grand Total (in words)"
+          defaultValue="zero"
+          sx = {{width: "50vw"}}
+          value={NumberToWordsConverter(grandTotal)}
           InputProps={{
             readOnly: true,
           }}
