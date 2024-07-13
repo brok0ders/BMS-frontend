@@ -119,17 +119,17 @@ const LiquorBillForm = () => {
       let output = "";
 
       if (Math.floor(num / 100000) > 0) {
-        output += numToWords(Math.floor(num / 100000), "lakh");
+        output += numToWords(Math.floor(num / 100000), "Lakh");
         num %= 100000;
       }
 
       if (Math.floor(num / 1000) > 0) {
-        output += " " + numToWords(Math.floor(num / 1000), "thousand");
+        output += " " + numToWords(Math.floor(num / 1000), "Thousand");
         num %= 1000;
       }
 
       if (Math.floor(num / 100) > 0) {
-        output += " " + numToWords(Math.floor(num / 100), "hundred");
+        output += " " + numToWords(Math.floor(num / 100), "Hundred");
         num %= 100;
       }
 
@@ -161,7 +161,6 @@ const LiquorBillForm = () => {
     }
     return words + " only";
   };
-
 
   const [currentInput, setCurrentInput] = useState({ brand: "", sizes: [] });
 
@@ -226,14 +225,81 @@ const LiquorBillForm = () => {
     createBill2();
   };
 
+  // const handleInputChange = (e) => {
+  //   e.preventDefault();
+  //   const { name, value } = e.target;
+  //   const [type, size] = name.split("-");
+  //   for (let i = 0; i < stocks.length; i++) {
+  //     if (stocks[i].size === size) {
+  //       if (stocks[i].quantity < value) {
+  //         toast.warning(`Stock for ${size} is only ${stocks[i].quantity}`);
+  //       }
+  //     }
+  //   }
+
+  //   // Prevent negative values and non-numeric inputs
+  //   if (value !== "" && (isNaN(value) || parseInt(value) < 0)) return;
+
+  //   setCurrentInput((prevInput) => {
+  //     const existingSizeIndex = prevInput.sizes.findIndex(
+  //       (s) => s.size === size
+  //     );
+
+  //     if (existingSizeIndex > -1) {
+  //       const updatedSizes = [...prevInput.sizes];
+  //       updatedSizes[existingSizeIndex] = {
+  //         ...updatedSizes[existingSizeIndex],
+  //         [type]: value === "" ? "" : parseInt(value),
+  //       };
+
+  //       if (type === "quantity") {
+  //         // Adjust price based on quantity if necessary
+  //         const selectedBrand = liquorBrandData.find(
+  //           (brand) => brand.liquor.brandName === currentInput.brand
+  //         );
+  //         const selectedSize = selectedBrand.liquor.sizes.find(
+  //           (s) => s.size === size
+  //         );
+
+  //         if (selectedSize) {
+  //           const basePrice = selectedSize.price * parseInt(value);
+  //           updatedSizes[existingSizeIndex].price = basePrice;
+  //         }
+  //       }
+
+  //       return { ...prevInput, sizes: updatedSizes };
+  //     } else {
+  //       const newSize = {
+  //         size: size,
+  //         [type]: value === "" ? "" : parseInt(value),
+  //       };
+
+  //       if (type === "quantity") {
+  //         // Adjust price based on quantity if necessary
+  //         const selectedBrand = liquorBrandData.find(
+  //           (brand) => brand.liquor.brandName === currentInput.brand
+  //         );
+  //         const selectedSize = selectedBrand.liquor.sizes.find(
+  //           (s) => s.size === size
+  //         );
+
+  //         if (selectedSize) {
+  //           const basePrice = selectedSize.price * parseInt(value);
+  //           newSize.price = basePrice;
+  //         }
+  //       }
+
+  //       return { ...prevInput, sizes: [...prevInput.sizes, newSize] };
+  //     }
+  //   });
+  // };
+
   const handleInputChange = (e) => {
     e.preventDefault();
     const { name, value } = e.target;
     const [type, size] = name.split("-");
-    // value = parseFloat(value);
-    // Prevent negative values and non-numeric inputs
-    if (value === "" || isNaN(value) || parseInt(value) < 0) {
-    }
+
+    // Validate stock quantity
     for (let i = 0; i < stocks.length; i++) {
       if (stocks[i].size === size) {
         if (stocks[i].quantity < value) {
@@ -241,6 +307,9 @@ const LiquorBillForm = () => {
         }
       }
     }
+
+    // Prevent negative values and non-numeric inputs
+    if (value !== "" && (isNaN(value) || parseInt(value) < 0)) return;
 
     setCurrentInput((prevInput) => {
       const existingSizeIndex = prevInput.sizes.findIndex(
@@ -251,11 +320,10 @@ const LiquorBillForm = () => {
         const updatedSizes = [...prevInput.sizes];
         updatedSizes[existingSizeIndex] = {
           ...updatedSizes[existingSizeIndex],
-          [type]: value === "" ? 0 : parseInt(value),
+          [type]: value === "" ? 0 : parseInt(value), // Convert to integer
         };
 
         if (type === "quantity") {
-          // Adjust price based on quantity if necessary
           const selectedBrand = liquorBrandData.find(
             (brand) => brand.liquor.brandName === currentInput.brand
           );
@@ -265,7 +333,7 @@ const LiquorBillForm = () => {
 
           if (selectedSize) {
             const basePrice =
-              selectedSize.price * isNaN(parseInt(value)) ? 0 : parseInt(value);
+              selectedSize.price * (value === "" ? 0 : parseInt(value));
             updatedSizes[existingSizeIndex].price = basePrice;
           }
         }
@@ -274,11 +342,10 @@ const LiquorBillForm = () => {
       } else {
         const newSize = {
           size: size,
-          [type]: value === "" ? 0 : parseInt(value),
+          [type]: value === "" ? 0 : parseInt(value), // Convert to integer
         };
 
         if (type === "quantity") {
-          // Adjust price based on quantity if necessary
           const selectedBrand = liquorBrandData.find(
             (brand) => brand.liquor.brandName === currentInput.brand
           );
@@ -287,7 +354,8 @@ const LiquorBillForm = () => {
           );
 
           if (selectedSize) {
-            const basePrice = selectedSize.price * parseInt(value);
+            const basePrice =
+              selectedSize.price * (value === "" ? 0 : parseInt(value));
             newSize.price = basePrice;
           }
         }
@@ -313,7 +381,6 @@ const LiquorBillForm = () => {
       );
 
       if (existingProductIndex > -1) {
-        // Subtract previous values
         const existingProduct = products[existingProductIndex];
         existingProduct.sizes.forEach((size, i) => {
           h -= size.quantity * sizes[i].hologram;
@@ -323,13 +390,11 @@ const LiquorBillForm = () => {
           t -= size.price;
         });
 
-        // Update existing product
         const updatedProducts = [...products];
         updatedProducts[existingProductIndex].sizes = currentInput.sizes;
 
         setProducts(updatedProducts);
       } else {
-        // Add new product
         setProducts((prevProducts) => [
           ...prevProducts,
           {
@@ -339,16 +404,22 @@ const LiquorBillForm = () => {
         ]);
       }
 
-      // Add current values
       currentInput.sizes?.forEach((size, i) => {
-        h += size.quantity * sizes[i].hologram;
-        p += size.quantity * sizes[i].pratifal;
-        w += size.quantity * sizes[i].wep;
-        q += size.quantity;
-        t += size.price;
+        if (size.quantity && size.quantity !== 0) {
+          // Check if the quantity is not empty and not zero
+          h += isNaN(size.quantity * sizes[i].hologram)
+            ? 0
+            : parseInt(size.quantity) * sizes[i].hologram;
+          p += isNaN(size.quantity * sizes[i].pratifal)
+            ? 0
+            : parseInt(size.quantity) * sizes[i].pratifal;
+          w += isNaN(size.quantity * sizes[i].wep)
+            ? 0
+            : parseInt(size.quantity) * sizes[i].wep;
+          q += isNaN(size.quantity) ? 0 : parseInt(size.quantity);
+          t += isNaN(size.price) ? 0 : parseInt(size.price);
+        }
       });
-
-      setCurrentInput({ brand: "", sizes: [] });
 
       setFholo(h);
       setFpratifal(p);
@@ -356,26 +427,16 @@ const LiquorBillForm = () => {
       setTotalQuantity(q);
       setTotal(t);
 
-      // All taxes calculation
       const vatTax = t * (12 / 100);
       const cess = ((t + vatTax) * 2) / 100;
-
       const profit = q * 50;
-
       const taxTotal = t + vatTax + cess + w + h + profit + p;
       const tcs = (taxTotal * 1) / 100;
       setGrandTotal(taxTotal + tcs);
-      // console.log("total quantity: " + q);
-      // console.log("total price: " + t);
-      // console.log("vatTax: " + vatTax);
-      // console.log("cess: " + cess);
-      // console.log("final wep is: " + w);
-      // console.log("final holo is: " + h);
-      // console.log("Profit: " + profit);
-      // console.log("final pratifal is: " + p);
-      // console.log("Total tax: " + taxTotal);
-      // console.log("tcs: " + tcs);
+
+      setCurrentInput({ brand: "", sizes: [] });
     } catch (e) {
+      console.error(e);
     } finally {
       setSpinner2(false);
     }
@@ -580,7 +641,7 @@ const LiquorBillForm = () => {
                                   value={
                                     currentInput?.sizes.find(
                                       (s) => s.size === size?.size
-                                    )?.quantity ?? ""
+                                    )?.quantity || ""
                                   }
                                   label={`Quantity ${
                                     size?.size === "750ml"
@@ -595,13 +656,14 @@ const LiquorBillForm = () => {
                                   onChange={handleInputChange}
                                   variant="outlined"
                                   type="number"
+                                  InputProps={{ inputProps: { min: 0 } }} // Ensure minimum value is 0
                                 />
                                 <TextField
                                   fullWidth
                                   value={
                                     currentInput?.sizes
                                       .find((s) => s.size === size?.size)
-                                      ?.price.toFixed(2) || ""
+                                      ?.price.toFixed(2) || 0
                                   }
                                   label={`Price ${
                                     size?.size === "750ml"

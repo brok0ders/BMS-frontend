@@ -22,7 +22,7 @@ import BeerContext from "../../context/beer/beerContext";
 import BillContext from "../../context/bill/billContext";
 import UserContext from "../../context/user/userContext";
 import CompanyContext from "../../context/company/companyContext";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import Loader from "../../components/Layout/Loader";
 import Spinner from "../../components/Layout/Spinner";
@@ -55,7 +55,7 @@ const BeerBillForm = () => {
   const [loading, setLoading] = useState(false);
   const [spinner, setSpinner] = useState(false);
   const [spinner2, setSpinner2] = useState(false);
-
+  const navigate = useNavigate();
   let customerId = "";
   const [currentInput, setCurrentInput] = useState({ brand: "", sizes: [] });
 
@@ -75,35 +75,35 @@ const BeerBillForm = () => {
     n = n.toFixed(2);
 
     const one = [
-      "one",
-      "two",
-      "three",
-      "four",
-      "five",
-      "six",
-      "seven",
-      "eight",
-      "nine",
-      "ten",
-      "eleven",
-      "twelve",
-      "thirteen",
-      "fourteen",
-      "fifteen",
-      "sixteen",
-      "seventeen",
-      "eighteen",
-      "nineteen",
+      "One",
+      "Two",
+      "Three",
+      "Four",
+      "Five",
+      "Six",
+      "Seven",
+      "Eight",
+      "Nine",
+      "Ten",
+      "Eleven",
+      "Twelve",
+      "Thirteen",
+      "Fourteen",
+      "Fifteen",
+      "Sixteen",
+      "Seventeen",
+      "Eighteen",
+      "Tineteen",
     ];
     const ten = [
-      "twenty",
-      "thirty",
-      "forty",
-      "fifty",
-      "sixty",
-      "seventy",
-      "eighty",
-      "ninety",
+      "Twenty",
+      "Thirty",
+      "Forty",
+      "Fifty",
+      "Sixty",
+      "Seventy",
+      "Eighty",
+      "Ninety",
     ];
 
     const numToWords = (num, suffix) => {
@@ -128,17 +128,17 @@ const BeerBillForm = () => {
       let output = "";
 
       if (Math.floor(num / 100000) > 0) {
-        output += numToWords(Math.floor(num / 100000), "lakh");
+        output += numToWords(Math.floor(num / 100000), "Lakh");
         num %= 100000;
       }
 
       if (Math.floor(num / 1000) > 0) {
-        output += " " + numToWords(Math.floor(num / 1000), "thousand");
+        output += " " + numToWords(Math.floor(num / 1000), "Thousand");
         num %= 1000;
       }
 
       if (Math.floor(num / 100) > 0) {
-        output += " " + numToWords(Math.floor(num / 100), "hundred");
+        output += " " + numToWords(Math.floor(num / 100), "Hundred");
         num %= 100;
       }
 
@@ -159,18 +159,18 @@ const BeerBillForm = () => {
     let words = convertToWords(integerPart);
 
     if (decimalPart > 0) {
-      words += " point";
+      words += " Point";
       for (const digit of parts[1]) {
         words += ` ${one[digit - 1]}`;
       }
     }
     if (!words) {
-      return "zero";
+      return "Zero";
     }
-    return words + " only";
+    return words + " Only";
   };
 
-  console.log(NumberToWordsConverter(12.00));
+  // console.log(NumberToWordsConverter(12.0));
 
   const createBill2 = async () => {
     try {
@@ -187,7 +187,7 @@ const BeerBillForm = () => {
         total: grandTotal,
         billType: "beer",
       });
-      
+
       setLicensee("");
       setShop("");
       setFirm("");
@@ -196,7 +196,7 @@ const BeerBillForm = () => {
       setPno("");
       setProducts([]);
       setGrandTotal(0);
-      getBeers();
+      navigate(`/dashboard/bill/details/${res.bill}`);
     } catch (e) {
     } finally {
       setSpinner(false);
@@ -225,6 +225,8 @@ const BeerBillForm = () => {
     e.preventDefault();
     const { name, value } = e.target;
     const [type, size] = name.split("-");
+
+    // Validate stock quantity
     for (let i = 0; i < stocks.length; i++) {
       if (stocks[i].size === size) {
         if (stocks[i].quantity < value) {
@@ -245,11 +247,10 @@ const BeerBillForm = () => {
         const updatedSizes = [...prevInput.sizes];
         updatedSizes[existingSizeIndex] = {
           ...updatedSizes[existingSizeIndex],
-          [type]: value === "" ? "" : parseInt(value),
+          [type]: value === "" ? 0 : parseInt(value), // Convert to integer
         };
 
         if (type === "quantity") {
-          // Adjust price based on quantity if necessary
           const selectedBrand = beerBrandData.find(
             (brand) => brand.beer.brandName === currentInput.brand
           );
@@ -258,7 +259,8 @@ const BeerBillForm = () => {
           );
 
           if (selectedSize) {
-            const basePrice = selectedSize.price * parseInt(value);
+            const basePrice =
+              selectedSize.price * (value === "" ? 0 : parseInt(value));
             updatedSizes[existingSizeIndex].price = basePrice;
           }
         }
@@ -267,11 +269,10 @@ const BeerBillForm = () => {
       } else {
         const newSize = {
           size: size,
-          [type]: value === "" ? "" : parseInt(value),
+          [type]: value === "" ? 0 : parseInt(value), // Convert to integer
         };
 
         if (type === "quantity") {
-          // Adjust price based on quantity if necessary
           const selectedBrand = beerBrandData.find(
             (brand) => brand.beer.brandName === currentInput.brand
           );
@@ -280,7 +281,8 @@ const BeerBillForm = () => {
           );
 
           if (selectedSize) {
-            const basePrice = selectedSize.price * parseInt(value);
+            const basePrice =
+              selectedSize.price * (value === "" ? 0 : parseInt(value));
             newSize.price = basePrice;
           }
         }
@@ -294,6 +296,7 @@ const BeerBillForm = () => {
     setSpinner2(true);
     try {
       e.preventDefault();
+
       let h = fholo;
       let p = fpratifal;
       let w = fwep;
@@ -305,7 +308,6 @@ const BeerBillForm = () => {
       );
 
       if (existingProductIndex > -1) {
-        // Subtract previous values
         const existingProduct = products[existingProductIndex];
         existingProduct.sizes.forEach((size, i) => {
           h -= size.quantity * sizes[i].hologram;
@@ -315,16 +317,11 @@ const BeerBillForm = () => {
           t -= size.price;
         });
 
-        // Update existing product
         const updatedProducts = [...products];
         updatedProducts[existingProductIndex].sizes = currentInput.sizes;
-        console.log(
-          "updated products: ",
-          updatedProducts[existingProductIndex]
-        );
+
         setProducts(updatedProducts);
       } else {
-        // Add new product
         setProducts((prevProducts) => [
           ...prevProducts,
           {
@@ -334,16 +331,22 @@ const BeerBillForm = () => {
         ]);
       }
 
-      // Add current values
       currentInput.sizes?.forEach((size, i) => {
-        h += size.quantity * sizes[i].hologram;
-        p += size.quantity * sizes[i].pratifal;
-        w += size.quantity * sizes[i].wep;
-        q += size.quantity;
-        t += size.price;
+        if (size.quantity && size.quantity !== 0) {
+          // Check if the quantity is not empty and not zero
+          h += isNaN(size.quantity * sizes[i].hologram)
+            ? 0
+            : parseInt(size.quantity) * sizes[i].hologram;
+          p += isNaN(size.quantity * sizes[i].pratifal)
+            ? 0
+            : parseInt(size.quantity) * sizes[i].pratifal;
+          w += isNaN(size.quantity * sizes[i].wep)
+            ? 0
+            : parseInt(size.quantity) * sizes[i].wep;
+          q += isNaN(size.quantity) ? 0 : parseInt(size.quantity);
+          t += isNaN(size.price) ? 0 : parseInt(size.price);
+        }
       });
-
-      setCurrentInput({ brand: "", sizes: [] });
 
       setFholo(h);
       setFpratifal(p);
@@ -351,26 +354,16 @@ const BeerBillForm = () => {
       setTotalQuantity(q);
       setTotal(t);
 
-      // All taxes calculation
       const vatTax = t * (12 / 100);
       const cess = ((t + vatTax) * 2) / 100;
-
       const profit = q * 50;
-
       const taxTotal = t + vatTax + cess + w + h + profit + p;
       const tcs = (taxTotal * 1) / 100;
       setGrandTotal(taxTotal + tcs);
-      // console.log("total quantity: " + q);
-      // console.log("total price: " + t);
-      // console.log("vatTax: " + vatTax);
-      // console.log("cess: " + cess);
-      // console.log("final wep is: " + w);
-      // console.log("final holo is: " + h);
-      // console.log("Profit: " + profit);
-      // console.log("final pratifal is: " + p);
-      // console.log("Total tax: " + taxTotal);
-      // console.log("tcs: " + tcs);
+
+      setCurrentInput({ brand: "", sizes: [] });
     } catch (e) {
+      console.error(e);
     } finally {
       setSpinner2(false);
     }
@@ -568,7 +561,7 @@ const BeerBillForm = () => {
                                 key={size?.size}
                                 className="flex flex-col gap-5"
                               >
-                                <TextField
+                                {/* <TextField
                                   fullWidth
                                   value={
                                     currentInput?.sizes.find(
@@ -595,18 +588,44 @@ const BeerBillForm = () => {
                                   type="number"
                                   focused={false}
                                   inputProps={{ readOnly: true }}
+                                /> */}
+
+                                <TextField
+                                  fullWidth
+                                  value={
+                                    currentInput?.sizes.find(
+                                      (s) => s.size === size?.size
+                                    )?.quantity || ""
+                                  }
+                                  label={`Quantity ${size?.size}`}
+                                  name={`quantity-${size?.size}`}
+                                  onChange={handleInputChange}
+                                  variant="outlined"
+                                  type="number"
+                                  InputProps={{ inputProps: { min: 0 } }} // Ensure minimum value is 0
+                                />
+                                <TextField
+                                  fullWidth
+                                  value={
+                                    currentInput?.sizes
+                                      .find((s) => s.size === size?.size)
+                                      ?.price.toFixed(2) || 0
+                                  }
+                                  label={`Price ${size?.size}`}
+                                  name={`price-${size?.size}`}
+                                  onChange={handleInputChange}
+                                  variant="outlined"
+                                  type="number"
+                                  focused={false}
+                                  inputProps={{ readOnly: true }}
                                 />
                               </Box>
                             ))}
                       </Box>
                       <Box className="px-2 py-2 m-4 flex justify-end">
-                        {spinner2 ? (
-                          <Button variant="contained" type="submit">
-                            Add Product
-                          </Button>
-                        ) : (
-                          <Button variant="contained">{<Spinner />}</Button>
-                        )}
+                        <Button variant="contained" type="submit">
+                          Add Product
+                        </Button>
                       </Box>
                     </>
                   )}
