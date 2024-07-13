@@ -22,6 +22,7 @@ import AdminHome from "./pages/Home/AdminHome.jsx";
 const Layout = () => {
   return (
     <div className="pt-24">
+      <ScrollToTop />
       <Navbar />
       <Outlet />
     </div>
@@ -41,6 +42,7 @@ import About from "./pages/About/About.jsx";
 import Contact from "./pages/Contact/Contact.jsx";
 import BillComponent from "./pages/Bill/BillComponent.jsx";
 import BillDetails from "./pages/Bill/BillDetails.jsx";
+import ScrollToTop from "./components/ScrollToTop.jsx";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -59,6 +61,7 @@ const App = () => {
           path="/"
           element={
             <>
+              <ScrollToTop />
               <Navbar />
               <HomePage />
             </>

@@ -245,7 +245,7 @@ const BillComponent = () => {
   const tableCellStyle = {
     border: "1px solid black",
     fontWeight: "700",
-    fontSize: "15px",
+    fontSize: "12px",
     background: "#FFFFFF",
     color: "black",
   };

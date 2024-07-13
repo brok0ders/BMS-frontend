@@ -14,6 +14,7 @@ import { Add, Delete, Edit } from "@mui/icons-material";
 import { Link, useParams } from "react-router-dom";
 import LiquorContext from "../../context/liquor/liquorContext";
 import Loader from "../../components/Layout/Loader";
+import BackButton from "../../components/BackButton";
 
 const LiquorList = () => {
   const { company } = useParams();

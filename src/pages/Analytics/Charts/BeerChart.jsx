@@ -57,6 +57,9 @@ const BeerChart = () => {
     },
     xaxis: {
       categories: beers,
+      labels: {
+        show: false,
+      },
     },
     yaxis: {
       title: {

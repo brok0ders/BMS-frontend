@@ -8,6 +8,7 @@ import { Add } from "@mui/icons-material";
 import { Button } from "@mui/material";
 import { Box } from "@mui/system";
 import CompanyForm from "../../pages/Company/CompanyForm";
+import BackButton from "../BackButton";
 
 const CompanySelection = () => {
   const [companyData, setCompanyData] = useState([]);
@@ -83,31 +84,32 @@ const CompanySelection = () => {
           ) : (
             <>
               <div className={`relative ${loading ? "blur-background" : ""}`}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      marginTop: "0rem",
-                      marginRight: "2rem",
-                      marginLeft: "33%", // Add left margin to balance the container
+                <BackButton className={"left-20 top-20"} />
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginTop: "0rem",
+                    marginRight: "2rem",
+                    marginLeft: "33%", // Add left margin to balance the container
+                  }}
+                >
+                  <h1 className="text-2xl md:text-5xl bg-gradient-to-r from-gray-100 to-gray-100 via-white py-8 h-24 mt-5 flex items-center text-center">
+                    <LiquorIcon sx={{ fontSize: 39, marginRight: 3 }} /> Select
+                    Supplier
+                    <LiquorIcon sx={{ fontSize: 39, marginLeft: 3 }} />
+                  </h1>
+                  <Button
+                    startIcon={<Add />}
+                    variant="contained"
+                    onClick={() => {
+                      setOpen(true);
                     }}
                   >
-                    <h1 className="text-2xl md:text-5xl bg-gradient-to-r from-gray-100 to-gray-100 via-white py-8 h-24 mt-5 flex items-center text-center">
-                      <LiquorIcon sx={{ fontSize: 39, marginRight: 3 }} />{" "}
-                      Select Supplier
-                      <LiquorIcon sx={{ fontSize: 39, marginLeft: 3 }} />
-                    </h1>
-                    <Button
-                      startIcon={<Add />}
-                      variant="contained"
-                      onClick={() => {
-                        setOpen(true);
-                      }}
-                    >
-                      New Supplier
-                    </Button>
-                  </Box>
+                    New Supplier
+                  </Button>
+                </Box>
 
                 <div className="px-20 mt-10">
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 my-9">

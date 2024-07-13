@@ -14,6 +14,7 @@ import BeerContext from "../../context/beer/beerContext";
 import { toast } from "react-toastify";
 import Loader from "../../components/Layout/Loader";
 import Spinner from "../../components/Layout/Spinner";
+import BackButton from "../../components/BackButton";
 
 const BeerForm = () => {
   const [brandName, setBrandName] = useState("");
@@ -103,6 +104,7 @@ const BeerForm = () => {
               loading ? "blur-background" : ""
             }`}
           >
+            <BackButton />
             <h1 className="text-center text-4xl md:text-5xl font-bold text-gray-900">
               Create Beer Brand
             </h1>
@@ -181,6 +183,7 @@ const BeerForm = () => {
                   sx = {{minWidth: '6rem', minHeight: '2rem',  fontSize: "1rem",}}
                 >
                   <Spinner />
+                  {<Spinner />}
                 </Button>
               ) : (
                 <Button

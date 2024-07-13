@@ -44,7 +44,7 @@ const CompanyForm = ({ open, onClose }) => {
       console.log(res);
       if (res?.success) {
         await getAllCompany();
-        toast.success(`New Company created successfully`);
+        toast.success(`New Supplier created successfully`);
       }
       setName(""); // Reset form
       setCompanyType("");
@@ -86,7 +86,7 @@ const CompanyForm = ({ open, onClose }) => {
                 my: 0,
               }}
             >
-              Create Company
+              Create Supplier
             </DialogTitle>
             <Box
               component="form"
@@ -103,13 +103,13 @@ const CompanyForm = ({ open, onClose }) => {
                 }}
               >
                 <FormControl sx={{ minWidth: "100%" }}>
-                  <InputLabel id="comapny-label">Company Type</InputLabel>
+                  <InputLabel id="comapny-label">Supplier Type</InputLabel>
                   <Select
                     required
                     labelId="company-label"
                     id="company-select"
                     value={companyType}
-                    label="Company Type"
+                    label="Supplier Type"
                     name="companyType"
                     className="w-full"
                     onChange={(event) => {
@@ -123,13 +123,13 @@ const CompanyForm = ({ open, onClose }) => {
                 </FormControl>
 
                 <FormControl sx={{ minWidth: "100%", marginTop: 3 }}>
-                  <InputLabel id="comapny-label">Company Name</InputLabel>
+                  <InputLabel id="comapny-label">Supplier Name</InputLabel>
                   <Select
                     required
                     labelId="company-label"
                     id="company-select"
                     value={name}
-                    label="Company Type"
+                    label="Supplier Name"
                     name="companyType"
                     className="w-full"
                     onChange={handleChange}

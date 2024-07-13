@@ -16,6 +16,7 @@ import { Link, useParams } from "react-router-dom";
 import BeerContext from "../../context/beer/beerContext";
 import { toast } from "react-toastify";
 import Loader from "../../components/Layout/Loader";
+import BackButton from "../../components/BackButton";
 
 const BeerList = () => {
   const { company } = useParams();
@@ -55,6 +56,7 @@ const BeerList = () => {
     } catch (error) {
       console.error(error);
     } finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -89,6 +91,7 @@ const BeerList = () => {
             <>
               <TableContainer className="py-5 px-3">
                 <Box className="py-3 px-10">
+          <BackButton />
                   <h1 className="text-center py-5 text-4xl font-bold">
                     Beer Details
                   </h1>

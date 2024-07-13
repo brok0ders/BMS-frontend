@@ -18,7 +18,8 @@ import { toast } from "react-toastify";
 const UpdateCompanyForm = ({ id, open, onClose }) => {
   const [name, setName] = useState("");
   const [companyType, setCompanyType] = useState("");
-  const { company, updateCompany, getCompany, getAllCompany } = useContext(CompanyContext);
+  const { company, updateCompany, getCompany, getAllCompany } =
+    useContext(CompanyContext);
   const handleChange = (event) => {
     setCompanyType(event.target.value);
   };
@@ -27,7 +28,7 @@ const UpdateCompanyForm = ({ id, open, onClose }) => {
     try {
       const res = await updateCompany({ id, name, companyType });
       if (res?.success) {
-        toast.success(`Company updated successfully!`);
+        toast.success(`Supplier updated successfully!`);
       }
       getCompany2();
       await getAllCompany();
@@ -60,7 +61,7 @@ const UpdateCompanyForm = ({ id, open, onClose }) => {
           my: 0,
         }}
       >
-        Update Company
+        Update Supplier
       </DialogTitle>
       <Box
         component="form"
@@ -80,19 +81,19 @@ const UpdateCompanyForm = ({ id, open, onClose }) => {
             onChange={(e) => setName(e.target.value)}
             value={name}
             id="outlined-basic"
-            label="Company Name"
+            label="Supplier Name"
             variant="outlined"
             fullWidth
             className="mb-0"
           />
           <FormControl sx={{ minWidth: "50%", marginTop: 3 }}>
-            <InputLabel id="comapny-label">Company Type</InputLabel>
+            <InputLabel id="comapny-label">Supplier Type</InputLabel>
             <Select
               required
               labelId="company-label"
               id="company-select"
               value={companyType}
-              label="Company Type"
+              label="Supplier Type"
               name="companyType"
               className="w-full"
               onChange={handleChange}

@@ -12,7 +12,7 @@ const AnalyticsCard = ({ name, value, icon }) => {
         </div>
       </div>
       <h1 className="text-xl md:text-3xl font-semibold text-gray-600">
-        {value}
+        {value || 0}
       </h1>
     </div>
   );

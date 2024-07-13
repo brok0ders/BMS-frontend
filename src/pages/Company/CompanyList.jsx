@@ -4,6 +4,7 @@ import CompanyForm from "./CompanyForm";
 import { Add } from "@mui/icons-material";
 import Companies from "../../components/Company/Companies";
 import CompanyTabs from "../../components/Company/CompanyTabs";
+import BackButton from "../../components/BackButton";
 const CompanyList = () => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => {
@@ -17,11 +18,12 @@ const CompanyList = () => {
     <Box
       sx={{
         py: { sm: "1rem", md: "2rem", lg: "2rem" },
-        px: { sm: "1rem", md: "2rem", lg: "3rem" }, 
+        px: { sm: "1rem", md: "2rem", lg: "3rem" },
       }}
     >
+      <BackButton />
       <h1 className="text-center text-5xl font-bold text-slate-700 mb-5">
-        All Companies
+        All Suppliers
       </h1>
       <Box
         sx={{
@@ -44,7 +46,7 @@ const CompanyList = () => {
           }}
           onClick={handleOpen}
         >
-          Add Company
+          Add Supplier
         </Button>
       </Box>
       <CompanyForm open={open} onClose={handleClose} />

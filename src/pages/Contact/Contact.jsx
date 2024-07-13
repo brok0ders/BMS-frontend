@@ -17,7 +17,7 @@ const Contact = () => {
         We would love to hear from you! Please fill out this form and we will
         get in touch with you shortly.
       </p>
-      <div className="contact-details">
+      <div className="contact-details flex flex-col sm:flex-row ">
         <div className="contact-item">
           <i className="fas fa-phone-alt"></i>
           <a href="tel:+919058044318">
