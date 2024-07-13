@@ -202,51 +202,28 @@ function AppAppBar({ mode, toggleColorMode }) {
                   flexGrow: 1,
                 }}
               >
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "end",
-                    flexGrow: 1,
-                  }}
-                >
-                  <ToggleColorMode
-                    mode={mode}
-                    toggleColorMode={toggleColorMode}
-                  />
-                </Box>
-                <MenuItem onClick={() => scrollToSection("features")}>
-                  Features
+                
+                <MenuItem onClick={() => navigate("/home")}>
+                  Home
                 </MenuItem>
-                <MenuItem onClick={() => scrollToSection("testimonials")}>
-                  Testimonials
+                <MenuItem onClick={() => navigate("/about")}>
+                  About
                 </MenuItem>
-                <MenuItem onClick={() => scrollToSection("highlights")}>
-                  Highlights
+                <MenuItem onClick={() => navigate("contact")}>
+                  Contact Us
                 </MenuItem>
-                <MenuItem onClick={() => scrollToSection("pricing")}>
-                  Pricing
-                </MenuItem>
-                <MenuItem onClick={() => scrollToSection("faq")}>FAQ</MenuItem>
+               
+                
+                
+                
                 <Divider />
-                <MenuItem>
-                  <Button
-                    color="primary"
-                    variant="contained"
-                    component="a"
-                    href="/material-ui/getting-started/templates/sign-up/"
-                    target="_blank"
-                    sx={{ width: "100%" }}
-                  >
-                    Sign up
-                  </Button>
-                </MenuItem>
+                
                 <MenuItem>
                   <Button
                     color="primary"
                     variant="outlined"
                     component="a"
-                    href="/material-ui/getting-started/templates/sign-in/"
+                    href="/login"
                     target="_blank"
                     sx={{ width: "100%" }}
                   >

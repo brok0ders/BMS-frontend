@@ -56,6 +56,7 @@ const BeerList = () => {
     } catch (error) {
       console.error(error);
     } finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -65,36 +66,49 @@ const BeerList = () => {
       {loading ? (
         <Loader />
       ) : (
-        <Box className="py-5 px-10">
-          <BackButton />
-          <h1 className="text-center py-5 text-4xl font-bold">Beer Details</h1>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              gap: 2,
-            }}
-          >
-            <Link to={`/dashboard/beer/create/${company}`}>
-              <Button startIcon={<Add />} variant="contained">
-                New Beer
-              </Button>
-            </Link>
-          </Box>
-          <TableContainer className="py-5">
-            {!beer || beer.length === 0 ? (
-              <>
-                <div className="w-[25vw] m-auto text-center">
+        <>
+          {!beer || beer.length === 0 ? (
+            <>
+              <div className="flex flex-col items-center justify-center min-h-[75vh]">
+                <div className="w-[25vw] text-center">
                   <img
                     src="/images/no-data.png"
-                    alt=""
+                    alt="No Data"
                     className="w-[25vw] m-auto"
                   />
-                  <p>NO BEER BRANDS FOUND!</p>
+                  <p>NO BEER BRAND FOUND!</p>
+                  <Box className="flex justify-center mt-5">
+                    <Link to={`/dashboard/beer/create/${company}`}>
+                      <Button startIcon={<Add />} variant="contained">
+                        New Beer
+                      </Button>
+                    </Link>
+                  </Box>
                 </div>
-              </>
-            ) : (
-              <>
+              </div>
+            </>
+          ) : (
+            <>
+              <TableContainer className="py-5 px-3">
+                <Box className="py-3 px-10">
+          <BackButton />
+                  <h1 className="text-center py-5 text-4xl font-bold">
+                    Beer Details
+                  </h1>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      gap: 2,
+                    }}
+                  >
+                    <Link to={`/dashboard/beer/create/${company}`}>
+                      <Button startIcon={<Add />} variant="contained">
+                        New Beer
+                      </Button>
+                    </Link>
+                  </Box>
+                </Box>
                 <Table
                   sx={{ minWidth: 650, border: 1.34, borderColor: "grey.400" }}
                   size="small"
@@ -297,10 +311,10 @@ const BeerList = () => {
                     </TableRow>
                   </TableBody>
                 </Table>
-              </>
-            )}
-          </TableContainer>
-        </Box>
+              </TableContainer>
+            </>
+          )}
+        </>
       )}
     </>
   );

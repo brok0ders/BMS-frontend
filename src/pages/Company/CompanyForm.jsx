@@ -152,7 +152,7 @@ const CompanyForm = ({ open, onClose }) => {
                   Cancel
                 </Button>
                 {spinner ? (
-                  <Button variant="contained" className=" p-2 !px-4">
+                  <Button variant="contained" className=" p-2 !px-4" sx = {{minWidth: '6rem', height: '2rem'}}>
                     {<Spinner />}
                   </Button>
                 ) : (
@@ -160,6 +160,7 @@ const CompanyForm = ({ open, onClose }) => {
                     type="submit"
                     variant="contained"
                     className=" p-2 !px-4"
+                    sx = {{minWidth: '6rem', minHeight: '2rem'}}
                   >
                     Create
                   </Button>
