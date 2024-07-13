@@ -21,7 +21,7 @@ import CustomerContext from "../../context/customer/customerContext";
 import BillContext from "../../context/bill/billContext";
 import UserContext from "../../context/user/userContext";
 import CompanyContext from "../../context/company/companyContext";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import Loader from "../../components/Layout/Loader";
 import Spinner from "../../components/Layout/Spinner";
@@ -54,7 +54,7 @@ const LiquorBillForm = () => {
   const [loading, setLoading] = useState(false);
   const [spinner, setSpinner] = useState(false);
   const [spinner2, setSpinner2] = useState(false);
-
+  const navigate = useNavigate();
   let customerId = "";
 
   const NumberToWordsConverter = (n) => {
@@ -119,17 +119,17 @@ const LiquorBillForm = () => {
       let output = "";
 
       if (Math.floor(num / 100000) > 0) {
-        output += numToWords(Math.floor(num / 100000), "lakh");
+        output += numToWords(Math.floor(num / 100000), "Lakh");
         num %= 100000;
       }
 
       if (Math.floor(num / 1000) > 0) {
-        output += " " + numToWords(Math.floor(num / 1000), "thousand");
+        output += " " + numToWords(Math.floor(num / 1000), "Thousand");
         num %= 1000;
       }
 
       if (Math.floor(num / 100) > 0) {
-        output += " " + numToWords(Math.floor(num / 100), "hundred");
+        output += " " + numToWords(Math.floor(num / 100), "Hundred");
         num %= 100;
       }
 
@@ -161,7 +161,6 @@ const LiquorBillForm = () => {
     }
     return words + " only";
   };
-
 
   const [currentInput, setCurrentInput] = useState({ brand: "", sizes: [] });
 
@@ -200,6 +199,7 @@ const LiquorBillForm = () => {
       setProducts([]);
       setGrandTotal(0);
       getLiquors();
+      navigate(`/dashboard/bill/details/${res.bill}`);
     } catch (e) {
     } finally {
       setSpinner(false);
@@ -229,10 +229,8 @@ const LiquorBillForm = () => {
     e.preventDefault();
     const { name, value } = e.target;
     const [type, size] = name.split("-");
-    // value = parseFloat(value);
-    // Prevent negative values and non-numeric inputs
-    if (value === "" || isNaN(value) || parseInt(value) < 0) {
-    }
+
+    // Validate stock quantity
     for (let i = 0; i < stocks.length; i++) {
       if (stocks[i].size === size) {
         if (stocks[i].quantity < value) {
@@ -240,6 +238,9 @@ const LiquorBillForm = () => {
         }
       }
     }
+
+    // Prevent negative values and non-numeric inputs
+    if (value !== "" && (isNaN(value) || parseInt(value) < 0)) return;
 
     setCurrentInput((prevInput) => {
       const existingSizeIndex = prevInput.sizes.findIndex(
@@ -250,11 +251,10 @@ const LiquorBillForm = () => {
         const updatedSizes = [...prevInput.sizes];
         updatedSizes[existingSizeIndex] = {
           ...updatedSizes[existingSizeIndex],
-          [type]: value === "" ? 0 : parseInt(value),
+          [type]: value === "" ? 0 : parseInt(value), // Convert to integer
         };
 
         if (type === "quantity") {
-          // Adjust price based on quantity if necessary
           const selectedBrand = liquorBrandData.find(
             (brand) => brand.liquor.brandName === currentInput.brand
           );
@@ -264,7 +264,7 @@ const LiquorBillForm = () => {
 
           if (selectedSize) {
             const basePrice =
-              selectedSize.price * isNaN(parseInt(value)) ? 0 : parseInt(value);
+              selectedSize.price * (value === "" ? 0 : parseInt(value));
             updatedSizes[existingSizeIndex].price = basePrice;
           }
         }
@@ -273,11 +273,10 @@ const LiquorBillForm = () => {
       } else {
         const newSize = {
           size: size,
-          [type]: value === "" ? 0 : parseInt(value),
+          [type]: value === "" ? 0 : parseInt(value), // Convert to integer
         };
 
         if (type === "quantity") {
-          // Adjust price based on quantity if necessary
           const selectedBrand = liquorBrandData.find(
             (brand) => brand.liquor.brandName === currentInput.brand
           );
@@ -286,7 +285,8 @@ const LiquorBillForm = () => {
           );
 
           if (selectedSize) {
-            const basePrice = selectedSize.price * parseInt(value);
+            const basePrice =
+              selectedSize.price * (value === "" ? 0 : parseInt(value));
             newSize.price = basePrice;
           }
         }
@@ -347,8 +347,6 @@ const LiquorBillForm = () => {
         t += size.price;
       });
 
-      setCurrentInput({ brand: "", sizes: [] });
-
       setFholo(h);
       setFpratifal(p);
       setFwep(w);
@@ -364,24 +362,80 @@ const LiquorBillForm = () => {
       const taxTotal = t + vatTax + cess + w + h + profit + p;
       const tcs = (taxTotal * 1) / 100;
       setGrandTotal(taxTotal + tcs);
-      // console.log("total quantity: " + q);
-      // console.log("total price: " + t);
-      // console.log("vatTax: " + vatTax);
-      // console.log("cess: " + cess);
-      // console.log("final wep is: " + w);
-      // console.log("final holo is: " + h);
-      // console.log("Profit: " + profit);
-      // console.log("final pratifal is: " + p);
-      // console.log("Total tax: " + taxTotal);
-      // console.log("tcs: " + tcs);
+
+      setCurrentInput({ brand: "", sizes: [] });
+      console.log("total quantity: " + q);
+      console.log("total price: " + t);
+      console.log("vatTax: " + vatTax);
+      console.log("cess: " + cess);
+      console.log("final wep is: " + w);
+      console.log("final holo is: " + h);
+      console.log("Profit: " + profit);
+      console.log("final pratifal is: " + p);
+      console.log("Total tax: " + taxTotal);
+      console.log("tcs: " + tcs);
     } catch (e) {
     } finally {
       setSpinner2(false);
     }
   };
 
+  // const handleDeleteProduct = (index) => {
+  //   setProducts((prevProducts) => prevProducts.filter((_, i) => i !== index));
+  // };
   const handleDeleteProduct = (index) => {
-    setProducts((prevProducts) => prevProducts.filter((_, i) => i !== index));
+    setSpinner2(true);
+    try {
+      let h = fholo;
+      let p = fpratifal;
+      let w = fwep;
+      let q = totalQuantity;
+      let t = total;
+
+      // Subtract the values of the product being deleted
+      const productToDelete = products[index];
+      productToDelete.sizes.forEach((size, i) => {
+        h -= size.quantity * sizes[i].hologram;
+        p -= size.quantity * sizes[i].pratifal;
+        w -= size.quantity * sizes[i].wep;
+        q -= size.quantity;
+        t -= size.price;
+      });
+
+      // Update the products list
+      const updatedProducts = products.filter((_, i) => i !== index);
+      setProducts(updatedProducts);
+
+      // Set the new values
+      setFholo(h);
+      setFpratifal(p);
+      setFwep(w);
+      setTotalQuantity(q);
+      setTotal(t);
+
+      // Recalculate all taxes and grand total
+      const vatTax = t * (12 / 100);
+      const cess = ((t + vatTax) * 2) / 100;
+      const profit = q * 50;
+      const taxTotal = t + vatTax + cess + w + h + profit + p;
+      const tcs = (taxTotal * 1) / 100;
+      setGrandTotal(taxTotal + tcs);
+
+      console.log("total quantity: " + q);
+      console.log("total price: " + t);
+      console.log("vatTax: " + vatTax);
+      console.log("cess: " + cess);
+      console.log("final wep is: " + w);
+      console.log("final holo is: " + h);
+      console.log("Profit: " + profit);
+      console.log("final pratifal is: " + p);
+      console.log("Total tax: " + taxTotal);
+      console.log("tcs: " + tcs);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setSpinner2(false);
+    }
   };
 
   const handleBrandChange = (e) => {
@@ -579,7 +633,7 @@ const LiquorBillForm = () => {
                                   value={
                                     currentInput?.sizes.find(
                                       (s) => s.size === size?.size
-                                    )?.quantity ?? ""
+                                    )?.quantity || ""
                                   }
                                   label={`Quantity ${
                                     size?.size === "750ml"
@@ -594,13 +648,14 @@ const LiquorBillForm = () => {
                                   onChange={handleInputChange}
                                   variant="outlined"
                                   type="number"
+                                  InputProps={{ inputProps: { min: 0 } }} // Ensure minimum value is 0
                                 />
                                 <TextField
                                   fullWidth
                                   value={
                                     currentInput?.sizes
                                       .find((s) => s.size === size?.size)
-                                      ?.price.toFixed(2) || ""
+                                      ?.price.toFixed(2) || 0
                                   }
                                   label={`Price ${
                                     size?.size === "750ml"
