@@ -7,6 +7,7 @@ import CompanyContext from "../../context/company/companyContext";
 import { toast } from "react-toastify";
 import Loader from "../../components/Layout/Loader";
 import Spinner from "../../components/Layout/Spinner";
+import BackButton from "../../components/BackButton";
 const UpdateBeerForm = () => {
   const [brandName, setBrandName] = useState("");
   const [companyName, setCompanyName] = useState("");
@@ -72,6 +73,7 @@ const UpdateBeerForm = () => {
             onSubmit={handleSubmit}
             className="w-full px-5 md:px-10 lg:px-20 py-10 md:py-16"
           >
+            <BackButton />
             <h1 className="text-center text-4xl md:text-5xl font-bold text-gray-900">
               Edit Beer Details
             </h1>

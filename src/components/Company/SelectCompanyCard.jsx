@@ -24,15 +24,14 @@ const SelectCompanyCard = ({ url, id, name, companyType }) => {
       to={`/dashboard/${url}/${id}`}
       className="flex flex-col gap-3 py-6 px-6 relative border border-gray-200 rounded-lg shadow-sm transition-transform transform hover:scale-105"
       style={{
-        background: "linear-gradient(135deg, rgba(240, 240, 240, 1), rgba(255, 255, 255, 1), rgba(220, 220, 220, 1))",
+        background:
+          "linear-gradient(135deg, rgba(240, 240, 240, 1), rgba(255, 255, 255, 1), rgba(220, 220, 220, 1))",
         color: "#333",
       }}
     >
-      <h2 className="text-2xl text-center font-bold">{name}</h2>
-      
+      <h3 className="text-lg  md:text-xl text-center  font-bold">{name}</h3>
     </Link>
   );
 };
 
 export default SelectCompanyCard;
-

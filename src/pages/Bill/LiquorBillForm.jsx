@@ -25,6 +25,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import Loader from "../../components/Layout/Loader";
 import Spinner from "../../components/Layout/Spinner";
+import BackButton from "../../components/BackButton";
 
 const LiquorBillForm = () => {
   const { company } = useParams();
@@ -551,7 +552,7 @@ const LiquorBillForm = () => {
       // Subtract the values of the product being deleted
 
       const productToDelete = products[index];
-      
+
       for (let j = 0; j < liquorBrandData.length; j++) {
         if (liquorBrandData[j].liquor.brandName === productToDelete.brand) {
           productToDelete.sizes.forEach((size, i) => {
@@ -666,8 +667,9 @@ const LiquorBillForm = () => {
               <Box
                 noValidate
                 autoComplete="off"
-                className="py-10 px-10 md:py-5 md:px-20 "
+                className="py-7 pb-10 px-10 md:py-5 md:px-20 "
               >
+                <BackButton className={"top-16 left-2"} />
                 <h1 className="md:text-5xl text-center font-bold text-slate-700 px-2 py-2 m-4 text-4xl">
                   FL Bill Details
                 </h1>

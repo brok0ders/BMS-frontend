@@ -5,6 +5,7 @@ import "./bill.css";
 import CompanyContext from "../../context/company/companyContext";
 import Loader from "../../components/Layout/Loader";
 import { useNavigate } from "react-router-dom";
+import BackButton from "../../components/BackButton";
 
 const BillRecords = () => {
   const columns = [
@@ -98,7 +99,6 @@ const BillRecords = () => {
         <Loader />
       ) : (
         <>
-        
           {!bills || bills.length === 0 ? (
             <>
               <div className="w-[25vw] m-auto text-center mt-[5rem]">
@@ -111,7 +111,8 @@ const BillRecords = () => {
               </div>
             </>
           ) : (
-            <div className="mt-5 w-[95%] m-auto">
+            <div className="w-[95%] m-auto">
+              <BackButton className={"top-5 left-5"} url={"/dashboard"} />
               <DataGrid
                 rows={rows}
                 columns={columns}
@@ -127,6 +128,7 @@ const BillRecords = () => {
                 onRowClick={(params) => {
                   navigate(`/dashboard/bill/details/${params.row.billId}`);
                 }}
+                className="my-10"
               />
             </div>
           )}

@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import BackButton from "../../components/BackButton";
 
 const BillSelection = () => {
   return (
-    <>
-      <div className="text-center text-2xl py-8 md:text-5xl bg-gradient-to-r from-blue-100 to-blue-100 via-white mt-5 h-24">
+    <div className="relative">
+      <div className="text-center relative text-2xl py-8 md:text-5xl bg-gradient-to-r from-blue-100 to-blue-100 via-white mt-5 h-24">
+        <BackButton className={"!absolute top-1/2 -translate-y-1/2 left-20"} />
         M/s Maa Banari Devi Traders
       </div>
       <div className="h-[75vh] bg-[#f6f6f6]">
@@ -29,7 +31,7 @@ const BillSelection = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -14,6 +14,7 @@ import { Add, Delete, Edit } from "@mui/icons-material";
 import { Link, useParams } from "react-router-dom";
 import LiquorContext from "../../context/liquor/liquorContext";
 import Loader from "../../components/Layout/Loader";
+import BackButton from "../../components/BackButton";
 
 const LiquorList = () => {
   const { company } = useParams();
@@ -69,6 +70,7 @@ const LiquorList = () => {
         <Loader />
       ) : (
         <Box className="py-5 px-10">
+          <BackButton />
           <h1 className="text-center py-5 text-4xl font-bold">
             Liquor Details
           </h1>

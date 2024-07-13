@@ -9,6 +9,7 @@ import People from "/images/people.png";
 import AnalyticsChart from "./AnalyticsChart";
 import BillContext from "../../context/bill/billContext";
 import Loader from "../../components/Layout/Loader";
+import BackButton from "../../components/BackButton";
 const AnalyticsPage = () => {
   const [analytics, setAnalytics] = useState({});
   const { getAnalyticsData } = useContext(BillContext);
@@ -35,6 +36,7 @@ const AnalyticsPage = () => {
       ) : (
         <>
           <div className="px-5  pb-10 md:px-20 md:pb-20">
+            <BackButton url={`/dashboard/`} />
             <h1 className="text-gray-600 text-center pt-10 pb-16 text-4xl md:text-6xl font-bold">
               Analytics
             </h1>

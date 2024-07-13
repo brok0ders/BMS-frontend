@@ -6,7 +6,7 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { savePDF } from "@progress/kendo-react-pdf";
 import { useNavigate } from "react-router-dom";
-import { Add } from "@mui/icons-material";
+import { Add, Home, PictureAsPdfOutlined } from "@mui/icons-material";
 
 const BillDetails = () => {
   const printRef = useRef();
@@ -45,16 +45,31 @@ const BillDetails = () => {
 
       <div className="flex gap-10 justify-end   pb-20 px-20 mt-10">
         <Button
+          startIcon={<Home />}
+          variant="outlined"
+          onClick={() => navigate("/dashboard/")}
+        >
+          Go Home
+        </Button>
+        <Button
           startIcon={<Add />}
           variant="contained"
           onClick={() => navigate("/dashboard/select")}
         >
           New Bill
         </Button>
-        <Button variant="contained" onClick={exportPDFWithMethod}>
+        <Button
+          startIcon={<PictureAsPdfOutlined />}
+          variant="contained"
+          onClick={exportPDFWithMethod}
+        >
           Download PDF
         </Button>
-        <Button variant="contained" onClick={handleGeneratePdf}>
+        <Button
+          startIcon={<PictureAsPdfOutlined />}
+          variant="contained"
+          onClick={handleGeneratePdf}
+        >
           Download PDF V2
         </Button>
       </div>

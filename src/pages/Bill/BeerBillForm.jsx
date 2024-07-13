@@ -26,6 +26,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import Loader from "../../components/Layout/Loader";
 import Spinner from "../../components/Layout/Spinner";
+import BackButton from "../../components/BackButton";
 
 const BeerBillForm = () => {
   const { company } = useParams();
@@ -643,8 +644,9 @@ const BeerBillForm = () => {
               <Box
                 noValidate
                 autoComplete="off"
-                className="py-10 px-10 md:py-5 md:px-20 "
+                className="py-5 pb-10 px-10 md:py-5 md:px-20 "
               >
+                <BackButton className={"top-16 left-2"} />
                 <h1 className="md:text-5xl text-center font-bold text-slate-700 px-2 py-2 m-4 text-4xl">
                   Beer Bill Details
                 </h1>
