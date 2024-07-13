@@ -15,13 +15,13 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Delete } from "@mui/icons-material";
+import { Add, Delete } from "@mui/icons-material";
 import LiquorContext from "../../context/liquor/liquorContext";
 import CustomerContext from "../../context/customer/customerContext";
 import BillContext from "../../context/bill/billContext";
 import UserContext from "../../context/user/userContext";
 import CompanyContext from "../../context/company/companyContext";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import Loader from "../../components/Layout/Loader";
 import Spinner from "../../components/Layout/Spinner";
@@ -471,10 +471,17 @@ const LiquorBillForm = () => {
     <>
       {!liquorBrandData || liquorBrandData.length === 0 ? (
         <>
-          <div className="w-[25vw] m-auto text-center mt-[5rem]">
+          <div className="w-[25vw] m-auto text-center mt-[3rem]">
             <img src="/images/no-data.png" alt="" className="w-[25vw] m-auto" />
             <p>NO LIQUOR BRAND FOUND FOR THE SELECTED COMPANY!</p>
           </div>
+          <Box className="flex justify-center mt-5">
+            <Link to={`/dashboard/liquor/create/${company}`}>
+              <Button startIcon={<Add />} variant="contained">
+                New Liquor
+              </Button>
+            </Link>
+          </Box>
         </>
       ) : (
         <>

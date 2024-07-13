@@ -22,7 +22,7 @@ const Companies = () => {
       if (tab === "all" || tab === null) {
         // setCompanyData(res.company);
       } else {
-        const filteredCompanies = res?.company.filter(
+        const filteredCompanies = res?.company?.filter(
           (company) => company?.company?.companyType === tab
         );
         setCompanyData(filteredCompanies);
@@ -33,19 +33,36 @@ const Companies = () => {
 
   return (
     <>
-      {loading ? (
-        <Loader />
+      {!companyData || companyData.length === 0 ? (
+        <>
+          <>
+            <div className="w-[25vw] m-auto text-center mt-[5rem]">
+              <img
+                src="/images/no-data.png"
+                alt=""
+                className="w-[25vw] m-auto"
+              />
+              <p>NO SUPPLIERS FOUND!</p>
+            </div>
+          </>
+        </>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 my-10">
-          {companyData?.map((company) => (
-            <CompanyCard
-              key={company.company._id}
-              name={company.company.name}
-              companyType={company.company.companyType}
-              id={company._id}
-            />
-          ))}
-        </div>
+        <>
+          {loading ? (
+            <Loader />
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 my-10">
+              {companyData?.map((company) => (
+                <CompanyCard
+                  key={company.company._id}
+                  name={company.company.name}
+                  companyType={company.company.companyType}
+                  id={company._id}
+                />
+              ))}
+            </div>
+          )}
+        </>
       )}
     </>
   );

@@ -11,14 +11,13 @@ const AdminHome = () => {
     try {
       setLoading(true);
       const res = await getUser();
-      console.log(res);
     } catch (e) {
     } finally {
       setLoading(false);
     }
   };
   useEffect(() => {
-    gettingUser;
+    gettingUser();
   }, []);
   return (
     <>

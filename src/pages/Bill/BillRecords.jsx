@@ -98,7 +98,8 @@ const BillRecords = () => {
         <Loader />
       ) : (
         <>
-          {!bills || bills.length < 0 ? (
+        
+          {!bills || bills.length === 0 ? (
             <>
               <div className="w-[25vw] m-auto text-center mt-[5rem]">
                 <img

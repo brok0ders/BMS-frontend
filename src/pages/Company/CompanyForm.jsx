@@ -49,6 +49,7 @@ const CompanyForm = ({ open, onClose }) => {
       setName(""); // Reset form
       setCompanyType("");
       onClose(); // Close the modal
+      await getAllCompany();
     } catch (error) {
       console.error("Error:", error);
     } finally {
