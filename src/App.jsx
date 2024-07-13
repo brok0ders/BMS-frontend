@@ -55,6 +55,15 @@ const App = () => {
             </>
           }
         />
+        <Route
+          path="/"
+          element={
+            <>
+              <Navbar />
+              <HomePage />
+            </>
+          }
+        />
         <Route path="/dashboard/bill/details/:id" element={<BillDetails />} />
         <Route path="/" element={<Layout />}>
           <Route path="/login" element={<LoginPage />} />
