@@ -542,13 +542,27 @@ const BeerBillForm = () => {
 
       // Subtract the values of the product being deleted
       const productToDelete = products[index];
-      productToDelete.sizes.forEach((size, i) => {
-        h -= size.quantity * sizes[i].hologram;
-        p -= size.quantity * sizes[i].pratifal;
-        w -= size.quantity * sizes[i].wep;
-        q -= size.quantity;
-        t -= size.price;
-      });
+
+      for (let j = 0; j < beerBrandData.length; j++) {
+        if (beerBrandData[j].beer.brandName === productToDelete.brand) {
+          productToDelete.sizes.forEach((size, i) => {
+            h -=
+              size.quantity *
+              beerBrandData[j].beer.sizes.find((s) => s.size === size.size)
+                .hologram;
+            p -=
+              size.quantity *
+              beerBrandData[j].beer.sizes.find((s) => s.size === size.size)
+                .pratifal;
+            // console.log("pratifal is: " + p);
+            w -=
+              size.quantity *
+              beerBrandData[j].beer.sizes.find((s) => s.size === size.size).wep;
+            q -= size.quantity;
+            t -= size.price;
+          });
+        }
+      }
 
       // Update the products list
       const updatedProducts = products.filter((_, i) => i !== index);
