@@ -627,386 +627,389 @@ const LiquorBillForm = () => {
 
   return (
     <>
-      {!liquorBrandData || liquorBrandData.length === 0 ? (
+      {loading ? (
+        <Loader />
+      ) : !liquorBrandData || liquorBrandData.length === 0 ? (
         <>
-          <div className="w-[25vw] m-auto text-center mt-[3rem]">
-            <img src="/images/no-data.png" alt="" className="w-[25vw] m-auto" />
-            <p>NO LIQUOR BRAND FOUND FOR THE SELECTED COMPANY!</p>
+          <div className="flex flex-col items-center justify-center min-h-[75vh]">
+            <div className="w-[25vw] text-center">
+              <img
+                src="/images/no-data.png"
+                alt="No Data"
+                className="w-[25vw] m-auto"
+              />
+              <p>NO LIQUOR BRAND FOUND FOR THE SELECTED COMPANY!</p>
+              <Box className="flex justify-center mt-5">
+                <Link to={`/dashboard/liquor/create/${company}`}>
+                  <Button startIcon={<Add />} variant="contained">
+                    New Liquor
+                  </Button>
+                </Link>
+              </Box>
+            </div>
           </div>
-          <Box className="flex justify-center mt-5">
-            <Link to={`/dashboard/liquor/create/${company}`}>
-              <Button startIcon={<Add />} variant="contained">
-                New Liquor
-              </Button>
-            </Link>
-          </Box>
         </>
       ) : (
         <>
-          {loading ? (
-            <Loader />
-          ) : (
-            <>
-              <Box
-                noValidate
-                autoComplete="off"
-                className="py-10 px-10 md:py-5 md:px-20 "
-              >
-                <h1 className="md:text-5xl text-center font-bold text-slate-700 px-2 py-2 m-4 text-4xl">
-                  FL Bill Details
+          <Box
+            noValidate
+            autoComplete="off"
+            className="py-10 px-10 md:py-5 md:px-20 "
+          >
+            <h1 className="md:text-5xl text-center font-bold text-slate-700 px-2 py-2 m-4 text-4xl">
+              FL Bill Details
+            </h1>
+
+            {/* Licensee Details */}
+            <Box className="w-full ">
+              <h1 className="md:text-3xl px-2 py-2 m-4 font-semibold text-2xl">
+                Licensee Details
+              </h1>
+              <Box className="px-3 grid md:grid-cols-3 gap-10 sm:grid-cols-2 ">
+                <TextField
+                  required
+                  id="outlined-basic"
+                  value={licensee}
+                  onChange={(e) => setLicensee(e.target.value)}
+                  label="Licensee"
+                  variant="outlined"
+                />
+                <TextField
+                  required
+                  id="outlined-basic"
+                  value={shop}
+                  onChange={(e) => setShop(e.target.value)}
+                  label="Shop"
+                  variant="outlined"
+                />
+                <TextField
+                  required
+                  id="outlined-basic"
+                  value={firm}
+                  onChange={(e) => setFirm(e.target.value)}
+                  label="Firm"
+                  variant="outlined"
+                />
+                <TextField
+                  required
+                  id="outlined-basic"
+                  value={pan}
+                  onChange={(e) => setPan(e.target.value)}
+                  label="PAN No."
+                  variant="outlined"
+                />
+                <TextField
+                  required
+                  id="outlined-basic"
+                  value={excise}
+                  onChange={(e) => setExcise(e.target.value)}
+                  label="Excise FL"
+                  variant="outlined"
+                />
+                <TextField
+                  required
+                  id="outlined-basic"
+                  value={pno}
+                  onChange={(e) => setPno(e.target.value)}
+                  label="P. No."
+                  variant="outlined"
+                />
+              </Box>
+            </Box>
+
+            {/* For Brand Selection */}
+            {/* For selecting quantities */}
+            <Box
+              className="w-full "
+              component="form"
+              onSubmit={handleAddProduct}
+            >
+              <Box className="w-full">
+                <h1 className="md:text-3xl px-2 py-2 m-4 font-semibold text-2xl">
+                  Supplier
                 </h1>
-
-                {/* Licensee Details */}
-
-                <Box className="w-full ">
-                  <h1 className="md:text-3xl px-2 py-2 m-4 font-semibold text-2xl">
-                    Licensee Details
-                  </h1>
-                  <Box className="px-3 grid md:grid-cols-3 gap-10 sm:grid-cols-2 ">
+                <Box className="px-3 grid grid-cols-1 sm:grid-cols-3 gap-10">
+                  <FormControl sx={{ m: 1, minWidth: 120 }}>
                     <TextField
+                      value={comp}
+                      label="Supplier"
                       required
-                      id="outlined-basic"
-                      value={licensee}
-                      onChange={(e) => setLicensee(e.target.value)}
-                      label="Licensee"
                       variant="outlined"
+                      inputProps={{
+                        readOnly: true,
+                      }}
                     />
-                    <TextField
-                      required
-                      id="outlined-basic"
-                      value={shop}
-                      onChange={(e) => setShop(e.target.value)}
-                      label="Shop"
-                      variant="outlined"
-                    />
-                    <TextField
-                      required
-                      id="outlined-basic"
-                      value={firm}
-                      onChange={(e) => setFirm(e.target.value)}
-                      label="Firm"
-                      variant="outlined"
-                    />
-                    <TextField
-                      required
-                      id="outlined-basic"
-                      value={pan}
-                      onChange={(e) => setPan(e.target.value)}
-                      label="PAN No."
-                      variant="outlined"
-                    />
-                    <TextField
-                      required
-                      id="outlined-basic"
-                      value={excise}
-                      onChange={(e) => setExcise(e.target.value)}
-                      label="Excise FL"
-                      variant="outlined"
-                    />
-                    <TextField
-                      required
-                      id="outlined-basic"
-                      value={pno}
-                      onChange={(e) => setPno(e.target.value)}
-                      label="P. No."
-                      variant="outlined"
-                    />
-                  </Box>
-                </Box>
-
-                {/* For Brand Selection */}
-
-                {/* For selecting quantities */}
-                <Box
-                  className="w-full "
-                  component="form"
-                  onSubmit={handleAddProduct}
-                >
-                  <Box className="w-full">
-                    <h1 className="md:text-3xl px-2 py-2 m-4 font-semibold text-2xl">
-                      Supplier
-                    </h1>
-                    <Box className="px-3 grid grid-cols-1 sm:grid-cols-3 gap-10">
-                      <FormControl sx={{ m: 1, minWidth: 120 }}>
-                        <TextField
-                          value={comp}
-                          label="Supplier"
-                          required
-                          variant="outlined"
-                          inputProps={{
-                            readOnly: true,
-                          }}
-                        />
-                      </FormControl>
-                    </Box>
-                  </Box>
-                  <Box className="w-full">
-                    <h1 className="md:text-3xl px-2 py-2 m-4 font-semibold text-2xl">
-                      Select Brand
-                    </h1>
-                    <Box className="px-3 grid grid-cols-1 sm:grid-cols-3 gap-10">
-                      <FormControl sx={{ m: 1, minWidth: 120 }}>
-                        <InputLabel id="demo-simple-select-helper-label">
-                          Brand Name
-                        </InputLabel>
-                        <Select
-                          required
-                          labelId="demo-simple-select-helper-label"
-                          id="demo-simple-select-helper"
-                          value={currentInput?.brand || ""}
-                          label="Brand Name"
-                          name="brand"
-                          className="w-full"
-                          onChange={handleBrandChange}
-                        >
-                          {liquorBrandData.length > 0 &&
-                            liquorBrandData?.map((brand) => (
-                              <MenuItem
-                                key={brand._id}
-                                value={brand?.liquor?.brandName}
-                                onClick={() => {
-                                  setStocks(brand.stock);
-                                  setSizes(brand.liquor.sizes);
-                                }}
-                              >
-                                {brand?.liquor?.brandName}
-                              </MenuItem>
-                            ))}
-                        </Select>
-                      </FormControl>
-                    </Box>
-                  </Box>
-                  {currentInput?.brand && (
-                    <>
-                      <h1 className="md:text-3xl px-2 py-2 m-4 font-semibold text-2xl">
-                        Select Quantities
-                      </h1>
-                      <Box className="px-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
-                        {currentInput?.brand &&
-                          liquorBrandData
-                            .find(
-                              (brand) =>
-                                brand?.liquor?.brandName === currentInput?.brand
-                            )
-                            ?.liquor?.sizes?.map((size) => (
-                              <Box
-                                key={size?.size}
-                                className="flex flex-col gap-5"
-                              >
-                                <TextField
-                                  fullWidth
-                                  value={
-                                    currentInput?.sizes.find(
-                                      (s) => s.size === size?.size
-                                    )?.quantity || ""
-                                  }
-                                  label={`Quantity ${
-                                    size?.size === "750ml"
-                                      ? size?.size + " (Q)"
-                                      : size?.size === "375ml"
-                                      ? size?.size + " (P)"
-                                      : size?.size === "180ml"
-                                      ? size?.size + " (N)"
-                                      : size?.size
-                                  }`}
-                                  name={`quantity-${size?.size}`}
-                                  onChange={handleInputChange}
-                                  variant="outlined"
-                                  type="number"
-                                  InputProps={{ inputProps: { min: 0 } }} // Ensure minimum value is 0
-                                />
-                                <TextField
-                                  fullWidth
-                                  value={
-                                    currentInput?.sizes
-                                      .find((s) => s.size === size?.size)
-                                      ?.price.toFixed(2) || 0
-                                  }
-                                  label={`Price ${
-                                    size?.size === "750ml"
-                                      ? size?.size + " (Q)"
-                                      : size?.size === "375ml"
-                                      ? size?.size + " (P)"
-                                      : size?.size === "180ml"
-                                      ? size?.size + " (N)"
-                                      : size?.size
-                                  }`}
-                                  name={`price-${size?.size}`}
-                                  onChange={handleInputChange}
-                                  variant="outlined"
-                                  type="number"
-                                  focused={false}
-                                  inputProps={{ readOnly: true }}
-                                />
-                              </Box>
-                            ))}
-                      </Box>
-                      <Box className="px-2 py-2 m-4 flex justify-end">
-                        {spinner2 ? (
-                          <Button variant="contained">{<Spinner />}</Button>
-                        ) : (
-                          <Button variant="contained" type="submit">
-                            Add Product
-                          </Button>
-                        )}
-                      </Box>
-                    </>
-                  )}
-                </Box>
-
-                <TableContainer className="py-12">
-                  <h1 className="md:text-3xl text-2xl font-semibold text-slate-700 py-5">
-                    Added Products
-                  </h1>
-                  <Table
-                    sx={{ minWidth: 650 }}
-                    size="small"
-                    aria-label="a dense table"
-                  >
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>S.No.</TableCell>
-                        <TableCell>Brand Name</TableCell>
-                        <TableCell align="center" colSpan={allSizes.length}>
-                          Quantity
-                        </TableCell>
-                        <TableCell align="center" colSpan={allSizes.length}>
-                          Price
-                        </TableCell>
-                        <TableCell align="center">Action</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell></TableCell>
-                        <TableCell></TableCell>
-                        {allSizes.map((size) => (
-                          <TableCell key={`qty-${size}`} align="center">
-                            {size === "750ml"
-                              ? size + " (Q)"
-                              : size === "375ml"
-                              ? size + " (P)"
-                              : size === "180ml"
-                              ? size + " (N)"
-                              : size}
-                          </TableCell>
-                        ))}
-                        {allSizes.map((size) => (
-                          <TableCell key={`price-${size}`} align="center">
-                            {size === "750ml"
-                              ? size + " (Q)"
-                              : size === "375ml"
-                              ? size + " (P)"
-                              : size === "180ml"
-                              ? size + " (N)"
-                              : size}
-                          </TableCell>
-                        ))}
-                        <TableCell></TableCell>
-                      </TableRow>
-                    </TableHead>
-
-                    <TableBody>
-                      {processedProducts.length > 0 &&
-                        processedProducts.map((p, i) => (
-                          <TableRow key={i}>
-                            <TableCell>{i + 1}</TableCell>
-                            <TableCell>{p.brand}</TableCell>
-                            {allSizes.map((size) => (
-                              <TableCell
-                                key={`qty-${size}-${i}`}
-                                align="center"
-                              >
-                                {p.sizes[size]?.quantity || "-"}
-                              </TableCell>
-                            ))}
-                            {allSizes.map((size) => (
-                              <TableCell
-                                key={`price-${size}-${i}`}
-                                align="center"
-                              >
-                                {isNaN(p.sizes[size]?.price.toFixed(2))
-                                  ? 0
-                                  : p.sizes[size]?.price.toFixed(2) || "-"}
-                              </TableCell>
-                            ))}
-                            <TableCell align="center" className="w-0">
-                              <Button
-                                className="text-red-500 hover:text-red-700"
-                                onClick={() => handleDeleteProduct(i)}
-                              >
-                                <Delete />
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-
-                      <TableRow>
-                        <TableCell colSpan={2} sx={{ fontWeight: 700 }}>
-                          Total
-                        </TableCell>
-                        {allSizes.map((size) => (
-                          <TableCell key={`qty-total-${size}`} align="center">
-                            {processedProducts.reduce(
-                              (acc, p) => acc + (p.sizes[size]?.quantity || 0),
-                              0
-                            )}
-                          </TableCell>
-                        ))}
-                        {allSizes.map((size) => (
-                          <TableCell key={`price-total-${size}`} align="center">
-                            {processedProducts
-                              .reduce(
-                                (acc, p) => acc + (p.sizes[size]?.price || 0),
-                                0
-                              )
-                              .toFixed(2)}
-                          </TableCell>
-                        ))}
-                        <TableCell></TableCell>
-                      </TableRow>
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-                {/* Total Calculation */}
-
-                <Box className="px-2 py-2 m-4 flex justify-end">
-                  <TextField
-                    id="filled-read-only-input"
-                    label="Grand Total"
-                    defaultValue="0"
-                    value={grandTotal.toFixed(2)}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    variant="filled"
-                  />
-                </Box>
-
-                <Box className="px-2 py-2 m-4 flex justify-end">
-                  <TextField
-                    id="filled-read-only-input"
-                    label="Grand Total (in words)"
-                    defaultValue="zero"
-                    sx={{ width: "50vw" }}
-                    value={NumberToWordsConverter(grandTotal)}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    variant="filled"
-                  />
-                </Box>
-
-                <Box className="px-2 py-2 m-4 flex justify-end">
-                  {spinner ? (
-                    <Button variant="contained">{<Spinner />}</Button>
-                  ) : (
-                    <Button variant="contained" onClick={handleBillSubmit}>
-                      Submit
-                    </Button>
-                  )}
+                  </FormControl>
                 </Box>
               </Box>
-            </>
-          )}
+              <Box className="w-full">
+                <h1 className="md:text-3xl px-2 py-2 m-4 font-semibold text-2xl">
+                  Select Brand
+                </h1>
+                <Box className="px-3 grid grid-cols-1 sm:grid-cols-3 gap-10">
+                  <FormControl sx={{ m: 1, minWidth: 120 }}>
+                    <InputLabel id="demo-simple-select-helper-label">
+                      Brand Name
+                    </InputLabel>
+                    <Select
+                      required
+                      labelId="demo-simple-select-helper-label"
+                      id="demo-simple-select-helper"
+                      value={currentInput?.brand || ""}
+                      label="Brand Name"
+                      name="brand"
+                      className="w-full"
+                      onChange={handleBrandChange}
+                    >
+                      {liquorBrandData.length > 0 &&
+                        liquorBrandData?.map((brand) => (
+                          <MenuItem
+                            key={brand._id}
+                            value={brand?.liquor?.brandName}
+                            onClick={() => {
+                              setStocks(brand.stock);
+                              setSizes(brand.liquor.sizes);
+                            }}
+                          >
+                            {brand?.liquor?.brandName}
+                          </MenuItem>
+                        ))}
+                    </Select>
+                  </FormControl>
+                  <Box className="pt-4">
+                    <Link to={`/dashboard/liquor/create/${company}`}>
+                      <Button
+                        startIcon={<Add />}
+                        variant="contained"
+                        onClick={() => {
+                          setOpen(true);
+                        }}
+                      >
+                        Add Liquor
+                      </Button>
+                    </Link>
+                  </Box>
+                </Box>
+              </Box>
+              {currentInput?.brand && (
+                <>
+                  <h1 className="md:text-3xl px-2 py-2 m-4 font-semibold text-2xl">
+                    Select Quantities
+                  </h1>
+                  <Box className="px-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
+                    {currentInput?.brand &&
+                      liquorBrandData
+                        .find(
+                          (brand) =>
+                            brand?.liquor?.brandName === currentInput?.brand
+                        )
+                        ?.liquor?.sizes?.map((size) => (
+                          <Box key={size?.size} className="flex flex-col gap-5">
+                            <TextField
+                              fullWidth
+                              value={
+                                currentInput?.sizes.find(
+                                  (s) => s.size === size?.size
+                                )?.quantity || ""
+                              }
+                              label={`Quantity ${
+                                size?.size === "750ml"
+                                  ? size?.size + " (Q)"
+                                  : size?.size === "375ml"
+                                  ? size?.size + " (P)"
+                                  : size?.size === "180ml"
+                                  ? size?.size + " (N)"
+                                  : size?.size
+                              }`}
+                              name={`quantity-${size?.size}`}
+                              onChange={handleInputChange}
+                              variant="outlined"
+                              type="number"
+                              InputProps={{ inputProps: { min: 0 } }} // Ensure minimum value is 0
+                            />
+                            <TextField
+                              fullWidth
+                              value={
+                                currentInput?.sizes
+                                  .find((s) => s.size === size?.size)
+                                  ?.price.toFixed(2) || 0
+                              }
+                              label={`Price ${
+                                size?.size === "750ml"
+                                  ? size?.size + " (Q)"
+                                  : size?.size === "375ml"
+                                  ? size?.size + " (P)"
+                                  : size?.size === "180ml"
+                                  ? size?.size + " (N)"
+                                  : size?.size
+                              }`}
+                              name={`price-${size?.size}`}
+                              onChange={handleInputChange}
+                              variant="outlined"
+                              type="number"
+                              focused={false}
+                              inputProps={{ readOnly: true }}
+                            />
+                          </Box>
+                        ))}
+                  </Box>
+                  <Box className="px-2 py-2 m-4 flex justify-end">
+                    {spinner2 ? (
+                      <Button variant="contained">{<Spinner />}</Button>
+                    ) : (
+                      <Button variant="contained" type="submit">
+                        Add Product
+                      </Button>
+                    )}
+                  </Box>
+                </>
+              )}
+            </Box>
+
+            <TableContainer className="py-12">
+              <h1 className="md:text-3xl text-2xl font-semibold text-slate-700 py-5">
+                Added Products
+              </h1>
+              <Table
+                sx={{ minWidth: 650 }}
+                size="small"
+                aria-label="a dense table"
+              >
+                <TableHead>
+                  <TableRow>
+                    <TableCell>S.No.</TableCell>
+                    <TableCell>Brand Name</TableCell>
+                    <TableCell align="center" colSpan={allSizes.length}>
+                      Quantity
+                    </TableCell>
+                    <TableCell align="center" colSpan={allSizes.length}>
+                      Price
+                    </TableCell>
+                    <TableCell align="center">Action</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell></TableCell>
+                    <TableCell></TableCell>
+                    {allSizes.map((size) => (
+                      <TableCell key={`qty-${size}`} align="center">
+                        {size === "750ml"
+                          ? size + " (Q)"
+                          : size === "375ml"
+                          ? size + " (P)"
+                          : size === "180ml"
+                          ? size + " (N)"
+                          : size}
+                      </TableCell>
+                    ))}
+                    {allSizes.map((size) => (
+                      <TableCell key={`price-${size}`} align="center">
+                        {size === "750ml"
+                          ? size + " (Q)"
+                          : size === "375ml"
+                          ? size + " (P)"
+                          : size === "180ml"
+                          ? size + " (N)"
+                          : size}
+                      </TableCell>
+                    ))}
+                    <TableCell></TableCell>
+                  </TableRow>
+                </TableHead>
+
+                <TableBody>
+                  {processedProducts.length > 0 &&
+                    processedProducts.map((p, i) => (
+                      <TableRow key={i}>
+                        <TableCell>{i + 1}</TableCell>
+                        <TableCell>{p.brand}</TableCell>
+                        {allSizes.map((size) => (
+                          <TableCell key={`qty-${size}-${i}`} align="center">
+                            {p.sizes[size]?.quantity || "-"}
+                          </TableCell>
+                        ))}
+                        {allSizes.map((size) => (
+                          <TableCell key={`price-${size}-${i}`} align="center">
+                            {isNaN(p.sizes[size]?.price.toFixed(2))
+                              ? 0
+                              : p.sizes[size]?.price.toFixed(2) || "-"}
+                          </TableCell>
+                        ))}
+                        <TableCell align="center" className="w-0">
+                          <Button
+                            className="text-red-500 hover:text-red-700"
+                            onClick={() => handleDeleteProduct(i)}
+                          >
+                            <Delete />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+
+                  <TableRow>
+                    <TableCell colSpan={2} sx={{ fontWeight: 700 }}>
+                      Total
+                    </TableCell>
+                    {allSizes.map((size) => (
+                      <TableCell key={`qty-total-${size}`} align="center">
+                        {processedProducts.reduce(
+                          (acc, p) => acc + (p.sizes[size]?.quantity || 0),
+                          0
+                        )}
+                      </TableCell>
+                    ))}
+                    {allSizes.map((size) => (
+                      <TableCell key={`price-total-${size}`} align="center">
+                        {processedProducts
+                          .reduce(
+                            (acc, p) => acc + (p.sizes[size]?.price || 0),
+                            0
+                          )
+                          .toFixed(2)}
+                      </TableCell>
+                    ))}
+                    <TableCell></TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
+            {/* Total Calculation */}
+            <Box className="px-2 py-2 m-4 flex justify-end">
+              <TextField
+                id="filled-read-only-input"
+                label="Grand Total"
+                defaultValue="0"
+                value={grandTotal.toFixed(2)}
+                InputProps={{
+                  readOnly: true,
+                }}
+                variant="filled"
+              />
+            </Box>
+
+            <Box className="px-2 py-2 m-4 flex justify-end">
+              <TextField
+                id="filled-read-only-input"
+                label="Grand Total (in words)"
+                defaultValue="zero"
+                sx={{ width: "50vw" }}
+                value={NumberToWordsConverter(grandTotal)}
+                InputProps={{
+                  readOnly: true,
+                }}
+                variant="filled"
+              />
+            </Box>
+
+            <Box className="px-2 py-2 m-4 flex justify-end">
+              {spinner ? (
+                <Button variant="contained">{<Spinner />}</Button>
+              ) : (
+                <Button variant="contained" onClick={handleBillSubmit}>
+                  Submit
+                </Button>
+              )}
+            </Box>
+          </Box>
         </>
       )}
     </>

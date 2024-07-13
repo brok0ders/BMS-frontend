@@ -83,8 +83,10 @@ const LiquorForm = () => {
         (liq) => liq.company === res1.company.company._id
       );
       setTemp(filtered);
-    } catch (e) {}
-    setLoading(false);
+    } catch (e) {
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -98,7 +100,7 @@ const LiquorForm = () => {
         <Box
           component="form"
           onSubmit={handleSubmit}
-          className="w-full px-5 md:px-10 lg:px-20 py-10 md:py-16"
+          className={`w-full px-5 md:px-10 lg:px-20 py-10 md:py-16`}
         >
           <h1 className="text-center text-4xl md:text-5xl font-bold text-gray-900">
             Create Liquor Brand
@@ -173,7 +175,7 @@ const LiquorForm = () => {
           >
             {spinner ? (
               <Button
-                sx={{ fontSize: "1rem" }}
+                sx={{ minWidth: "6rem", minHeight: "2rem", fontSize: "1rem" }}
                 variant="contained"
                 className=" p-4 !px-6"
               >
@@ -181,7 +183,7 @@ const LiquorForm = () => {
               </Button>
             ) : (
               <Button
-                sx={{ fontSize: "1rem" }}
+                sx={{ minWidth: "6rem", minHeight: "2rem", fontSize: "1rem" }}
                 type="submit"
                 variant="contained"
                 className=" p-4 !px-6"

@@ -99,7 +99,9 @@ const BeerForm = () => {
           <Box
             component="form"
             onSubmit={handleSubmit}
-            className="w-full px-5 md:px-10 lg:px-20 py-10 md:py-16"
+            className={`px-5 md:px-10 lg:px-20 py-10 md:py-16 ${
+              loading ? "blur-background" : ""
+            }`}
           >
             <h1 className="text-center text-4xl md:text-5xl font-bold text-gray-900">
               Create Beer Brand
@@ -113,7 +115,7 @@ const BeerForm = () => {
                     aria-readonly
                     label="Company Name"
                     value={companyName}
-                    className="w-full "
+                    className="w-full"
                     variant="outlined"
                   />
                   <FormControl fullWidth>
@@ -125,7 +127,7 @@ const BeerForm = () => {
                       value={brandName}
                       label="Brand Name"
                       name="brand"
-                      className="w-full"
+                      className="w-[94%]"
                       onChange={(e) => {
                         setBrandName(e.target.value);
                       }}
@@ -174,24 +176,20 @@ const BeerForm = () => {
             >
               {spinner ? (
                 <Button
-                  sx={{
-                    fontSize: "1rem",
-                  }}
                   variant="contained"
-                  className=" p-4 !px-6"
+                  className="p-4 !px-6"
+                  sx = {{minWidth: '6rem', minHeight: '2rem',  fontSize: "1rem",}}
                 >
-                  {<Spinner /> }
+                  <Spinner />
                 </Button>
               ) : (
                 <Button
-                  sx={{
-                    fontSize: "1rem",
-                  }}
                   type="submit"
                   variant="contained"
-                  className=" p-4 !px-6"
+                  className="p-4 !px-6"
+                  sx = {{minWidth: '6rem', minHeight: '2rem',  fontSize: "1rem",}}
                 >
-                 Create
+                  Create
                 </Button>
               )}
             </Box>
