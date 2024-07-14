@@ -1,17 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Delete } from "@mui/icons-material";
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-} from "@mui/material";
-import UpdateCompanyForm from "../../pages/Company/UpdateCompanyForm";
 import CompanyContext from "../../context/company/companyContext";
-import { toast } from "react-toastify";
 import BeerContext from "../../context/beer/beerContext";
 import LiquorContext from "../../context/liquor/liquorContext";
 
@@ -53,7 +41,7 @@ const CompanyCard = ({ id, name, companyType }) => {
             
 
           <h2 className="mt-3 text-xl text-center font-semibold">{name}</h2>
-          <p className="text-[1.1rem] text-center w-[10rem] m-auto mt-3 text-blue-900">
+          <p className="text-[1.1rem] text-center w-[10rem] m-auto mt-3 text-blue-900 underline">
             {brands} brands
           </p>
         </div>
