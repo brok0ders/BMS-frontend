@@ -650,7 +650,7 @@ const BeerBillForm = () => {
                 className="py-5 pb-10 px-10 md:py-5 md:px-20 "
               >
                 <BackButton className={"top-16 left-2"} />
-                <h1 className="md:text-5xl text-center font-bold text-slate-700 px-2 py-2 m-4 text-4xl">
+                <h1 className="md:text-5xl text-center font-bold text-slate-700 px-2 py-2 m-4 text-3xl">
                   Beer Bill Details
                 </h1>
 
