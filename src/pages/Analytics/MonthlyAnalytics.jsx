@@ -126,12 +126,15 @@ const MonthlyAnalytics = () => {
         <AnalyticsCard
           name={"Revenue"}
           value={monthlyData?.totalRevenue?.toFixed(2)}
+          icon={"/images/salary.png"}
         />
         <AnalyticsCard
           name={"Pratifal"}
           value={monthlyData?.totalPratifal?.toFixed(2)}
+          icon={"/images/pay.png"}
         />
-        <AnalyticsCard name={"TCS"} value={monthlyData?.totalTcs?.toFixed(2)} />
+        <AnalyticsCard name={"TCS"} value={monthlyData?.totalTcs?.toFixed(2)} 
+        icon={"/images/budget.png"}/>
 
         {sizesData.length > 0 &&
           sizesData?.map((size) => {
@@ -140,6 +143,7 @@ const MonthlyAnalytics = () => {
                 key={size.size}
                 name={size.size}
                 value={size.total}
+                icon={"/images/packages.png"}
               />
             );
           })}

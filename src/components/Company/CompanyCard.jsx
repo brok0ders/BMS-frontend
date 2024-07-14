@@ -28,7 +28,7 @@ const CompanyCard = ({ id, name, companyType }) => {
 
   return (
     <>
-      <div className="flex flex-col gap-2 py-5 relative  border border-gray-100 bg-gradient-to-r from-gray-100 to-gray-200 via-white">
+      <div className="flex flex-col gap-2 py-2 mx-5 md:py-5 pb-7  relative  border border-gray-100 bg-gradient-to-r from-gray-100 to-gray-200 via-white">
           <p
             className={`w-3 h-3 rounded-full flex items-center justify-center text-center ${
               companyType === "beer"
@@ -40,8 +40,8 @@ const CompanyCard = ({ id, name, companyType }) => {
         <div className="rounded-lg">
             
 
-          <h2 className="mt-3 text-xl text-center font-semibold">{name}</h2>
-          <p className="text-[1.1rem] text-center w-[10rem] m-auto mt-3 text-blue-900 underline">
+          <h2 className="mt-3 text-md md:text-lg text-center font-semibold">{name}</h2>
+          <p className="text-sm md:text-[1.1rem] text-center w-[10rem] m-auto mt-3 text-blue-900 underline">
             {brands} brands
           </p>
         </div>
