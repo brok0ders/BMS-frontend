@@ -43,6 +43,7 @@ import Contact from "./pages/Contact/Contact.jsx";
 import BillComponent from "./pages/Bill/BillComponent.jsx";
 import BillDetails from "./pages/Bill/BillDetails.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
+import MonthlyAnalytics from "./pages/Analytics/MonthlyAnalytics.jsx";
 
 const App = () => {
   const router = createBrowserRouter(
