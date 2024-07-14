@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { ThemeProvider, alpha, createTheme } from "@mui/material/styles";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
@@ -80,10 +80,48 @@ export default function HomePage() {
     <>
       <ThemeProvider theme={showCustomTheme ? LPtheme : defaultTheme}>
         <CssBaseline />
-        <Hero />
         <Box sx={{ bgcolor: "background.default" }}>
+          <Box
+            sx={{
+              position: "relative",
+              width: "100%",
+              height: "120vh", // Adjust height as needed
+              overflow: "hidden",
+            }}
+          >
+            <Box
+              sx={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                backgroundImage: 'url("/images/bg.jpg")',
+                backgroundSize: "cover",
+                backgroundRepeat: "no-repeat",
+                filter: "blur(3px)", // Blur intensity
+              }}
+            />
+            <Box
+              sx={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                backgroundColor: alpha("#000000", 0.5), // Semi-transparent overlay
+              }}
+            />
+            <Box
+              sx={{
+                position: "relative",
+                zIndex: 1,
+              }}
+            >
+              <Hero />
+            </Box>
+          </Box>
           <Highlights />
-
           <FAQ />
           <Divider />
           <Footer />

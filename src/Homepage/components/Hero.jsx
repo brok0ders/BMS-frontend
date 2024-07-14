@@ -13,40 +13,15 @@ export default function Hero() {
     <Box
       id="hero"
       sx={{
-        width: "100%",
-        height: "100vh", // Full viewport height
         position: "relative",
         overflow: "hidden",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        marginTop: {xs: "25vh", sm: "30vh", md: "35vh"},
       }}
     >
-      <Box
-        sx={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          backgroundImage: 'url("/images/bg.jpg")',
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          filter: "blur(3px)", // Blur intensity
-          zIndex: -1,
-        }}
-      />
-      <Box
-        sx={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          backgroundColor: alpha("#000000", 0.5), // Semi-transparent overlay
-          zIndex: -1,
-        }}
-      />
+    
       <Container
         sx={{
           display: "flex",

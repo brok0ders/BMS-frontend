@@ -35,6 +35,23 @@ const CustomerState = (props) => {
     return data;
   };
 
+  const getCustomerByLisencee = async ({ licensee }) => {
+    try {
+      const config = {
+        headers: {
+          authorization: localStorage.getItem("token"),
+        },
+      };
+      const { data } = await API.get(`/customer/details/${licensee}`, config);
+      console.log(data);
+      if (data.success) {
+        setCustomer(data.customer);
+      }
+      console.log(data.message);
+      return data;
+    } catch (e) {}
+  };
+
   const createCustomer = async ({ licensee, shop, firm, pan, email }) => {
     const config = {
       headers: {
@@ -100,6 +117,7 @@ const CustomerState = (props) => {
         updateCustomer,
         createCustomer,
         deleteCustomer,
+        getCustomerByLisencee,
       }}
     >
       {props.children}

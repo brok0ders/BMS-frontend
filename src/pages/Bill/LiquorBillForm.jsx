@@ -56,9 +56,22 @@ const LiquorBillForm = () => {
   const [spinner, setSpinner] = useState(false);
   const [spinner2, setSpinner2] = useState(false);
   const navigate = useNavigate();
+  const { getCustomerByLisencee } = useContext(CustomerContext);
+  const [cus, setCus] = useState({});
   const [email, setEmail] = useState("");
   let customerId = "";
   const [tcs, setTcs] = useState(0);
+
+  const handleLisencee = async (e) => {
+    setLicensee(e.target.value);
+    try {
+      const res = await getCustomerByLisencee({ licensee: e.target.value });
+      if (res.success) {
+        setCus(res.customer);
+      }
+    } catch (e) {}
+  };
+
   const NumberToWordsConverter = (n) => {
     if (isNaN(n)) {
       return "Invalid number";
@@ -539,7 +552,7 @@ const LiquorBillForm = () => {
                   required
                   id="outlined-basic"
                   value={licensee}
-                  onChange={(e) => setLicensee(e.target.value)}
+                  onChange={handleLisencee}
                   label="Licensee"
                   variant="outlined"
                 />
@@ -547,7 +560,7 @@ const LiquorBillForm = () => {
                 <TextField
                   required
                   id="outlined-basic"
-                  value={shop}
+                  value={cus.shop || shop}
                   onChange={(e) => setShop(e.target.value)}
                   label="Shop"
                   variant="outlined"
@@ -603,60 +616,6 @@ const LiquorBillForm = () => {
               component="form"
               onSubmit={handleAddProduct}
             >
-              <Box className="w-full">
-                <h1 className="md:text-3xl px-2 py-2 m-4 font-semibold text-2xl">
-                  Supplier
-                </h1>
-                <Box className="px-3 grid grid-cols-1 sm:grid-cols-3 gap-10">
-                  <FormControl sx={{ m: 1, minWidth: 120 }}>
-                    <TextField
-                      value={comp}
-                      label="Supplier"
-                      required
-                      variant="outlined"
-                      inputProps={{
-                        readOnly: true,
-                      }}
-                    />
-                  </FormControl>
-                </Box>
-              </Box>
-              <Box className="w-full">
-                <h1 className="md:text-3xl px-2 py-2 m-4 font-semibold text-2xl">
-                  Select Brand
-                </h1>
-                <Box className="px-3 grid grid-cols-1 sm:grid-cols-3 gap-10">
-                  <FormControl sx={{ m: 1, minWidth: 120 }}>
-                    <InputLabel id="demo-simple-select-helper-label">
-                      Brand Name
-                    </InputLabel>
-                    <Select
-                      required
-                      labelId="demo-simple-select-helper-label"
-                      id="demo-simple-select-helper"
-                      value={currentInput?.brand || ""}
-                      label="Brand Name"
-                      name="brand"
-                      className="w-full"
-                      onChange={handleBrandChange}
-                    >
-                      {liquorBrandData.length > 0 &&
-                        liquorBrandData?.map((brand) => (
-                          <MenuItem
-                            key={brand._id}
-                            value={brand?.liquor?.brandName}
-                            onClick={() => {
-                              setStocks(brand.stock);
-                              setSizes(brand.liquor.sizes);
-                            }}
-                          >
-                            {brand?.liquor?.brandName}
-                          </MenuItem>
-                        ))}
-                    </Select>
-                  </FormControl>
-                </Box>
-              </Box>
               {currentInput?.brand && (
                 <>
                   <h1 className="md:text-3xl px-2 py-2 m-4 font-semibold text-2xl">

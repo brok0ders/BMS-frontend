@@ -24,7 +24,7 @@ const logoStyle = {
   cursor: "pointer",
 };
 
-function AppAppBar({ mode, toggleColorMode }) {
+function AppAppBar() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -52,9 +52,8 @@ function AppAppBar({ mode, toggleColorMode }) {
       sx={{
         boxShadow: 0,
         bgcolor: "transparent",
-        mt: 2,
-        width: "100%",
         top: 10,
+        width: "100%",
       }}
     >
       <Container maxWidth="lg">
@@ -165,7 +164,6 @@ function AppAppBar({ mode, toggleColorMode }) {
               alignItems: "center",
             }}
           >
-            {/* <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} /> */}
             {localStorage.getItem("token") ? (
               <>
                 <MenuIntroduction />
@@ -202,22 +200,14 @@ function AppAppBar({ mode, toggleColorMode }) {
                   flexGrow: 1,
                 }}
               >
-                
-                <MenuItem onClick={() => navigate("/home")}>
-                  Home
-                </MenuItem>
-                <MenuItem onClick={() => navigate("/about")}>
-                  About
-                </MenuItem>
+                <MenuItem onClick={() => navigate("/home")}>Home</MenuItem>
+                <MenuItem onClick={() => navigate("/about")}>About</MenuItem>
                 <MenuItem onClick={() => navigate("contact")}>
                   Contact Us
                 </MenuItem>
-               
-                
-                
-                
+
                 <Divider />
-                
+
                 <MenuItem>
                   <Button
                     color="primary"

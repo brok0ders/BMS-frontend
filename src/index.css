@@ -27,3 +27,8 @@
   pointer-events: none; /* Optional: This makes the form unclickable while blurred */
 }
 
+.gradient-background {
+  background-image: linear-gradient(to right, #ebf8ff, #ebf8ff); /* both from-blue-100 and to-blue-100 */
+}
+
+

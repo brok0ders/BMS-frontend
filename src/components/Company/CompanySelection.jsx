@@ -85,35 +85,43 @@ const CompanySelection = () => {
           ) : (
             <>
               <div className={`relative ${loading ? "blur-background" : ""}`}>
-                <BackButton className={"md:left-20 md:top-20"} />
                 <Box
                   sx={{
                     display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    marginTop: "0rem",
-                    marginRight: "2rem",
-                    marginLeft: { xs: "0rem", md: "33%" }, // Responsive left margin
-                    flexDirection: { xs: "column", md: "row" }, // Stack items vertically on smaller screens
-                    textAlign: { xs: "center", md: "left" }, // Center align text on smaller screens
+                    // justifyContent: "start",
+                    flexDirection: { xs: "column", md: "row" },
+                    textAlign: { xs: "center", md: "left" },
+                    backgroundImage:
+                      "linear-gradient(to right, #ebf8ff, white, #ebf8ff)",
+                    width: "100vw",
+                    padding: "1rem",
                   }}
                 >
-                  <h1 className="text-2xl md:text-5xl bg-gradient-to-r from-gray-100 to-gray-100 via-white py-8 h-24 mt-5 flex items-center justify-center">
-                    <LiquorIcon
-                      sx={{ fontSize: 39, marginRight: { xs: 0, md: 3 } }}
-                    />
-                    Select Supplier
-                    <LiquorIcon
-                      sx={{ fontSize: 39, marginLeft: { xs: 0, md: 3 } }}
-                    />
-                  </h1>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      position: "relative",
+                      width: { xs: "100%", md: "auto" },
+                    }}
+                  >
+                    <BackButton className={"!absolute top-[0rem]"} />
+                    <h1 className="text-2xl md:text-5xl mt-10 text-center ml-[33vw]">
+                      Select Supplier
+                    </h1>
+                  </Box>
                   <Button
                     startIcon={<Add />}
                     variant="contained"
                     onClick={() => {
                       setOpen(true);
                     }}
-                    sx={{ mt: { xs: 2, md: 0 } }} // Add top margin on smaller screens
+                    sx={{
+                      mt: { xs: 2, md: 0 },
+                      alignSelf: { xs: "center", md: "flex-end" },
+                      marginLeft: "24vw"
+                    }} // Add top margin on smaller screens
                   >
                     New Supplier
                   </Button>
