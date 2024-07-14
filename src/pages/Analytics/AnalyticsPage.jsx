@@ -10,6 +10,7 @@ import AnalyticsChart from "./AnalyticsChart";
 import BillContext from "../../context/bill/billContext";
 import Loader from "../../components/Layout/Loader";
 import BackButton from "../../components/BackButton";
+import MonthlyAnalytics from "./MonthlyAnalytics";
 const AnalyticsPage = () => {
   const [analytics, setAnalytics] = useState({});
   const { getAnalyticsData } = useContext(BillContext);
@@ -72,6 +73,7 @@ const AnalyticsPage = () => {
                 value={analytics?.totalCustomers}
               />
             </div>
+            <MonthlyAnalytics />
             <div className="py-10">
               <AnalyticsChart
                 beers={analytics?.totalBeers}

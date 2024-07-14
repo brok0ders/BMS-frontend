@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import API from "../../utils/API";
 import { Box, MenuItem, FormControl, Select, InputLabel } from "@mui/material";
 import { toast } from "react-toastify";
+import AnalyticsCard from "./AnalyticsCard";
 
 const months = [
+  { name: "All Months", value: 0 },
   { name: "January", value: 1 },
   { name: "February", value: 2 },
   { name: "March", value: 3 },
@@ -20,9 +22,10 @@ const months = [
 
 const MonthlyAnalytics = () => {
   const [loading, seLoading] = useState(false);
-  const [monthlyData, setMonthlyData] = useState({});
+  const [monthlyData, setMonthlyData] = useState([]);
   const [billType, setBillType] = useState("liquor");
-  const [month, setMonth] = useState();
+  const [sizesData, setSizesData] = useState([]);
+  const [month, setMonth] = useState(new Date().getMonth() + 1);
   const getMonthlyAnalytics = async () => {
     try {
       const config = {
@@ -32,14 +35,28 @@ const MonthlyAnalytics = () => {
         },
       };
       const { data } = await API.get(
-        `/bill/analytics/monthly-data?billType=${billType}&month=${month}`,
+        `/bill/analytics/monthly?billType=${billType}&month=${month}`,
         config
       );
+      const sizesArray = Object.entries(data?.data.sizes).map(
+        ([size, total]) => ({
+          size,
+          total,
+        })
+      );
+      const sortedArray = sizesArray.sort((a, b) => {
+        // Extract numerical values from the size strings
+        const sizeA = parseInt(a.size.replace("ml", ""), 10);
+        const sizeB = parseInt(b.size.replace("ml", ""), 10);
+        return sizeB - sizeA;
+      });
+      setSizesData(sortedArray);
       setMonthlyData(data?.data);
     } catch (error) {
       console.log(error);
       toast.warning("No Data Found");
       setMonthlyData();
+      setSizesData([]);
     }
   };
 
@@ -47,10 +64,14 @@ const MonthlyAnalytics = () => {
     setMonth(e.target.value);
   };
 
+  useEffect(() => {
+    getMonthlyAnalytics();
+  }, [month, billType]);
+
   return (
-    <div>
+    <div className="pt-20">
       <div>
-        <Box className="px-3 grid grid-cols-1 sm:grid-cols-3 gap-10">
+        <Box className="grid grid-cols-1 sm:grid-cols-3 gap-5">
           <FormControl sx={{ m: 1, minWidth: 120 }}>
             <InputLabel id="demo-simple-select-helper-label">
               Select Month
@@ -77,8 +98,8 @@ const MonthlyAnalytics = () => {
             <Select
               required
               value={billType}
-              label="Month Name"
-              name="brand"
+              label="Select Liqour/Beer"
+              name="billType"
               className="w-full"
               onChange={(e) => setBillType(e.target.value)}
             >
@@ -91,6 +112,36 @@ const MonthlyAnalytics = () => {
             </Select>
           </FormControl>
         </Box>
+      </div>
+
+      <h4 className="my-5 text-xl underline text-center font-bold">
+        Month: Data for{" "}
+        <span className="text-sky-800 font-bold">
+          {" "}
+          {months.find((month) => month.value === monthlyData?.month)?.name}
+        </span>
+      </h4>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        <AnalyticsCard
+          name={"Revenue"}
+          value={monthlyData?.totalRevenue?.toFixed(2)}
+        />
+        <AnalyticsCard
+          name={"Pratifal"}
+          value={monthlyData?.totalPratifal?.toFixed(2)}
+        />
+        <AnalyticsCard name={"TCS"} value={monthlyData?.totalTcs?.toFixed(2)} />
+
+        {sizesData.length > 0 &&
+          sizesData?.map((size) => {
+            return (
+              <AnalyticsCard
+                key={size.size}
+                name={size.size}
+                value={size.total}
+              />
+            );
+          })}
       </div>
     </div>
   );
