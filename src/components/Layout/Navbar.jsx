@@ -7,13 +7,10 @@ export default function Navbar() {
   const [mode, setMode] = React.useState("light");
   const LPtheme = createTheme(getLPTheme(mode));
 
-  const toggleColorMode = () => {
-    setMode((prev) => (prev === "dark" ? "light" : "dark"));
-  };
 
   return (
     <ThemeProvider theme={LPtheme}>
-      <AppAppBar mode={mode} toggleColorMode={toggleColorMode} />
+      <AppAppBar />
     </ThemeProvider>
   );
 }

@@ -1,17 +1,34 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import BackButton from "../../components/BackButton";
+import UserContext from "../../context/user/userContext";
 
 const BillSelection = () => {
+  const { getUser } = useContext(UserContext);
+  const [user, setUser] = useState();
+  const gettingUser = async () => {
+    try {
+      // setLoading(true);
+      const res = await getUser();
+      console.log(res);
+      setUser(res.user);
+    } catch (e) {
+    } finally {
+      // setLoading(false);
+    }
+  };
+  useEffect(() => {
+    gettingUser();
+  }, []);
   return (
-    <div className="relative p-4">
-      <div className="text-center relative text-2xl py-8 md:text-5xl bg-gradient-to-r from-blue-100 to-blue-100 via-white mt-5 h-24">
-        <BackButton className={"!absolute -top-1/4 -translate-y-1/2 left-2"} />
-        M/s Maa Banari Devi Traders
+    <div className="relative">
+      <div className="text-center relative text-2xl md:text-5xl md:py-6 bg-gradient-to-r from-blue-100 to-blue-100 via-white py-10">
+        <BackButton className={"!absolute top-5 -translate-y-1/2 left-3"} />
+        {user?.name}
       </div>
-      <div className="h-[75vh] bg-[#f6f6f6]">
-        <div className="flex flex-col items-center justify-center h-[75vh] md:h-[50vh]">
-          <div className="grid place-items-center place grid-cols-1 md:grid-cols-2 gap-28 mx-20 my-10">
+      <div className="bg-[#f6f6f6]">
+        <div className="flex flex-col items-center justify-center md:mt-[15vh] mt-9">
+          <div className="grid place-items-center grid-cols-1 md:grid-cols-2 lg:gap-40 md:gap-36 sm:gap-14 gap-11">
             <Link to={"/dashboard/company/liquor?page=create"}>
               <div className="text-center">
                 <div className="flex justify-center items-center bg-gradient-to-r from-blue-100 to-green-100 rounded-full w-36 h-36">

@@ -25,13 +25,16 @@ const AdminHome = () => {
         <Loader />
       ) : (
         <>
-          <div className={`bg-gradient-to-r from-cyan-100 to-cyan-100 via-white h-24 mt-5 ${loading ? "blur-background" : ""}`}>
-            <div className="text-center text-2xl py-8 md:text-5xl ">
+          <div
+            className={`bg-gradient-to-r from-cyan-100 to-cyan-100 via-white mt-0 ${
+              loading ? "blur-background" : ""
+            }`}
+          >
+            <div className="text-center text-2xl py-8 md:text-5xl">
               {user?.name}
             </div>
-            <MenuList />
           </div>
-          <div className="bg-[#f6f6f6] h-[75vh]"></div>
+          <MenuList />
         </>
       )}
     </>
