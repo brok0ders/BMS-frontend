@@ -69,22 +69,23 @@ const CompanySelection = () => {
                 />
                 <p>NO SUPPLIERS FOUND!</p>
               </div>
-              <Box className="flex justify-center mt-8">
+              <Box className="mt-4 flex justify-center sm:flex md:mt-4 lg:mt-6">
                 <Button
                   startIcon={<Add />}
                   variant="contained"
                   onClick={() => {
                     setOpen(true);
                   }}
+                  className="px-4 py-2  sm:px-6 sm:py-3 md:px-8 md:py-4"
                 >
-                  New Supplier
+                  <span className="text-sm">New Supplier</span>
                 </Button>
               </Box>
             </>
           ) : (
             <>
               <div className={`relative ${loading ? "blur-background" : ""}`}>
-                <BackButton className={"left-20 top-20"} />
+                <BackButton className={"md:left-20 md:top-20"} />
                 <Box
                   sx={{
                     display: "flex",
@@ -92,13 +93,19 @@ const CompanySelection = () => {
                     alignItems: "center",
                     marginTop: "0rem",
                     marginRight: "2rem",
-                    marginLeft: "33%", // Add left margin to balance the container
+                    marginLeft: { xs: "0rem", md: "33%" }, // Responsive left margin
+                    flexDirection: { xs: "column", md: "row" }, // Stack items vertically on smaller screens
+                    textAlign: { xs: "center", md: "left" }, // Center align text on smaller screens
                   }}
                 >
-                  <h1 className="text-2xl md:text-5xl bg-gradient-to-r from-gray-100 to-gray-100 via-white py-8 h-24 mt-5 flex items-center text-center">
-                    <LiquorIcon sx={{ fontSize: 39, marginRight: 3 }} /> Select
-                    Supplier
-                    <LiquorIcon sx={{ fontSize: 39, marginLeft: 3 }} />
+                  <h1 className="text-2xl md:text-5xl bg-gradient-to-r from-gray-100 to-gray-100 via-white py-8 h-24 mt-5 flex items-center justify-center">
+                    <LiquorIcon
+                      sx={{ fontSize: 39, marginRight: { xs: 0, md: 3 } }}
+                    />
+                    Select Supplier
+                    <LiquorIcon
+                      sx={{ fontSize: 39, marginLeft: { xs: 0, md: 3 } }}
+                    />
                   </h1>
                   <Button
                     startIcon={<Add />}
@@ -106,17 +113,18 @@ const CompanySelection = () => {
                     onClick={() => {
                       setOpen(true);
                     }}
+                    sx={{ mt: { xs: 2, md: 0 } }} // Add top margin on smaller screens
                   >
                     New Supplier
                   </Button>
                 </Box>
 
-                <div className="px-20 mt-10">
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 my-9">
+                <div className="px-4 md:px-10 lg:px-20 mt-10">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 my-9">
                     {companyData?.map((company) => (
                       <SelectCompanyCard
-                        url={`${companyType}${page ? "/bill/" + page : ""}`}
                         key={company.company._id}
+                        url={`${companyType}${page ? "/bill/" + page : ""}`}
                         name={company.company.name}
                         id={company._id}
                         companyType={company.company.companyType}

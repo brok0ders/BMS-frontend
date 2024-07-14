@@ -10,7 +10,7 @@ import analytics from "/images/analytics.png";
 const MenuList = () => {
   return (
     <>
-      <div className="mx-20 my-10 grid grid-cols-1 md:grid-cols-4 gap-10">
+      <div className="mx-10 md:mx-20 my-10 grid grid-cols-2 md:grid-cols-4 gap-10">
         <MenuCard menu={"select"} image={add} text={"Create Bill"} />
         <MenuCard menu={"bill/records"} image={bills} text={"Bills"} />
         <MenuCard menu={"company/beer"} image={beer} text={"Beers"} />

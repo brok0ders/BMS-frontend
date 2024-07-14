@@ -69,6 +69,7 @@ const BillRecords = () => {
   const getBills = async () => {
     setLoading(true);
     const data = await getAllBills();
+    console.log(data);
     if (data) {
       setBills(data);
       if (rows.length == 0) {
@@ -77,7 +78,7 @@ const BillRecords = () => {
           sno: index + 1,
           billId: bill._id,
           date: bill.createdAt.split("T")[0],
-          billno: `BST${index + 1}`,
+          billno: bill.billNo,
           lincensee: bill.customer.licensee,
           Company: bill?.company?.company?.name,
           total: bill.total,

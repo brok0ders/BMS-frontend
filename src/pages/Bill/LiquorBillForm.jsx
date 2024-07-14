@@ -1137,6 +1137,9 @@ const LiquorBillForm = () => {
                 </TableBody>
               </Table>
             </TableContainer>
+            
+            
+
             {/* Total Calculation */}
 
             {/* Total Calculation */}
@@ -1169,9 +1172,9 @@ const LiquorBillForm = () => {
 
             <Box className="px-2 py-2 m-4 flex justify-end">
               {spinner ? (
-                <Button variant="contained">{<Spinner />}</Button>
+                <Button variant="contained" sx = {{minWidth: '6rem', minHeight: '2rem'}}>{<Spinner />}</Button>
               ) : (
-                <Button variant="contained" onClick={handleBillSubmit}>
+                <Button variant="contained" sx = {{minWidth: '6rem', minHeight: '2rem'}} onClick={handleBillSubmit}>
                   Submit
                 </Button>
               )}

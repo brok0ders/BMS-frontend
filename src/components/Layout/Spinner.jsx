@@ -5,7 +5,7 @@ import { LineWave } from "react-loader-spinner";
 const Spinner = () => {
   return (
     <>
-      <img src="/images/spinner.gif" alt="" className="w-5" />
+      <img src="/images/spinner.gif" alt="" className="w-6" />
     </>
   );
 };

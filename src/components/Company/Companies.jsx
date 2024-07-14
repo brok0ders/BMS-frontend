@@ -36,7 +36,7 @@ const Companies = () => {
       {!companyData || companyData.length === 0 ? (
         <>
           <>
-            <div className="w-[25vw] m-auto text-center mt-[5rem]">
+            <div className="w-[25vw] m-auto text-center mt-[2rem]">
               <img
                 src="/images/no-data.png"
                 alt=""
@@ -51,7 +51,7 @@ const Companies = () => {
           {loading ? (
             <Loader />
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 my-10">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 my-1">
               {companyData?.map((company) => (
                 <CompanyCard
                   key={company.company._id}

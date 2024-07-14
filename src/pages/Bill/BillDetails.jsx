@@ -43,7 +43,7 @@ const BillDetails = () => {
         <BillComponent />
       </div>
 
-      <div className="flex gap-10 justify-end   pb-20 px-20 mt-10">
+      <div className="flex flex-col md:flex-row gap-10 justify-end   pb-20 px-20 mt-10">
         <Button
           startIcon={<Home />}
           variant="outlined"

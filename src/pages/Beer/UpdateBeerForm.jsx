@@ -147,7 +147,7 @@ const UpdateBeerForm = () => {
               </Link>
               {spinner ? (
                 <Button
-                  sx={{ fontSize: "1rem" }}
+                  sx={{ fontSize: "1rem", minWidth: "6rem", minHeight: "2rem" }}
                   variant="contained"
                   className=" p-4 !px-6"
                 >
@@ -155,7 +155,7 @@ const UpdateBeerForm = () => {
                 </Button>
               ) : (
                 <Button
-                  sx={{ fontSize: "1rem" }}
+                  sx={{ fontSize: "1rem", minWidth: "6rem", minHeight: "2rem" }}
                   type="submit"
                   variant="contained"
                   className=" p-4 !px-6"

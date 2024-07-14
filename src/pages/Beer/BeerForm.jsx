@@ -26,11 +26,16 @@ const BeerForm = () => {
   const { company } = useParams();
   const [loading, setLoading] = useState(false);
   const [spinner, setSpinner] = useState(false);
+  const [filled, setFilled] = useState(false);
 
   const handleSubmit = async (e) => {
-    setSpinner(true);
     e.preventDefault();
+    if (!filled) {
+      toast.warning("Choose quantity of atleasst one size!");
+      return;
+    }
     try {
+      setSpinner(true);
       const res = await createBeer({
         beerId: brandName._id,
         stock,
@@ -100,7 +105,7 @@ const BeerForm = () => {
           <Box
             component="form"
             onSubmit={handleSubmit}
-            className={`px-5 md:px-10 lg:px-20 py-10 md:py-16 ${
+            className={`px-5 md:px-10 lg:px-20 py-10 md:py-5 ${
               loading ? "blur-background" : ""
             }`}
           >
@@ -156,7 +161,9 @@ const BeerForm = () => {
                     name="quantity"
                     type="number"
                     inputProps={{ min: 0 }}
-                    required
+                    onClick={() => {
+                      setFilled(true);
+                    }}
                     label={`Stock ${b.size}`}
                     variant="outlined"
                   />
@@ -180,17 +187,16 @@ const BeerForm = () => {
                 <Button
                   variant="contained"
                   className="p-4 !px-6"
-                  sx = {{minWidth: '6rem', minHeight: '2rem',  fontSize: "1rem",}}
+                  sx={{ minWidth: "6rem", minHeight: "2rem", fontSize: "1rem" }}
                 >
                   <Spinner />
-                  {<Spinner />}
                 </Button>
               ) : (
                 <Button
                   type="submit"
                   variant="contained"
                   className="p-4 !px-6"
-                  sx = {{minWidth: '6rem', minHeight: '2rem',  fontSize: "1rem",}}
+                  sx={{ minWidth: "6rem", minHeight: "2rem", fontSize: "1rem" }}
                 >
                   Create
                 </Button>

@@ -17,11 +17,11 @@ const CompanyList = () => {
   return (
     <Box
       sx={{
-        py: { sm: "1rem", md: "2rem", lg: "2rem" },
+        py: { sm: "0rem", md: "0rem", lg: "1rem" },
         px: { sm: "1rem", md: "2rem", lg: "3rem" },
       }}
     >
-      <BackButton />
+      <BackButton url={"/dashboard"}/>
       <h1 className="text-center text-5xl font-bold text-slate-700 mb-5">
         All Suppliers
       </h1>
