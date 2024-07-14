@@ -38,7 +38,8 @@ const MonthlyAnalytics = () => {
         `/bill/analytics/monthly?billType=${billType}&month=${month}`,
         config
       );
-      const sizesArray = Object.entries(data?.data.sizes).map(
+      console.log(data?.data?.sizes);
+      const sizesArray = Object.entries(data?.data?.sizes).map(
         ([size, total]) => ({
           size,
           total,
