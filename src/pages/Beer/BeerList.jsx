@@ -56,7 +56,6 @@ const BeerList = () => {
     } catch (error) {
       console.error(error);
     } finally {
-    } finally {
       setLoading(false);
     }
   };
@@ -89,9 +88,9 @@ const BeerList = () => {
             </>
           ) : (
             <>
-              <TableContainer className="py-5 px-3">
+              <TableContainer className="px-3">
                 <Box className="py-3 px-10">
-          <BackButton />
+                  <BackButton />
                   <h1 className="text-center py-5 text-4xl font-bold">
                     Beer Details
                   </h1>

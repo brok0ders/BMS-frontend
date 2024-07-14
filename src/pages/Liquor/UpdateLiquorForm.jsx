@@ -154,7 +154,7 @@ const UpdateLiquorForm = () => {
               </Button>
             ) : (
               <Button
-                sx={{ fontSize: "1rem" }}
+                sx={{ fontSize: "1rem", minWidth: "6rem", minHeight: "2rem" }}
                 type="submit"
                 variant="contained"
                 className=" p-4 px-6"

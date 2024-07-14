@@ -95,7 +95,7 @@ const CompanySelection = () => {
                     marginLeft: "33%", // Add left margin to balance the container
                   }}
                 >
-                  <h1 className="text-2xl md:text-5xl bg-gradient-to-r from-gray-100 to-gray-100 via-white py-8 h-24 mt-5 flex items-center text-center">
+                  <h1 className="text-2xl md:text-5xl bg-gradient-to-r from-gray-100 to-gray-100 via-white h-24 mt-5 flex items-center text-center">
                     <LiquorIcon sx={{ fontSize: 39, marginRight: 3 }} /> Select
                     Supplier
                     <LiquorIcon sx={{ fontSize: 39, marginLeft: 3 }} />
