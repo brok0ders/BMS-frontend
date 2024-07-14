@@ -35,7 +35,7 @@ const CustomerState = (props) => {
     return data;
   };
 
-  const createCustomer = async ({ licensee, shop, firm, pan }) => {
+  const createCustomer = async ({ licensee, shop, firm, pan, email }) => {
     const config = {
       headers: {
         "Content-Type": "application/json",
@@ -44,7 +44,7 @@ const CustomerState = (props) => {
     };
     const { data } = await API.post(
       "/customer/create",
-      { licensee, shop, firm, pan },
+      { licensee, shop, firm, pan, email },
       config
     );
     if (data.success) {
