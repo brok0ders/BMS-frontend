@@ -69,15 +69,16 @@ const CompanySelection = () => {
                 />
                 <p>NO SUPPLIERS FOUND!</p>
               </div>
-              <Box className="flex justify-center mt-8">
+              <Box className="mt-4 flex justify-center sm:flex md:mt-4 lg:mt-6">
                 <Button
                   startIcon={<Add />}
                   variant="contained"
                   onClick={() => {
                     setOpen(true);
                   }}
+                  className="px-4 py-2  sm:px-6 sm:py-3 md:px-8 md:py-4"
                 >
-                  New Supplier
+                  <span className="text-sm">New Supplier</span>
                 </Button>
               </Box>
             </>
