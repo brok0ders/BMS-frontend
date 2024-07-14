@@ -57,16 +57,17 @@ const LiquorBillForm = () => {
   const [spinner2, setSpinner2] = useState(false);
   const navigate = useNavigate();
   const { getCustomerByLisencee } = useContext(CustomerContext);
-  const [cus, setCus] = useState({});
   let customerId = "";
   const [tcs, setTcs] = useState(0);
 
   const handleLisencee = async (e) => {
     setLicensee(e.target.value);
     try {
-      const res = await getCustomerByLisencee({licensee: e.target.value});
+      const res = await getCustomerByLisencee({ licensee: e.target.value });
       if (res.success) {
-        setCus(res.customer);
+        setShop(res?.customer[0].shop);
+        setFirm(res?.customer[0].firm);
+        setPan(res?.customer[0].pan);
       }
     } catch (e) {}
   };
@@ -552,7 +553,7 @@ const LiquorBillForm = () => {
                 <TextField
                   required
                   id="outlined-basic"
-                  value={cus.shop || shop}
+                  value={shop}
                   onChange={(e) => setShop(e.target.value)}
                   label="Shop"
                   variant="outlined"

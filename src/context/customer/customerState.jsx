@@ -43,9 +43,8 @@ const CustomerState = (props) => {
         },
       };
       const { data } = await API.get(`/customer/details/${licensee}`, config);
-      console.log(data);
       if (data.success) {
-        setCustomer(data.customer);
+        setCustomer(data.customer[0]);
       }
       console.log(data.message);
       return data;
