@@ -104,13 +104,13 @@ const LiquorForm = () => {
           className={`w-full px-5 md:px-10 lg:px-20 py-10 md:py-16`}
         >
           <BackButton />
-          <h1 className="text-center text-4xl md:text-5xl font-bold text-gray-900">
+          <h1 className="text-center text-2xl grid grid-row-1 md:text-5xl font-bold text-gray-900">
             Create Liquor Brand
           </h1>
           <Box className="pb-10 grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-10">
             <Box className="py-10">
               <h1 className="text-2xl font-semibold mb-5">Company</h1>
-              <div className="flex gap-3 w-[90vw]">
+              <div className="flex flex-col md:flex-row gap-3 w-[90vw]">
                 <TextField
                   required
                   aria-readonly
