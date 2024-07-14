@@ -51,7 +51,7 @@ const Companies = () => {
           {loading ? (
             <Loader />
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 my-1">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-10 mt-1">
               {companyData?.map((company) => (
                 <CompanyCard
                   key={company.company._id}
