@@ -56,6 +56,7 @@ const BeerBillForm = () => {
   const [loading, setLoading] = useState(false);
   const [spinner, setSpinner] = useState(false);
   const [spinner2, setSpinner2] = useState(false);
+  const [tcs, setTcs] = useState(0);
   const navigate = useNavigate();
   let customerId = "";
   const [currentInput, setCurrentInput] = useState({ brand: "", sizes: [] });
@@ -185,6 +186,8 @@ const BeerBillForm = () => {
         customer: customerId,
         seller: user?._id,
         company,
+        pratifal: fpratifal,
+        tcs,
         total: grandTotal,
         billType: "beer",
       });
@@ -355,7 +358,7 @@ const BeerBillForm = () => {
       const taxTotal = t + vatTax + cess + w + h + profit + p;
       const tcs = taxTotal * 0.01;
       setGrandTotal(taxTotal + tcs);
-
+      setTcs(tcs);
       setCurrentInput({ brand: "", sizes: [] });
 
       console.log("total quantity: " + q);

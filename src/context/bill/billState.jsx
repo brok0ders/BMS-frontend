@@ -117,7 +117,9 @@ const BillState = ({ children }) => {
     products,
     company,
     total,
-    billType
+    billType,
+    pratifal,
+    tcs,
   }) => {
     try {
       const config = {
@@ -126,6 +128,8 @@ const BillState = ({ children }) => {
           authorization: localStorage.getItem("token"),
         },
       };
+      console.log(pratifal);
+      console.log(tcs);
       const { data } = await API.post(
         "/bill/new",
         {
@@ -137,6 +141,8 @@ const BillState = ({ children }) => {
           pno,
           total,
           billType,
+          pratifal,
+          tcs,
         },
         config
       );

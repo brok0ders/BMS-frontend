@@ -57,7 +57,7 @@ const LiquorBillForm = () => {
   const [spinner2, setSpinner2] = useState(false);
   const navigate = useNavigate();
   let customerId = "";
-
+  const [tcs, setTcs] = useState(0);
   const NumberToWordsConverter = (n) => {
     if (isNaN(n)) {
       return "Invalid number";
@@ -189,6 +189,8 @@ const LiquorBillForm = () => {
         customer: customerId,
         seller: user?._id,
         company,
+        tcs,
+        pratifal: fpratifal,
         total: grandTotal,
         billType: "liquor",
       });
@@ -355,6 +357,7 @@ const LiquorBillForm = () => {
 
       const taxTotal = t + vatTax + cess + w + h + profit + p;
       const tcs = taxTotal * 0.01;
+      setTcs(tcs);
       setGrandTotal(taxTotal + tcs);
 
       setCurrentInput({ brand: "", sizes: [] });
