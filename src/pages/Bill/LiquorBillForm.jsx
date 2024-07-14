@@ -57,6 +57,7 @@ const LiquorBillForm = () => {
   const [spinner2, setSpinner2] = useState(false);
   const navigate = useNavigate();
   const { getCustomerByLisencee } = useContext(CustomerContext);
+  const [email, setEmail] = useState("");
   let customerId = "";
   const [tcs, setTcs] = useState(0);
 
@@ -194,7 +195,13 @@ const LiquorBillForm = () => {
   const createBill2 = async () => {
     try {
       setSpinner(true);
-      const customerData = await createCustomer({ licensee, shop, firm, pan });
+      const customerData = await createCustomer({
+        email,
+        licensee,
+        shop,
+        firm,
+        pan,
+      });
       customerId = customerData.customer._id;
       const res = await createBill({
         excise,
@@ -550,6 +557,7 @@ const LiquorBillForm = () => {
                   label="Licensee"
                   variant="outlined"
                 />
+
                 <TextField
                   required
                   id="outlined-basic"
@@ -588,6 +596,14 @@ const LiquorBillForm = () => {
                   value={pno}
                   onChange={(e) => setPno(e.target.value)}
                   label="P. No."
+                  variant="outlined"
+                />
+                <TextField
+                  id="basic"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  label="Email"
                   variant="outlined"
                 />
               </Box>

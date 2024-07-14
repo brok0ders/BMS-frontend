@@ -48,11 +48,10 @@ const CustomerState = (props) => {
       }
       console.log(data.message);
       return data;
-    }
-    catch(e) {}
+    } catch (e) {}
   };
 
-  const createCustomer = async ({ licensee, shop, firm, pan }) => {
+  const createCustomer = async ({ licensee, shop, firm, pan, email }) => {
     const config = {
       headers: {
         "Content-Type": "application/json",
@@ -61,7 +60,7 @@ const CustomerState = (props) => {
     };
     const { data } = await API.post(
       "/customer/create",
-      { licensee, shop, firm, pan },
+      { licensee, shop, firm, pan, email },
       config
     );
     if (data.success) {
@@ -117,7 +116,7 @@ const CustomerState = (props) => {
         updateCustomer,
         createCustomer,
         deleteCustomer,
-        getCustomerByLisencee
+        getCustomerByLisencee,
       }}
     >
       {props.children}
