@@ -56,7 +56,10 @@ const BeerBillForm = () => {
   const [loading, setLoading] = useState(false);
   const [spinner, setSpinner] = useState(false);
   const [spinner2, setSpinner2] = useState(false);
+  const [added, setAdded] = useState(false);
   const [tcs, setTcs] = useState(0);
+  const { getCustomerByLisencee } = useContext(CustomerContext);
+  const [email, setEmail] = useState("");
   const navigate = useNavigate();
   let customerId = "";
   const [currentInput, setCurrentInput] = useState({ brand: "", sizes: [] });
@@ -177,7 +180,7 @@ const BeerBillForm = () => {
   const createBill2 = async () => {
     try {
       setSpinner(true);
-      const customerData = await createCustomer({ licensee, shop, firm, pan });
+      const customerData = await createCustomer({ licensee, shop, firm, pan, email });
       customerId = customerData.customer._id;
       const res = await createBill({
         excise,
@@ -216,6 +219,28 @@ const BeerBillForm = () => {
       setLoading(false);
     }
   };
+
+  const handleLisencee = async (e) => {
+    setLicensee(e.target.value);
+    try {
+      const res = await getCustomerByLisencee({ licensee: e.target.value });
+      if (res.success) {
+        setShop(res?.customer[0].shop);
+        setFirm(res?.customer[0].firm);
+        setPan(res?.customer[0].pan);
+        setEmail(res?.customer[0].email);
+      } else {
+        setShop("");
+        setFirm("");
+        setPan("");
+        setEmail("");
+      }
+    } catch (e) {
+      setShop("");
+      setFirm("");
+      setPan("");
+    }
+  };
   useEffect(() => {
     getCompany2();
     getBeers();
@@ -226,6 +251,7 @@ const BeerBillForm = () => {
   };
 
   const handleInputChange = (e) => {
+    setAdded(true);
     e.preventDefault();
     const { name, value } = e.target;
     const [type, size] = name.split("-");
@@ -234,6 +260,7 @@ const BeerBillForm = () => {
     const stock = stocks.find((stock) => stock.size === size);
     if (stock && stock.quantity < value) {
       toast.warning(`Stock for ${size} is only ${stock.quantity}`);
+      return;
     }
 
     // Prevent negative values and non-numeric inputs
@@ -294,10 +321,12 @@ const BeerBillForm = () => {
   };
 
   const handleAddProduct = (e) => {
-    setSpinner2(true);
     try {
       e.preventDefault();
-
+      if (!added) {
+        toast.warning("Select quantity of atleast one size!");
+        return;
+      }
       let h = fholo;
       let p = fpratifal;
       let w = fwep;
@@ -373,167 +402,10 @@ const BeerBillForm = () => {
       console.log("tcs: " + tcs);
     } catch (error) {
       console.error("Error adding product:", error);
-    } finally {
-      setSpinner2(false);
     }
   };
 
   // =================================================>
-
-  // const handleInputChange = (e) => {
-  //   e.preventDefault();
-  //   const { name, value } = e.target;
-  //   const [type, size] = name.split("-");
-
-  //   // Validate stock quantity
-  //   for (let i = 0; i < stocks.length; i++) {
-  //     if (stocks[i].size === size) {
-  //       if (stocks[i].quantity < value) {
-  //         toast.warning(`Stock for ${size} is only ${stocks[i].quantity}`);
-  //       }
-  //     }
-  //   }
-
-  //   // Prevent negative values and non-numeric inputs
-  //   if (value !== "" && (isNaN(value) || parseInt(value) < 0)) return;
-
-  //   setCurrentInput((prevInput) => {
-  //     const existingSizeIndex = prevInput.sizes.findIndex(
-  //       (s) => s.size === size
-  //     );
-
-  //     if (existingSizeIndex > -1) {
-  //       const updatedSizes = [...prevInput.sizes];
-  //       updatedSizes[existingSizeIndex] = {
-  //         ...updatedSizes[existingSizeIndex],
-  //         [type]: value === "" ? 0 : parseInt(value), // Convert to integer
-  //       };
-
-  //       if (type === "quantity") {
-  //         const selectedBrand = beerBrandData.find(
-  //           (brand) => brand.beer.brandName === currentInput.brand
-  //         );
-  //         const selectedSize = selectedBrand.beer.sizes.find(
-  //           (s) => s.size === size
-  //         );
-
-  //         if (selectedSize) {
-  //           const basePrice =
-  //             selectedSize.price * (value === "" ? 0 : parseInt(value));
-  //           updatedSizes[existingSizeIndex].price = basePrice;
-  //         }
-  //       }
-
-  //       return { ...prevInput, sizes: updatedSizes };
-  //     } else {
-  //       const newSize = {
-  //         size: size,
-  //         [type]: value === "" ? 0 : parseInt(value), // Convert to integer
-  //       };
-
-  //       if (type === "quantity") {
-  //         const selectedBrand = beerBrandData.find(
-  //           (brand) => brand.beer.brandName === currentInput.brand
-  //         );
-  //         const selectedSize = selectedBrand.beer.sizes.find(
-  //           (s) => s.size === size
-  //         );
-
-  //         if (selectedSize) {
-  //           const basePrice =
-  //             selectedSize.price * (value === "" ? 0 : parseInt(value));
-  //           newSize.price = basePrice;
-  //         }
-  //       }
-
-  //       return { ...prevInput, sizes: [...prevInput.sizes, newSize] };
-  //     }
-  //   });
-  // };
-
-  // const handleAddProduct = (e) => {
-  //   setSpinner2(true);
-  //   try {
-  //     e.preventDefault();
-
-  //     let h = fholo;
-  //     let p = fpratifal;
-  //     let w = fwep;
-  //     let q = totalQuantity;
-  //     let t = total;
-
-  //     const existingProductIndex = products.findIndex(
-  //       (product) => product.brand === currentInput.brand
-  //     );
-
-  //     if (existingProductIndex > -1) {
-  //       // Subtract previous values
-  //       const existingProduct = products[existingProductIndex];
-  //       existingProduct.sizes.forEach((size, i) => {
-  //         h -= size.quantity * sizes[i].hologram;
-  //         p -= size.quantity * sizes[i].pratifal;
-  //         w -= size.quantity * sizes[i].wep;
-  //         q -= size.quantity;
-  //         t -= size.price;
-  //       });
-
-  //       // Update existing product
-  //       const updatedProducts = [...products];
-  //       updatedProducts[existingProductIndex].sizes = currentInput.sizes;
-
-  //       setProducts(updatedProducts);
-  //     } else {
-  //       // Add new product
-  //       setProducts((prevProducts) => [
-  //         ...prevProducts,
-  //         {
-  //           brand: currentInput.brand,
-  //           sizes: currentInput.sizes,
-  //         },
-  //       ]);
-  //     }
-
-  //     // Add current values
-  //     currentInput.sizes?.forEach((size, i) => {
-  //       h += size.quantity * sizes[i].hologram;
-  //       p += size.quantity * sizes[i].pratifal;
-  //       w += size.quantity * sizes[i].wep;
-  //       q += size.quantity;
-  //       t += size.price;
-  //     });
-
-  //     setFholo(h);
-  //     setFpratifal(p);
-  //     setFwep(w);
-  //     setTotalQuantity(q);
-  //     setTotal(t);
-
-  //     // All taxes calculation
-  //     const vatTax = t * (12 / 100);
-  //     const cess = ((t + vatTax) * 2) / 100;
-
-  //     const profit = q * 50;
-
-  //     const taxTotal = t + vatTax + cess + w + h + profit + p;
-  //     const tcs = (taxTotal * 1) / 100;
-  //     setGrandTotal(taxTotal + tcs);
-
-  //     setCurrentInput({ brand: "", sizes: [] });
-  //     console.log("total quantity: " + q);
-  //     console.log("total price: " + t);
-  //     console.log("vatTax: " + vatTax);
-  //     console.log("cess: " + cess);
-  //     console.log("final wep is: " + w);
-  //     console.log("final holo is: " + h);
-  //     console.log("Profit: " + profit);
-  //     console.log("final pratifal is: " + p);
-  //     console.log("Total tax: " + taxTotal);
-  //     console.log("tcs: " + tcs);
-  //   } catch (e) {
-  //   } finally {
-  //     setSpinner2(false);
-  //   }
-  // };
 
   const handleDeleteProduct = (index) => {
     setSpinner2(true);
@@ -665,7 +537,7 @@ const BeerBillForm = () => {
                       required
                       id="outlined-basic"
                       value={licensee}
-                      onChange={(e) => setLicensee(e.target.value)}
+                      onChange={handleLisencee}
                       label="Licensee"
                       variant="outlined"
                     />
@@ -707,6 +579,14 @@ const BeerBillForm = () => {
                       value={pno}
                       onChange={(e) => setPno(e.target.value)}
                       label="P. No."
+                      variant="outlined"
+                    />
+                    <TextField
+                      id="basic"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      label="Email"
                       variant="outlined"
                     />
                   </Box>
@@ -1001,9 +881,18 @@ const BeerBillForm = () => {
 
                 <Box className="px-2 py-2 m-4 flex justify-end">
                   {spinner ? (
-                    <Button variant="contained" sx = {{minWidth: '6rem', minHeight: '2rem'}}>{<Spinner />}</Button>
+                    <Button
+                      variant="contained"
+                      sx={{ minWidth: "6rem", minHeight: "2rem" }}
+                    >
+                      {<Spinner />}
+                    </Button>
                   ) : (
-                    <Button variant="contained" sx = {{minWidth: '6rem', minHeight: '2rem'}} onClick={handleBillSubmit}>
+                    <Button
+                      variant="contained"
+                      sx={{ minWidth: "6rem", minHeight: "2rem" }}
+                      onClick={handleBillSubmit}
+                    >
                       Submit
                     </Button>
                   )}

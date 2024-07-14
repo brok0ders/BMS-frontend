@@ -23,6 +23,7 @@ const LiquorForm = () => {
   const [companyName, setCompanyName] = useState("");
   const [loading, setLoading] = useState(false);
   const [spinner, setSpinner] = useState(false);
+  const [filled, setFilled] = useState(false);
   const { brands, getLiquorCom, allGlobalLiquor, createLiquor } =
     useContext(LiquorContext);
   const { getCompany } = useContext(CompanyContext);
@@ -31,6 +32,10 @@ const LiquorForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      if (!filled) {
+        toast.warning("Select quantity of atleast one size!");
+        return;
+      }
       setSpinner(true);
       const res = await createLiquor({
         liquorId: brandName._id,
@@ -148,7 +153,10 @@ const LiquorForm = () => {
               <h1 className="text-2xl font-semibold mb-3">{b.size}</h1>
               <Box className="pb-10 grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-10">
                 <TextField
-                  onChange={(e) => handleStockChange(e, b.size, b.price)}
+                  onChange={(e) => {
+                    handleStockChange(e, b.size, b.price);
+                    setFilled(true);
+                  }}
                   value={
                     stock.find((item) => item.size === b.size)?.quantity || ""
                   }

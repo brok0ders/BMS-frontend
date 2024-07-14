@@ -55,6 +55,7 @@ const LiquorBillForm = () => {
   const [loading, setLoading] = useState(false);
   const [spinner, setSpinner] = useState(false);
   const [spinner2, setSpinner2] = useState(false);
+  const [added, setAdded] = useState(false);
   const navigate = useNavigate();
   const { getCustomerByLisencee } = useContext(CustomerContext);
   const [email, setEmail] = useState("");
@@ -69,8 +70,18 @@ const LiquorBillForm = () => {
         setShop(res?.customer[0].shop);
         setFirm(res?.customer[0].firm);
         setPan(res?.customer[0].pan);
+        setEmail(res?.customer[0].email);
+      } else {
+        setShop("");
+        setFirm("");
+        setPan("");
+        setEmail("");
       }
-    } catch (e) {}
+    } catch (e) {
+      setShop("");
+      setFirm("");
+      setPan("");
+    }
   };
 
   const NumberToWordsConverter = (n) => {
@@ -247,6 +258,7 @@ const LiquorBillForm = () => {
 
   const handleInputChange = (e) => {
     e.preventDefault();
+    setAdded(true);
     const { name, value } = e.target;
     const [type, size] = name.split("-");
 
@@ -254,6 +266,7 @@ const LiquorBillForm = () => {
     const stock = stocks.find((stock) => stock.size === size);
     if (stock && stock.quantity < value) {
       toast.warning(`Stock for ${size} is only ${stock.quantity}`);
+      return;
     }
 
     // Prevent negative values and non-numeric inputs
@@ -314,10 +327,12 @@ const LiquorBillForm = () => {
   };
 
   const handleAddProduct = (e) => {
-    setSpinner2(true);
     try {
       e.preventDefault();
-
+      if (!added) {
+        toast.warning("Select quantity of atleast one size!");
+        return;
+      }
       let h = fholo;
       let p = fpratifal;
       let w = fwep;
@@ -382,21 +397,8 @@ const LiquorBillForm = () => {
       setGrandTotal(taxTotal + tcs);
 
       setCurrentInput({ brand: "", sizes: [] });
-
-      console.log("total quantity: " + q);
-      console.log("total price: " + t);
-      console.log("vatTax: " + vatTax);
-      console.log("cess: " + cess);
-      console.log("final wep is: " + w);
-      console.log("final holo is: " + h);
-      console.log("Profit: " + profit);
-      console.log("final pratifal is: " + p);
-      console.log("Total tax: " + taxTotal);
-      console.log("tcs: " + tcs);
     } catch (error) {
       console.error("Error adding product:", error);
-    } finally {
-      setSpinner2(false);
     }
   };
 
@@ -537,7 +539,7 @@ const LiquorBillForm = () => {
           <Box
             noValidate
             autoComplete="off"
-            className="py-10 px-10 md:py-5 md:px-20 "
+            className="py-10 px-10 md:py-5 md:px-20"
           >
             <h1 className="md:text-5xl text-center font-bold text-slate-700 px-2 py-2 m-4 text-4xl">
               FL Bill Details
@@ -609,101 +611,9 @@ const LiquorBillForm = () => {
               </Box>
             </Box>
 
-            {/* For Brand Selection */}
-
             {/* For selecting quantities */}
             <Box
-              className="w-full "
-              component="form"
-              onSubmit={handleAddProduct}
-            >
-              {currentInput?.brand && (
-                <>
-                  <h1 className="md:text-3xl px-2 py-2 m-4 font-semibold text-2xl">
-                    Select Quantities
-                  </h1>
-                  <Box className="px-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
-                    {currentInput?.brand &&
-                      liquorBrandData
-                        .find(
-                          (brand) =>
-                            brand?.liquor?.brandName === currentInput?.brand
-                        )
-                        ?.liquor?.sizes?.map((size) => (
-                          <Box key={size?.size} className="flex flex-col gap-5">
-                            <TextField
-                              fullWidth
-                              value={
-                                currentInput?.sizes.find(
-                                  (s) => s.size === size?.size
-                                )?.quantity || ""
-                              }
-                              label={`Quantity ${
-                                size?.size === "750ml"
-                                  ? size?.size + " (Q)"
-                                  : size?.size === "375ml"
-                                  ? size?.size + " (P)"
-                                  : size?.size === "180ml"
-                                  ? size?.size + " (N)"
-                                  : size?.size
-                              }`}
-                              name={`quantity-${size?.size}`}
-                              onChange={handleInputChange}
-                              variant="outlined"
-                              type="number"
-                              InputProps={{ inputProps: { min: 0 } }} // Ensure minimum value is 0
-                              onFocus={(e) =>
-                                e.target.addEventListener(
-                                  "wheel",
-                                  function (e) {
-                                    e.preventDefault();
-                                  },
-                                  { passive: false }
-                                )
-                              }
-                            />
-                            <TextField
-                              fullWidth
-                              value={
-                                currentInput?.sizes
-                                  .find((s) => s.size === size?.size)
-                                  ?.price.toFixed(2) || 0
-                              }
-                              label={`Price ${
-                                size?.size === "750ml"
-                                  ? size?.size + " (Q)"
-                                  : size?.size === "375ml"
-                                  ? size?.size + " (P)"
-                                  : size?.size === "180ml"
-                                  ? size?.size + " (N)"
-                                  : size?.size
-                              }`}
-                              name={`price-${size?.size}`}
-                              onChange={handleInputChange}
-                              variant="outlined"
-                              type="number"
-                              focused={false}
-                              inputProps={{ readOnly: true }}
-                            />
-                          </Box>
-                        ))}
-                  </Box>
-                  <Box className="px-2 py-2 m-4 flex justify-end">
-                    {spinner2 ? (
-                      <Button variant="contained">{<Spinner />}</Button>
-                    ) : (
-                      <Button variant="contained" type="submit">
-                        Add Product
-                      </Button>
-                    )}
-                  </Box>
-                </>
-              )}
-            </Box>
-            {/* For Brand Selection */}
-            {/* For selecting quantities */}
-            <Box
-              className="w-full "
+              className="w-full mt-10"
               component="form"
               onSubmit={handleAddProduct}
             >
@@ -837,13 +747,9 @@ const LiquorBillForm = () => {
                         ))}
                   </Box>
                   <Box className="px-2 py-2 m-4 flex justify-end">
-                    {spinner2 ? (
-                      <Button variant="contained">{<Spinner />}</Button>
-                    ) : (
-                      <Button variant="contained" type="submit">
-                        Add Product
-                      </Button>
-                    )}
+                    <Button variant="contained" type="submit">
+                      Add Product
+                    </Button>
                   </Box>
                 </>
               )}
@@ -959,7 +865,7 @@ const LiquorBillForm = () => {
             {/* Total Calculation */}
 
             {/* Total Calculation */}
-            <Box className="px-2 py-2 m-4 flex justify-end">
+            <Box className="px-2 py-2 m-4 flex justify-end overflow-x-auto">
               <TextField
                 id="filled-read-only-input"
                 label="Grand Total"
