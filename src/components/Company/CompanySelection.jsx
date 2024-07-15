@@ -61,11 +61,11 @@ const CompanySelection = () => {
           </Box>
           {!companyData || companyData.length === 0 ? (
             <>
-              <div className="w-[25vw] m-auto text-center mt-[1rem]">
+              <div className="w-[90vw] md:w-[25vw] m-auto text-center mt-[1rem]">
                 <img
                   src="/images/no-data.png"
-                  alt=""
-                  className="w-[25vw] m-auto"
+                  alt="No Data"
+                  className="w-[90vw] md:w-[25vw] m-auto"
                 />
                 <p>NO SUPPLIERS FOUND!</p>
               </div>
@@ -76,7 +76,7 @@ const CompanySelection = () => {
                   onClick={() => {
                     setOpen(true);
                   }}
-                  className="px-4 py-2  sm:px-6 sm:py-3 md:px-8 md:py-4"
+                  className="px-4 py-2 sm:px-6 sm:py-3 md:px-8 md:py-4"
                 >
                   <span className="text-sm">New Supplier</span>
                 </Button>
@@ -88,7 +88,6 @@ const CompanySelection = () => {
                 <Box
                   sx={{
                     display: "flex",
-                    // justifyContent: "start",
                     flexDirection: { xs: "column", md: "row" },
                     textAlign: { xs: "center", md: "left" },
                     backgroundImage:
@@ -106,8 +105,8 @@ const CompanySelection = () => {
                       width: { xs: "100%", md: "auto" },
                     }}
                   >
-                    <BackButton className={"!absolute top-[0rem]"} />
-                    <h1 className="text-2xl md:text-5xl mt-10 text-center ml-[33vw]">
+                    <BackButton className="!absolute top-[0rem]" />
+                    <h1 className="text-2xl md:text-5xl text-center ml-0 md:ml-[33vw]">
                       Select Supplier
                     </h1>
                   </Box>
@@ -120,8 +119,8 @@ const CompanySelection = () => {
                     sx={{
                       mt: { xs: 2, md: 0 },
                       alignSelf: { xs: "center", md: "flex-end" },
-                      marginLeft: "24vw"
-                    }} // Add top margin on smaller screens
+                      marginLeft: { xs: 0, md: "24vw" },
+                    }}
                   >
                     New Supplier
                   </Button>
