@@ -78,10 +78,10 @@ const BillRecords = () => {
           sno: index + 1,
           billId: bill._id,
           date: bill.createdAt.split("T")[0],
-          billno: bill.billNo,
-          lincensee: bill.customer.licensee,
+          billno: bill?.billNo,
+          lincensee: bill?.customer?.licensee,
           Company: bill?.company?.company?.name,
-          total: bill.total,
+          total: bill?.total,
         }));
         setRows((prevRows) => [...prevRows, ...newRows]);
       }
