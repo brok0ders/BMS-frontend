@@ -6,7 +6,9 @@ import { toast } from "react-toastify";
 
 const UserState = (props) => {
   const [user, setUser] = useState(null);
-
+  const [isLoggedIn, setisLoggedIn] = useState(
+    localStorage.getItem("token") ? true : false
+  );
   const getUser = async () => {
     try {
       const config = {
@@ -17,11 +19,13 @@ const UserState = (props) => {
       const { data } = await API.get("/user/details", config);
       if (data.success) {
         setUser(data.user);
+        setisLoggedIn(true);
       }
       console.log(data.message);
       return data;
     } catch (e) {
-      toast.error(e.response.data.message);
+      setisLoggedIn(false);
+      // toast.error(e.response.data.message);
     }
   };
 
@@ -128,6 +132,7 @@ const UserState = (props) => {
     <UserContext.Provider
       value={{
         user,
+        isLoggedIn,
         setUser,
         getUser,
         userRegister,

@@ -19,6 +19,8 @@ import FAQ from "./components/FAQ";
 
 import getLPTheme from "./getLPTheme.jsx";
 import Footer from "../components/Layout/Footer.jsx";
+import { useNavigate } from "react-router-dom";
+import UserContext from "../context/user/userContext.jsx";
 
 function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {
   return (
@@ -63,6 +65,8 @@ ToggleCustomTheme.propTypes = {
 };
 
 export default function HomePage() {
+  const { isLoggedIn, getUser } = React.useContext(UserContext);
+
   const [mode, setMode] = React.useState("light");
   const [showCustomTheme, setShowCustomTheme] = React.useState(true);
   const LPtheme = createTheme(getLPTheme(mode));
@@ -71,10 +75,18 @@ export default function HomePage() {
   const toggleColorMode = () => {
     setMode((prev) => (prev === "dark" ? "light" : "dark"));
   };
+  const navigate = useNavigate();
 
   const toggleCustomTheme = () => {
     setShowCustomTheme((prev) => !prev);
   };
+  React.useEffect(() => {
+    getUser();
+  }, []);
+
+  if (isLoggedIn) {
+    navigate("/dashboard");
+  }
 
   return (
     <>

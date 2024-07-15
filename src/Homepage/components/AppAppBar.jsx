@@ -97,7 +97,7 @@ function AppAppBar() {
               onClick={() => {
                 localStorage.getItem("token")
                   ? navigate("/dashboard")
-                  : navigate("/home");
+                  : navigate("/");
               }}
             />
             <Box
@@ -115,7 +115,7 @@ function AppAppBar() {
                 onClick={() => {
                   localStorage.getItem("token")
                     ? navigate("/dashboard")
-                    : navigate("/home");
+                    : navigate("/");
                 }}
                 sx={{ py: "6px", px: "12px", mx: "1%" }}
               >
@@ -200,7 +200,7 @@ function AppAppBar() {
                   flexGrow: 1,
                 }}
               >
-                <MenuItem onClick={() => navigate("/home")}>Home</MenuItem>
+                <MenuItem onClick={() => navigate("/")}>Home</MenuItem>
                 <MenuItem onClick={() => navigate("/about")}>About</MenuItem>
                 <MenuItem onClick={() => navigate("contact")}>
                   Contact Us
