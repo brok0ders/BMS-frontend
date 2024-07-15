@@ -357,7 +357,7 @@ const BillComponent = () => {
                     sx={tableCellStyle}
                     align="left"
                   >
-                    Bill No.: {data?.bill ?? "FLV0001"}
+                    Bill No.: {data?.billNo}
                   </TableCell>
                 </TableRow>
                 <TableRow>
