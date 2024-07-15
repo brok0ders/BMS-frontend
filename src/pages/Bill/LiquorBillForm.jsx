@@ -196,7 +196,6 @@ const LiquorBillForm = () => {
     try {
       const res = await getLiquorCom({ id: company });
       setLiquorBrandData(res.liquor);
-      console.log(res.liquor);
     } catch (e) {
     } finally {
       setLoading(false);
