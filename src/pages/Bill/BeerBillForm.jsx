@@ -713,6 +713,7 @@ const BeerBillForm = () => {
                                   onChange={handleInputChange}
                                   variant="outlined"
                                   type="number"
+                                  onFocus={(e) => e.target.addEventListener("wheel", function (e) { e.preventDefault() }, { passive: false })}
                                   InputProps={{ inputProps: { min: 0 } }}
                                 />
                                 <TextField

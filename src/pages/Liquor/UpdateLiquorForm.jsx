@@ -114,6 +114,15 @@ const UpdateLiquorForm = () => {
                   required
                   label={`Quantity ${s?.size}`}
                   variant="outlined"
+                  onFocus={(e) =>
+                    e.target.addEventListener(
+                      "wheel",
+                      function (e) {
+                        e.preventDefault();
+                      },
+                      { passive: false }
+                    )
+                  }
                 />
                 <TextField
                   value={s.price}

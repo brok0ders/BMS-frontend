@@ -166,6 +166,15 @@ const BeerForm = () => {
                     }}
                     label={`Stock ${b.size}`}
                     variant="outlined"
+                    onFocus={(e) =>
+                      e.target.addEventListener(
+                        "wheel",
+                        function (e) {
+                          e.preventDefault();
+                        },
+                        { passive: false }
+                      )
+                    }
                   />
                   <TextField
                     value={b?.price}

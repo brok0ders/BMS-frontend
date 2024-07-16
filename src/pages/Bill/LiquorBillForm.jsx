@@ -716,6 +716,15 @@ const LiquorBillForm = () => {
                               name={`quantity-${size?.size}`}
                               onChange={handleInputChange}
                               variant="outlined"
+                              onFocus={(e) =>
+                                e.target.addEventListener(
+                                  "wheel",
+                                  function (e) {
+                                    e.preventDefault();
+                                  },
+                                  { passive: false }
+                                )
+                              }
                               type="number"
                               InputProps={{ inputProps: { min: 0 } }} // Ensure minimum value is 0
                             />

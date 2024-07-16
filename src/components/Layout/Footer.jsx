@@ -72,12 +72,10 @@ export default function Footer() {
             gap: 1,
           }}
         >
-         
-          
           <Link color="text.secondary" href="#highlights">
             Highlights
           </Link>
-          
+
           <Link color="text.secondary" href="#faq">
             FAQs
           </Link>
@@ -105,9 +103,7 @@ export default function Footer() {
             flexDirection: "column",
             gap: 1,
           }}
-        >
-          
-        </Box>
+        ></Box>
       </Box>
       <Box
         sx={{
