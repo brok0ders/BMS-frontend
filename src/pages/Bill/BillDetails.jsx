@@ -58,19 +58,19 @@ const BillDetails = () => {
         >
           New Bill
         </Button>
-        <Button
+        {/* <Button
           startIcon={<PictureAsPdfOutlined />}
           variant="contained"
           onClick={exportPDFWithMethod}
         >
           Download PDF
-        </Button>
+        </Button> */}
         <Button
           startIcon={<PictureAsPdfOutlined />}
           variant="contained"
           onClick={handleGeneratePdf}
         >
-          Download PDF V2
+          Download PDF
         </Button>
       </div>
     </div>

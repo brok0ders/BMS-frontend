@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -44,10 +44,11 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function LoginPage() {
-  const { userLogin } = useContext(UserContext);
+  const { userLogin, isLoggedIn, getUser } = useContext(UserContext);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
   const navigate = useNavigate();
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -55,12 +56,18 @@ export default function LoginPage() {
       const data = await userLogin({ username, password });
       if (data.success) {
         toast.success(`${data.user.username} has been logged in successfully!`);
-        navigate(`/dashboard/`);
+        navigate(`/dashboard`);
         localStorage.setItem("token", data?.token);
       }
     } catch (e) {}
   };
+  useEffect(() => {
+    getUser();
+  }, []);
 
+  if (isLoggedIn) {
+    navigate("/dashboard");
+  }
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   return (

@@ -44,20 +44,12 @@ import BillComponent from "./pages/Bill/BillComponent.jsx";
 import BillDetails from "./pages/Bill/BillDetails.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import MonthlyAnalytics from "./pages/Analytics/MonthlyAnalytics.jsx";
+import ProtectedRoutes from "./components/routes/ProtectedRoutes.jsx";
 
 const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route>
-        <Route
-          path="/home"
-          element={
-            <>
-              <Navbar />
-              <HomePage />
-            </>
-          }
-        />
         <Route
           path="/"
           element={
@@ -75,29 +67,128 @@ const App = () => {
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/dashboard">
-            <Route index element={<AdminHome />} />
-            <Route path="profile/:id" element={<ProfilePage />} />
-            <Route path="bill/records" element={<BillRecords />} />
-            <Route path="liquor/:company" element={<LiquorList />} />
-            <Route path="beer/:company" element={<BeerList />} />
-            <Route path="beer/edit/:id" element={<UpdateBeerForm />} />
-            <Route path="liquor/edit/:id" element={<UpdateLiquorForm />} />
-            <Route path="select" element={<BillSelection />} />
-            <Route path="company" element={<CompanyList />} />
-            <Route path="analytics" element={<AnalyticsPage />} />
+            <Route
+              index
+              element={
+                <ProtectedRoutes>
+                  <AdminHome />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="profile/:id"
+              element={
+                <ProtectedRoutes>
+                  <ProfilePage />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="bill/records"
+              element={
+                <ProtectedRoutes>
+                  <BillRecords />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="liquor/:company"
+              element={
+                <ProtectedRoutes>
+                  <LiquorList />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="beer/:company"
+              element={
+                <ProtectedRoutes>
+                  <BeerList />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="beer/edit/:id"
+              element={
+                <ProtectedRoutes>
+                  <UpdateBeerForm />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="liquor/edit/:id"
+              element={
+                <ProtectedRoutes>
+                  <UpdateLiquorForm />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="select"
+              element={
+                <ProtectedRoutes>
+                  <BillSelection />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="company"
+              element={
+                <ProtectedRoutes>
+                  <CompanyList />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="analytics"
+              element={
+                <ProtectedRoutes>
+                  <AnalyticsPage />
+                </ProtectedRoutes>
+              }
+            />
 
-            <Route path="company/:companyType" element={<CompanySelection />} />
-            <Route path="bill/:id" element={<ProfilePage />} />
+            <Route
+              path="company/:companyType"
+              element={
+                <ProtectedRoutes>
+                  <CompanySelection />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="bill/:id"
+              element={
+                <ProtectedRoutes>
+                  <ProfilePage />
+                </ProtectedRoutes>
+              }
+            />
 
-            <Route path="beer/create/:company" element={<BeerForm />} />
+            <Route
+              path="beer/create/:company"
+              element={
+                <ProtectedRoutes>
+                  <BeerForm />
+                </ProtectedRoutes>
+              }
+            />
             <Route path="liquor/create/:company" element={<LiquorForm />} />
             <Route
               path="liquor/bill/create/:company"
-              element={<LiquorBillForm />}
+              element={
+                <ProtectedRoutes>
+                  <LiquorBillForm />
+                </ProtectedRoutes>
+              }
             />
             <Route
               path="beer/bill/create/:company"
-              element={<BeerBillForm />}
+              element={
+                <ProtectedRoutes>
+                  <BeerBillForm />
+                </ProtectedRoutes>
+              }
             />
           </Route>
         </Route>

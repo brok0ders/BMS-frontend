@@ -92,7 +92,7 @@ function AppAppBar() {
               onClick={() => {
                 localStorage.getItem("token")
                   ? navigate("/dashboard")
-                  : navigate("/home");
+                  : navigate("/");
               }}
             />
             <Box
@@ -110,7 +110,7 @@ function AppAppBar() {
                 onClick={() => {
                   localStorage.getItem("token")
                     ? navigate("/dashboard")
-                    : navigate("/home");
+                    : navigate("/");
                 }}
                 sx={{ py: "6px", px: "12px", mx: "1%" }}
               >
