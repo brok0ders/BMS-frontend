@@ -106,7 +106,7 @@ const LiquorForm = () => {
         <Box
           component="form"
           onSubmit={handleSubmit}
-          className={`w-full px-5 md:px-10 lg:px-20 py-10 md:py-16`}
+          className={`w-full px-5 md:px-10 lg:px-20 py-10 md:py-0`}
         >
           <BackButton />
           <h1 className="text-center text-2xl grid grid-row-1 md:text-5xl font-bold text-gray-900">
@@ -117,7 +117,6 @@ const LiquorForm = () => {
               <h1 className="text-2xl font-semibold mb-5">Company</h1>
               <div className="flex flex-col md:flex-row gap-3 w-[90vw]">
                 <TextField
-                  required
                   aria-readonly
                   label="Company Name"
                   value={companyName}
@@ -127,7 +126,7 @@ const LiquorForm = () => {
                 <FormControl fullWidth>
                   <InputLabel id="brand-label">Brand Name</InputLabel>
                   <Select
-                    required
+                  required
                     labelId="brand-label"
                     id="brand-select"
                     value={brandName}
@@ -163,7 +162,6 @@ const LiquorForm = () => {
                   name="quantity"
                   type="number"
                   inputProps={{ min: 0 }}
-                  required
                   label={`Stock ${b.size}`}
                   variant="outlined"
                 />

@@ -11,7 +11,6 @@ import Typography from "@mui/material/Typography";
 import MenuItem from "@mui/material/MenuItem";
 import Drawer from "@mui/material/Drawer";
 import MenuIcon from "@mui/icons-material/Menu";
-import ToggleColorMode from "./ToggleColorMode";
 import { Link, useNavigate } from "react-router-dom";
 import { Avatar } from "@mui/material";
 import { Dropdown } from "@mui/base/Dropdown";
@@ -27,10 +26,6 @@ const logoStyle = {
 function AppAppBar() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-
-  const toggleDrawer = (newOpen) => () => {
-    setOpen(newOpen);
-  };
 
   const scrollToSection = (sectionId) => {
     const sectionElement = document.getElementById(sectionId);
@@ -182,56 +177,40 @@ function AppAppBar() {
           </Box>
 
           <Box sx={{ display: { sm: "", md: "none" } }}>
-            <Button
-              variant="text"
-              color="primary"
-              aria-label="menu"
-              onClick={toggleDrawer(true)}
-              sx={{ minWidth: "30px", p: "4px" }}
+            <Box
+              sx={{
+                minWidth: "60dvw",
+                p: 2,
+                backgroundColor: "background.paper",
+                flexGrow: 1,
+              }}
             >
-              <MenuIcon />
-            </Button>
-            <Drawer anchor="right" open={open} onClose={toggleDrawer(false)}>
-              <Box
-                sx={{
-                  minWidth: "60dvw",
-                  p: 2,
-                  backgroundColor: "background.paper",
-                  flexGrow: 1,
-                }}
-              >
-                <MenuItem onClick={() => navigate("/home")}>Home</MenuItem>
-                <MenuItem onClick={() => navigate("/about")}>About</MenuItem>
-                <MenuItem onClick={() => navigate("contact")}>
-                  Contact Us
-                </MenuItem>
+              <MenuItem onClick={() => navigate("/home")}>Home</MenuItem>
+              <MenuItem onClick={() => navigate("/about")}>About</MenuItem>
+              <MenuItem onClick={() => navigate("contact")}>
+                Contact Us
+              </MenuItem>
 
-                <Divider />
+              <Divider />
 
-                <MenuItem>
-                  <Button
-                    color="primary"
-                    variant="outlined"
-                    component="a"
-                    href="/login"
-                    target="_blank"
-                    sx={{ width: "100%" }}
-                  >
-                    Sign in
-                  </Button>
-                </MenuItem>
-              </Box>
-            </Drawer>
+              <MenuItem>
+                <Button
+                  color="primary"
+                  variant="outlined"
+                  component="a"
+                  href="/login"
+                  target="_blank"
+                  sx={{ width: "100%" }}
+                >
+                  Sign in
+                </Button>
+              </MenuItem>
+            </Box>
           </Box>
         </Toolbar>
       </Container>
     </AppBar>
   );
 }
-
-AppAppBar.propTypes = {
-  mode: PropTypes.oneOf(["dark", "light"]).isRequired,
-  toggleColorMode: PropTypes.func.isRequired,
-};
 
 export default AppAppBar;

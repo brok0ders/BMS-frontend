@@ -93,7 +93,7 @@ const LiquorList = () => {
           ) : (
             <TableContainer className="py-5">
               <>
-                <Box className="py-3 px-10">
+                <Box className="py-0 px-10">
                   <h1 className="text-center py-5 text-4xl font-bold">
                     Liquor Details
                   </h1>
@@ -104,7 +104,7 @@ const LiquorList = () => {
                       gap: 2,
                     }}
                   >
-                    <Link to={`/dashboard/beer/create/${company}`}>
+                    <Link to={`/dashboard/liquor/create/${company}`}>
                       <Button startIcon={<Add />} variant="contained">
                         New Liquor
                       </Button>
@@ -112,7 +112,7 @@ const LiquorList = () => {
                   </Box>
                 </Box>
                 <Table
-                  sx={{ minWidth: 650, border: 1.34, borderColor: "grey.400" }}
+                  sx={{ minWidth: 650, border: 1.34, borderColor: "grey.400", marginTop: "1rem" }}
                   size="small"
                   aria-label="a dense table"
                 >
