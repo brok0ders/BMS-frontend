@@ -301,7 +301,7 @@ const BeerList = () => {
                                 (item) => item.size === size
                               );
                               return acc + (stockItem ? stockItem.price : 0);
-                            }, 0)}
+                            }, 0).toFixed(2)}
                           </Typography>
                         </TableCell>
                       ))}
