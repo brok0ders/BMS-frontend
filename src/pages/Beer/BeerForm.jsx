@@ -60,7 +60,7 @@ const BeerForm = () => {
         const updatedStock = [...prevStock];
         updatedStock[stockIndex] = {
           ...updatedStock[stockIndex],
-          [name]: name === "quantity" ? Number(value) : value,
+          [name]: name === "quantity" || name === "leak" ? Number(value) : value,
         };
         return updatedStock;
       } else {
@@ -69,7 +69,7 @@ const BeerForm = () => {
           {
             size,
             price,
-            [name]: name === "quantity" ? Number(value) : value,
+            [name]: name === "quantity" || name === "leak" ? Number(value) : value,
           },
         ];
       }
@@ -183,6 +183,27 @@ const BeerForm = () => {
                     label={`Price ${b.size}`}
                     variant="outlined"
                   />
+
+<TextField
+                  inputProps={{ min: 0 }}
+                  type="number"
+                  label={`Loose ${b.size}`}
+                  name="leak"
+                  variant="outlined"
+                  onChange={(e) => {
+                    handleStockChange(e, b.size, b.price);
+                  }}
+                  value={stock.find((item) => item.size === b.size)?.leak || ""}
+                  onFocus={(e) =>
+                    e.target.addEventListener(
+                      "wheel",
+                      function (e) {
+                        e.preventDefault();
+                      },
+                      { passive: false }
+                    )
+                  }
+                />
                 </Box>
               </div>
             ))}

@@ -28,6 +28,7 @@ const LiquorForm = () => {
     useContext(LiquorContext);
   const { getCompany } = useContext(CompanyContext);
   const { company } = useParams();
+  const [leak, setLeak] = useState();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -53,6 +54,7 @@ const LiquorForm = () => {
       setSpinner(false);
     }
   };
+
   const handleStockChange = (e, size, price) => {
     setLoading(true);
     const { name, value } = e.target;
@@ -62,7 +64,7 @@ const LiquorForm = () => {
         const updatedStock = [...prevStock];
         updatedStock[stockIndex] = {
           ...updatedStock[stockIndex],
-          [name]: name === "quantity" ? Number(value) : value,
+          [name]: name === "quantity" || name === "leak" ? Number(value) : value,
         };
         return updatedStock;
       } else {
@@ -71,13 +73,14 @@ const LiquorForm = () => {
           {
             size,
             price,
-            [name]: name === "quantity" ? Number(value) : value,
+            [name]: name === "quantity" || name === "leak" ? Number(value) : value,
           },
         ];
       }
     });
     setLoading(false);
   };
+  
 
   const getLiquorByComp = async () => {
     setLoading(true);
@@ -126,7 +129,7 @@ const LiquorForm = () => {
                 <FormControl fullWidth>
                   <InputLabel id="brand-label">Brand Name</InputLabel>
                   <Select
-                  required
+                    required
                     labelId="brand-label"
                     id="brand-select"
                     value={brandName}
@@ -180,6 +183,26 @@ const LiquorForm = () => {
                   aria-readonly
                   label={`Price ${b.size}`}
                   variant="outlined"
+                />
+                <TextField
+                  inputProps={{ min: 0 }}
+                  type="number"
+                  label={`Loose ${b.size}`}
+                  name="leak"
+                  variant="outlined"
+                  onChange={(e) => {
+                    handleStockChange(e, b.size, b.price);
+                  }}
+                  value={stock.find((item) => item.size === b.size)?.leak || ""}
+                  onFocus={(e) =>
+                    e.target.addEventListener(
+                      "wheel",
+                      function (e) {
+                        e.preventDefault();
+                      },
+                      { passive: false }
+                    )
+                  }
                 />
               </Box>
             </div>

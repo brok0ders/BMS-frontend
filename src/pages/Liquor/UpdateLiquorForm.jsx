@@ -20,11 +20,19 @@ const UpdateLiquorForm = () => {
   const [spinner, setSpinner] = useState(false);
   const navigate = useNavigate();
 
-  const handleQuantityChange = (index, value) => {
+  const handleQuantityChange = (index, e) => {
+    const { name, value } = e.target;
     const newStock = [...stock];
-    newStock[index].quantity = value;
+    
+    if (name === "quantity") {
+      newStock[index].quantity = Number(value);
+    } else if (name === "leak") {
+      newStock[index].leak = Number(value);
+    }
+    
     setStock(newStock);
   };
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -107,11 +115,12 @@ const UpdateLiquorForm = () => {
               <h1 className="text-2xl font-semibold mb-3">{s.size}</h1>
               <Box className="pb-10 grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-10">
                 <TextField
-                  onChange={(e) => handleQuantityChange(index, e.target.value)}
+                  onChange={(e) => handleQuantityChange(index, e)}
                   value={s?.quantity}
                   type="number"
                   inputProps={{ min: 0 }}
                   required
+                  name="quantity"
                   label={`Quantity ${s?.size}`}
                   variant="outlined"
                   onFocus={(e) =>
@@ -128,6 +137,26 @@ const UpdateLiquorForm = () => {
                   value={s.price}
                   label={`Price ${s?.size}`}
                   variant="outlined"
+                />
+                 <TextField
+                  inputProps={{ min: 0 }}
+                  type="number"
+                  label={`Loose ${s.size}`}
+                  name="leak"
+                  variant="outlined"
+                  onChange={(e) => {
+                    handleQuantityChange(index, e);
+                  }}
+                  value={s?.leak}
+                  onFocus={(e) =>
+                    e.target.addEventListener(
+                      "wheel",
+                      function (e) {
+                        e.preventDefault();
+                      },
+                      { passive: false }
+                    )
+                  }
                 />
               </Box>
             </>

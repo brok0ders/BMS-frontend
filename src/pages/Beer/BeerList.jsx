@@ -208,7 +208,7 @@ const BeerList = () => {
                                 sx={{ border: 1.34, borderColor: "grey.400" }}
                               >
                                 <Typography fontWeight="normal">
-                                  {stockItem ? stockItem.quantity : 0}
+                                {stockItem ? (stockItem.quantity + "  [" + stockItem?.leak + "]") : (0)}
                                 </Typography>
                               </TableCell>
                             );
