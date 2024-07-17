@@ -841,9 +841,9 @@ const BeerBillForm = () => {
                           <TableCell key={`price-total-${size}`} align="center">
                             {processedProducts.reduce(
                               (acc, p) =>
-                                acc + (p.sizes[size]?.price.toFixed(2) || 0),
+                                acc + (p.sizes[size]?.price || 0),
                               0
-                            )}
+                            ).toFixed(2)}
                           </TableCell>
                         ))}
                         <TableCell></TableCell>
