@@ -66,6 +66,28 @@ const LiquorChart = () => {
         },
       },
     },
+    responsive: [
+      {
+        breakpoint: 768, // devices with width less than 768px
+        options: {
+          plotOptions: {
+            bar: {
+              columnWidth: "50",
+            },
+          },
+        },
+      },
+      {
+        breakpoint: 480, // devices with width less than 480px
+        options: {
+          plotOptions: {
+            bar: {
+              columnWidth: "40",
+            },
+          },
+        },
+      },
+    ],
   };
 
   const series = [

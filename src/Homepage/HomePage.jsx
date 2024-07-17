@@ -97,7 +97,7 @@ export default function HomePage() {
             sx={{
               position: "relative",
               width: "100%",
-              height: "120vh", // Adjust height as needed
+              height: "100vh", // Adjust height as needed
               overflow: "hidden",
             }}
           >

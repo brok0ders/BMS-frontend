@@ -12,10 +12,11 @@ import MenuItem from "@mui/material/MenuItem";
 import Drawer from "@mui/material/Drawer";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Link, useNavigate } from "react-router-dom";
-import { Avatar } from "@mui/material";
+import { Avatar, IconButton } from "@mui/material";
 import { Dropdown } from "@mui/base/Dropdown";
 import { Menu } from "@mui/base/Menu";
 import MenuIntroduction from "../../components/Layout/Avatar";
+import UserContext from "../../context/user/userContext";
 
 const logoStyle = {
   width: "140px",
@@ -26,6 +27,18 @@ const logoStyle = {
 function AppAppBar() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const { isLoggedIn, getUser } = React.useContext(UserContext);
+
+  const toggleDrawer = (open) => (event) => {
+    if (
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
+      return;
+    }
+    setIsDrawerOpen(open);
+  };
 
   const scrollToSection = (sectionId) => {
     const sectionElement = document.getElementById(sectionId);
@@ -176,7 +189,7 @@ function AppAppBar() {
             )}
           </Box>
 
-          <Box sx={{ display: { sm: "", md: "none" } }}>
+          {/* <Box sx={{ display: { sm: "none", md: "none" } }}>
             <Box
               sx={{
                 minWidth: "60dvw",
@@ -206,7 +219,82 @@ function AppAppBar() {
                 </Button>
               </MenuItem>
             </Box>
-          </Box>
+          </Box> */}
+          <>
+            <Box sx={{ display: { sm: "block", md: "none" } }}>
+              <Box
+                sx={{
+                  display: { xs: "flex", md: "none" },
+
+                  gap: 2,
+                  alignItems: "center",
+                }}
+              >
+                {isLoggedIn ? (
+                  <>
+                    <MenuIntroduction />
+                  </>
+                ) : (
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    size="small"
+                    component="a"
+                    sx={{ fontSize: "0.8rem" }}
+                  >
+                    <Link to={"/login"}>Sign in</Link>
+                  </Button>
+                )}
+                <IconButton
+                  color="default"
+                  aria-label="open drawer"
+                  edge="start"
+                  onClick={toggleDrawer(true)}
+                >
+                  <MenuIcon />
+                </IconButton>
+              </Box>
+            </Box>
+            <Drawer
+              anchor="left"
+              open={isDrawerOpen}
+              onClose={toggleDrawer(false)}
+            >
+              <Box
+                sx={{
+                  minWidth: "80vw",
+                  p: 2,
+                  backgroundColor: "background.paper",
+                  flexGrow: 1,
+                }}
+                role="presentation"
+                onClick={toggleDrawer(false)}
+                onKeyDown={toggleDrawer(false)}
+              >
+                <MenuItem onClick={() => navigate("/")}>Home</MenuItem>
+                <MenuItem onClick={() => navigate("/about")}>About</MenuItem>
+                <MenuItem onClick={() => navigate("contact")}>
+                  Contact Us
+                </MenuItem>
+
+                <Divider />
+
+                {!isLoggedIn && (
+                  <MenuItem>
+                    <Button
+                      color="primary"
+                      variant="outlined"
+                      component="a"
+                      onClick={() => navigate("/login")}
+                      sx={{ width: "100%" }}
+                    >
+                      Sign in
+                    </Button>
+                  </MenuItem>
+                )}
+              </Box>
+            </Drawer>
+          </>
         </Toolbar>
       </Container>
     </AppBar>

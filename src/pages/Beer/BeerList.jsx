@@ -87,27 +87,27 @@ const BeerList = () => {
               </div>
             </>
           ) : (
-            <>
-              <TableContainer className="px-3">
-                <Box className="py-3 px-10">
-                  <BackButton />
-                  <h1 className="text-center py-5 text-4xl font-bold">
-                    Beer Details
-                  </h1>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "flex-end",
-                      gap: 2,
-                    }}
-                  >
-                    <Link to={`/dashboard/beer/create/${company}`}>
-                      <Button startIcon={<Add />} variant="contained">
-                        New Beer
-                      </Button>
-                    </Link>
-                  </Box>
+            <div className="pb-10">
+              <Box className="py-3 px-10">
+                <BackButton className={"top-0"} />
+                <h1 className="text-center py-5 text-4xl font-bold">
+                  Beer Details
+                </h1>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: { xs: "center", md: " flex-end" },
+                    gap: 2,
+                  }}
+                >
+                  <Link to={`/dashboard/beer/create/${company}`}>
+                    <Button startIcon={<Add />} variant="contained">
+                      New Beer
+                    </Button>
+                  </Link>
                 </Box>
+              </Box>
+              <TableContainer className="px-3 ">
                 <Table
                   sx={{ minWidth: 650, border: 1.34, borderColor: "grey.400" }}
                   size="small"
@@ -208,7 +208,12 @@ const BeerList = () => {
                                 sx={{ border: 1.34, borderColor: "grey.400" }}
                               >
                                 <Typography fontWeight="normal">
-                                {stockItem ? (stockItem.quantity + "  [" + stockItem?.leak + "]") : (0)}
+                                  {stockItem
+                                    ? stockItem.quantity +
+                                      "  [" +
+                                      stockItem?.leak +
+                                      "]"
+                                    : 0}
                                 </Typography>
                               </TableCell>
                             );
@@ -311,7 +316,7 @@ const BeerList = () => {
                   </TableBody>
                 </Table>
               </TableContainer>
-            </>
+            </div>
           )}
         </>
       )}

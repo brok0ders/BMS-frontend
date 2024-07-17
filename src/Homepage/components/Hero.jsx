@@ -18,10 +18,9 @@ export default function Hero() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        marginTop: {xs: "25vh", sm: "30vh", md: "35vh"},
+        marginTop: { xs: "15vh", sm: "30vh", md: "35vh" },
       }}
     >
-    
       <Container
         sx={{
           display: "flex",
