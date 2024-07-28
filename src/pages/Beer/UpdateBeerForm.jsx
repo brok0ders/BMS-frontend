@@ -114,7 +114,7 @@ const UpdateBeerForm = () => {
                 <Box className="pb-10 grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-10">
                   <TextField
                     onChange={(e) =>
-                      handleQuantityChange(index, e.target.value)
+                      handleQuantityChange(index, e)
                     }
                     value={s?.quantity}
                     type="number"

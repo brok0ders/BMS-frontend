@@ -20,6 +20,7 @@ import {
   OutlinedInput,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { Spinner } from "@chakra-ui/react";
 
 function Copyright(props) {
   return (
@@ -48,10 +49,12 @@ export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
     try {
       const data = await userLogin({ username, password });
       if (data.success) {
@@ -59,7 +62,10 @@ export default function LoginPage() {
         navigate(`/dashboard`);
         localStorage.setItem("token", data?.token);
       }
-    } catch (e) {}
+    } catch (e) {
+    } finally {
+      setLoading(false);
+    }
   };
   useEffect(() => {
     getUser();
@@ -139,15 +145,24 @@ export default function LoginPage() {
                 label="Password"
               />
             </FormControl>
-
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign In
-            </Button>
+            {loading ? (
+              <Button
+                type="submit"
+                sx={{ minWidth: "6rem", minHeight: "2rem", mt: 3, mb: 2 }}
+                variant="contained"
+              >
+                <Spinner />
+              </Button>
+            ) : (
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ minWidth: "6rem", minHeight: "2rem", mt: 3, mb: 2 }}
+              >
+                Sign In
+              </Button>
+            )}
           </Box>
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />

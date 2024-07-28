@@ -189,37 +189,6 @@ function AppAppBar() {
             )}
           </Box>
 
-          {/* <Box sx={{ display: { sm: "none", md: "none" } }}>
-            <Box
-              sx={{
-                minWidth: "60dvw",
-                p: 2,
-                backgroundColor: "background.paper",
-                flexGrow: 1,
-              }}
-            >
-              <MenuItem onClick={() => navigate("/home")}>Home</MenuItem>
-              <MenuItem onClick={() => navigate("/about")}>About</MenuItem>
-              <MenuItem onClick={() => navigate("contact")}>
-                Contact Us
-              </MenuItem>
-
-              <Divider />
-
-              <MenuItem>
-                <Button
-                  color="primary"
-                  variant="outlined"
-                  component="a"
-                  href="/login"
-                  target="_blank"
-                  sx={{ width: "100%" }}
-                >
-                  Sign in
-                </Button>
-              </MenuItem>
-            </Box>
-          </Box> */}
           <>
             <Box sx={{ display: { sm: "block", md: "none" } }}>
               <Box
