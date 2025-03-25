@@ -62,6 +62,7 @@ const UserState = (props) => {
     address,
     TINno,
     PANno,
+    gType,
   }) => {
     const config = {
       headers: {
@@ -81,6 +82,7 @@ const UserState = (props) => {
         address,
         TINno,
         PANno,
+        gType,
       },
       config
     );
