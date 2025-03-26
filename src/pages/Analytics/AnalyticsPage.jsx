@@ -11,6 +11,7 @@ import BillContext from "../../context/bill/billContext";
 import Loader from "../../components/Layout/Loader";
 import BackButton from "../../components/BackButton";
 import MonthlyAnalytics from "./MonthlyAnalytics";
+import DateWiseReports from "./DateWiseReports";
 const AnalyticsPage = () => {
   const [analytics, setAnalytics] = useState({});
   const { getAnalyticsData } = useContext(BillContext);
@@ -38,8 +39,14 @@ const AnalyticsPage = () => {
         <>
           <div className="px-5  pb-10 md:px-20 md:pb-20">
             <BackButton url={`/dashboard/`} />
-            <h1 className="text-gray-600 text-center pt-10 pb-16 text-4xl md:text-6xl font-bold">
+            <h1 className="text-gray-600 text-center  text-4xl md:text-6xl font-bold">
               Analytics
+            </h1>
+            <div>
+              <DateWiseReports />
+            </div>
+            <h1 className="text-gray-600 text-center pt-10 pb-16 text-4xl md:text-5xl font-bold">
+              Overall Analytics
             </h1>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
               <AnalyticsCard
