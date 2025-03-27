@@ -82,9 +82,9 @@ export default function RegisterPage() {
         gType,
       });
       if (data.success) {
-        const res = await createCL({
-          userId: data.user._id,
-        });
+        // const res = await createCL({
+        //   userId: data.user._id,
+        // });
         toast.success(
           `${data.user.username} has been registered successfully!`
         );

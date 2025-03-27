@@ -127,7 +127,12 @@ const BillRecords = () => {
                 disableColumnSorting
                 pageSizeOptions={[5, 10]}
                 onRowClick={(params) => {
-                  navigate(`/dashboard/bill/details/${params.row.billId}`);
+                  console.log(params.row);
+                  params.row.billno.includes("CL")
+                    ? navigate(
+                        `/dashboard/cl/bill/details/${params.row.billId}`
+                      )
+                    : navigate(`/dashboard/bill/details/${params.row.billId}`);
                 }}
                 className="my-10"
               />

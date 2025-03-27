@@ -7,7 +7,6 @@ const CLState = (props) => {
   const [CL, setCL] = useState([]);
   const [brands, setBrands] = useState([]);
 
-
   const getAllCL = async () => {
     try {
       const config = {

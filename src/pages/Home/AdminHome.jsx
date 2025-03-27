@@ -7,10 +7,14 @@ import Loader from "../../components/Layout/Loader";
 const AdminHome = ({ user }) => {
   return (
     <>
-      <div
+      {/* <div
         className={`bg-gradient-to-r from-cyan-100 to-cyan-100 via-white mt-0 ${
           loading ? "blur-background" : ""
         }`}
+      > */}
+
+      <div
+        className={`bg-gradient-to-r from-cyan-100 to-cyan-100 via-white mt-0 `}
       >
         <div className="text-center text-2xl py-8 md:text-5xl">
           {user?.name}

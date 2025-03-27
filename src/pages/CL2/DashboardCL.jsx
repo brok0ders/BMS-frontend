@@ -17,7 +17,11 @@ const DashboardCL = ({ user }) => {
         </div>
       </div>
       <div className="mx-10 md:mx-20 my-10 grid grid-cols-2 md:grid-cols-4 gap-10">
-        <MenuCard menu={"select"} image={add} text={"Create Bill"} />
+        <MenuCard
+          menu={"/dashboard/cl/bill/create"}
+          image={add}
+          text={"Create Bill"}
+        />
         <MenuCard menu={"bill/records"} image={bills} text={"Bills"} />
         <MenuCard menu={"cl/cllist"} image={liquor} text={"Stock"} />
         <MenuCard menu={"analytics"} image={analytics} text={"Analytics"} />

@@ -49,6 +49,7 @@ import Dashboard from "./pages/Home/Dashboard.jsx";
 import CLBillForm from "./pages/CL2/CLBillForm.jsx";
 import CLList from "./pages/CL2/CLList.jsx";
 import UpdateCL from "./pages/CL2/UpdateCL.jsx";
+import CLBillDetails from "./pages/CL2/CLBillDetails.jsx";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -65,6 +66,11 @@ const App = () => {
           }
         />
         <Route path="/dashboard/bill/details/:id" element={<BillDetails />} />
+        <Route
+          path="/dashboard/cl/bill/details/:id"
+          element={<CLBillDetails />}
+        />
+
         <Route path="/" element={<Layout />}>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
@@ -116,6 +122,15 @@ const App = () => {
               element={
                 <ProtectedRoutes>
                   <CLList />
+                </ProtectedRoutes>
+              }
+            />
+
+            <Route
+              path="cl/bill/create"
+              element={
+                <ProtectedRoutes>
+                  <CLBillForm />
                 </ProtectedRoutes>
               }
             />

@@ -54,14 +54,7 @@ const CLList = () => {
       ) : (
         <>
           <Box className="py-0 px-10">
-            <h1 className="text-center py-5 text-4xl font-bold">CL Details</h1>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-                gap: 2,
-              }}
-            ></Box>
+            <h1 className="text-center py-5 text-4xl font-bold">Cl Details</h1>
           </Box>
           <TableContainer className="py-5">
             <>
@@ -97,7 +90,7 @@ const CLList = () => {
                     </TableCell>
                     <TableCell
                       align="center"
-                      colSpan={headers.length }
+                      colSpan={headers.length}
                       sx={{
                         border: 1.34,
                         borderColor: "grey.400",
@@ -185,7 +178,12 @@ const CLList = () => {
                             sx={{ border: 1.34, borderColor: "grey.400" }}
                           >
                             <Typography fontWeight="normal">
-                              {stockItem ? stockItem.quantity : 0}
+                              {stockItem
+                                ? stockItem.quantity +
+                                  "  [" +
+                                  stockItem?.leak +
+                                  "]"
+                                : 0}
                             </Typography>
                           </TableCell>
                         );
@@ -261,6 +259,13 @@ const CLList = () => {
               </Table>
             </>
           </TableContainer>
+
+          <p className="text-center py-5">
+            <em className="italic">
+              {" "}
+              <b>*Note:</b> Values inside [ ] represent leak measurements.
+            </em>
+          </p>
         </>
       )}
     </>
