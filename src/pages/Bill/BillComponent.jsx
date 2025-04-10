@@ -204,6 +204,7 @@ const BillComponent = () => {
     let fholo = 0;
     let fpratifal = 0;
     let fwep = 0;
+    let excise = 0;
 
     products.forEach((product) => {
       const brandDetails = brandsDetails[product.brand];
@@ -214,6 +215,7 @@ const BillComponent = () => {
           fpratifal += size.quantity * sizeDetail.pratifal;
           fwep += size.quantity * sizeDetail.wep;
           totalQuantity += size.quantity;
+          excise += size.quantity * sizeDetail.excise;
           total += size.price;
         }
       });
@@ -222,11 +224,26 @@ const BillComponent = () => {
     // Calculate taxes
     const vatTax = total * (12 / 100);
     const cess = ((total + vatTax) * 2) / 100;
-    const profit = totalQuantity * 50;
-    const taxTotal = total + vatTax + cess + fwep + fholo + profit + fpratifal;
+    const profit = totalQuantity * 70;
+    const taxTotal =
+      total + vatTax + cess + fwep + fholo + profit + fpratifal + excise;
+
     const tcs = (taxTotal * 1) / 100;
     const grandTotal = taxTotal + tcs;
-
+    console.log("taxesData", {
+      totalQuantity,
+      total,
+      fholo,
+      fpratifal,
+      fwep,
+      vatTax,
+      cess,
+      profit,
+      taxTotal,
+      tcs,
+      excise,
+      grandTotal,
+    });
     return {
       totalQuantity,
       total,
@@ -238,6 +255,7 @@ const BillComponent = () => {
       profit,
       taxTotal,
       tcs,
+      excise,
       grandTotal,
     };
   };
@@ -715,6 +733,19 @@ const BillComponent = () => {
                     sx={tableCellStyle}
                     align="center"
                   >
+                    Excise Duty
+                  </TableCell>
+                  <TableCell sx={tableCellStyle} align="center">
+                    {taxesData?.excise?.toFixed(2)}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell
+                    className="!font-bold"
+                    colSpan={allSizes.length * 3 + 2}
+                    sx={tableCellStyle}
+                    align="center"
+                  >
                     Pratifal Fee
                   </TableCell>
                   <TableCell sx={tableCellStyle} align="center">
@@ -747,6 +778,7 @@ const BillComponent = () => {
                     {taxesData?.tcs?.toFixed(2)}
                   </TableCell>
                 </TableRow>
+
                 <TableRow>
                   <TableCell
                     className="!font-bold"

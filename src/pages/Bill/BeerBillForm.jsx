@@ -49,6 +49,7 @@ const BeerBillForm = () => {
   const [fholo, setFholo] = useState(0);
   const [fpratifal, setFpratifal] = useState(0);
   const [fwep, setFwep] = useState(0);
+  const [fexduty, setFexduty] = useState(0);
   const [total, setTotal] = useState(0);
   const [grandTotal, setGrandTotal] = useState(0);
   const inputRefs = useRef({});
@@ -69,7 +70,8 @@ const BeerBillForm = () => {
     try {
       const res = await getBeerCom({ id: company });
       setBeerBrandData(res.beer);
-    } catch {
+    } catch (error) {
+      console.error("Error fetching beers:", error);
     } finally {
       setLoading(false);
     }
@@ -98,7 +100,7 @@ const BeerBillForm = () => {
       "Sixteen",
       "Seventeen",
       "Eighteen",
-      "Tineteen",
+      "Nineteen",
     ];
     const ten = [
       "Twenty",
@@ -166,7 +168,7 @@ const BeerBillForm = () => {
     if (decimalPart > 0) {
       words += " Point";
       for (const digit of parts[1]) {
-        words += ` ${one[digit - 1]}`;
+        words += ` ${one[parseInt(digit) - 1] || "Zero"}`;
       }
     }
     if (!words) {
@@ -175,12 +177,16 @@ const BeerBillForm = () => {
     return words + " Only";
   };
 
-  // console.log(NumberToWordsConverter(12.0));
-
   const createBill2 = async () => {
     try {
       setSpinner(true);
-      const customerData = await createCustomer({ licensee, shop, firm, pan, email });
+      const customerData = await createCustomer({
+        licensee,
+        shop,
+        firm,
+        pan,
+        email,
+      });
       customerId = customerData.customer._id;
       const res = await createBill({
         excise,
@@ -205,16 +211,20 @@ const BeerBillForm = () => {
       setGrandTotal(0);
       navigate(`/dashboard/bill/details/${res.bill}`);
     } catch (e) {
+      console.error("Error creating bill:", e);
+      toast.error("Failed to create bill. Please try again.");
     } finally {
       setSpinner(false);
     }
   };
+
   const getCompany2 = async () => {
     setLoading(true);
     try {
       const res = await getCompany({ id: company });
       setComp(res?.company?.company.name);
     } catch (e) {
+      console.error("Error fetching company:", e);
     } finally {
       setLoading(false);
     }
@@ -236,15 +246,19 @@ const BeerBillForm = () => {
         setEmail("");
       }
     } catch (e) {
+      console.error("Error fetching licensee data:", e);
       setShop("");
       setFirm("");
       setPan("");
+      setEmail("");
     }
   };
+
   useEffect(() => {
     getCompany2();
     getBeers();
   }, []);
+
   const handleBillSubmit = (e) => {
     e.preventDefault();
     createBill2();
@@ -324,7 +338,7 @@ const BeerBillForm = () => {
     try {
       e.preventDefault();
       if (!added) {
-        toast.warning("Select quantity of atleast one size!");
+        toast.warning("Select quantity of at least one size!");
         return;
       }
       let h = fholo;
@@ -332,6 +346,7 @@ const BeerBillForm = () => {
       let w = fwep;
       let q = totalQuantity;
       let t = total;
+      let exDuty = fexduty;
 
       const existingProductIndex = products.findIndex(
         (product) => product.brand === currentInput.brand
@@ -340,13 +355,25 @@ const BeerBillForm = () => {
       if (existingProductIndex > -1) {
         // Subtract previous values
         const existingProduct = products[existingProductIndex];
-        existingProduct.sizes.forEach((size) => {
-          h -= size.quantity * sizes.find((s) => s.size === size.size).hologram;
-          p -= size.quantity * sizes.find((s) => s.size === size.size).pratifal;
-          w -= size.quantity * sizes.find((s) => s.size === size.size).wep;
-          q -= size.quantity;
-          t -= size.price;
-        });
+        const selectedBrand = beerBrandData.find(
+          (brand) => brand.beer.brandName === currentInput.brand
+        );
+
+        if (selectedBrand) {
+          existingProduct.sizes.forEach((size) => {
+            const sizeData = selectedBrand.beer.sizes.find(
+              (s) => s.size === size.size
+            );
+            if (sizeData) {
+              h -= size.quantity * (sizeData.hologram || 0);
+              p -= size.quantity * (sizeData.pratifal || 0);
+              w -= size.quantity * (sizeData.wep || 0);
+              exDuty -= size.quantity * (sizeData.excise || 0);
+              q -= size.quantity;
+              t -= size.price;
+            }
+          });
+        }
 
         // Update existing product
         const updatedProducts = [...products];
@@ -365,29 +392,41 @@ const BeerBillForm = () => {
       }
 
       // Add current values
-      currentInput.sizes.forEach((size) => {
-        h += size.quantity * sizes.find((s) => s.size === size.size).hologram;
-        p += size.quantity * sizes.find((s) => s.size === size.size).pratifal;
-        w += size.quantity * sizes.find((s) => s.size === size.size).wep;
-        q += size.quantity;
-        t += size.price;
-      });
+      const selectedBrand = beerBrandData.find(
+        (brand) => brand.beer.brandName === currentInput.brand
+      );
+
+      if (selectedBrand) {
+        currentInput.sizes.forEach((size) => {
+          const sizeData = selectedBrand.beer.sizes.find(
+            (s) => s.size === size.size
+          );
+          if (sizeData) {
+            h += size.quantity * (sizeData.hologram || 0);
+            p += size.quantity * (sizeData.pratifal || 0);
+            w += size.quantity * (sizeData.wep || 0);
+            exDuty += size.quantity * (sizeData.excise || 0);
+            q += size.quantity;
+            t += size.price;
+          }
+        });
+      }
 
       setFholo(h);
       setFpratifal(p);
       setFwep(w);
+      setFexduty(exDuty);
       setTotalQuantity(q);
       setTotal(t);
 
       // Tax calculations
       const vatTax = t * 0.12;
       const cess = (t + vatTax) * 0.02;
-      const profit = q * 50;
-
-      const taxTotal = t + vatTax + cess + w + h + profit + p;
-      const tcs = taxTotal * 0.01;
-      setGrandTotal(taxTotal + tcs);
-      setTcs(tcs);
+      const profit = q * 70;
+      const taxTotal = t + vatTax + cess + w + h + profit + p + exDuty;
+      const tcsValue = taxTotal * 0.01;
+      setGrandTotal(taxTotal + tcsValue);
+      setTcs(tcsValue);
       setCurrentInput({ brand: "", sizes: [] });
 
       console.log("total quantity: " + q);
@@ -398,14 +437,14 @@ const BeerBillForm = () => {
       console.log("final holo is: " + h);
       console.log("Profit: " + profit);
       console.log("final pratifal is: " + p);
+      console.log("final excise duty is: " + exDuty);
       console.log("Total tax: " + taxTotal);
-      console.log("tcs: " + tcs);
+      console.log("tcs: " + tcsValue);
     } catch (error) {
       console.error("Error adding product:", error);
+      toast.error("Error adding product. Please try again.");
     }
   };
-
-  // =================================================>
 
   const handleDeleteProduct = (index) => {
     setSpinner2(true);
@@ -413,31 +452,30 @@ const BeerBillForm = () => {
       let h = fholo;
       let p = fpratifal;
       let w = fwep;
+      let exDuty = fexduty;
       let q = totalQuantity;
       let t = total;
 
       // Subtract the values of the product being deleted
       const productToDelete = products[index];
+      const brandData = beerBrandData.find(
+        (item) => item.beer.brandName === productToDelete.brand
+      );
 
-      for (let j = 0; j < beerBrandData.length; j++) {
-        if (beerBrandData[j].beer.brandName === productToDelete.brand) {
-          productToDelete.sizes.forEach((size, i) => {
-            h -=
-              size.quantity *
-              beerBrandData[j].beer.sizes.find((s) => s.size === size.size)
-                .hologram;
-            p -=
-              size.quantity *
-              beerBrandData[j].beer.sizes.find((s) => s.size === size.size)
-                .pratifal;
-            // console.log("pratifal is: " + p);
-            w -=
-              size.quantity *
-              beerBrandData[j].beer.sizes.find((s) => s.size === size.size).wep;
+      if (brandData) {
+        productToDelete.sizes.forEach((size) => {
+          const sizeData = brandData.beer.sizes.find(
+            (s) => s.size === size.size
+          );
+          if (sizeData) {
+            h -= size.quantity * (sizeData.hologram || 0);
+            p -= size.quantity * (sizeData.pratifal || 0);
+            w -= size.quantity * (sizeData.wep || 0);
+            exDuty -= size.quantity * (sizeData.excise || 0);
             q -= size.quantity;
             t -= size.price;
-          });
-        }
+          }
+        });
       }
 
       // Update the products list
@@ -448,16 +486,18 @@ const BeerBillForm = () => {
       setFholo(h);
       setFpratifal(p);
       setFwep(w);
+      setFexduty(exDuty);
       setTotalQuantity(q);
       setTotal(t);
 
       // Recalculate all taxes and grand total
-      const vatTax = t * (12 / 100);
-      const cess = ((t + vatTax) * 2) / 100;
-      const profit = q * 50;
-      const taxTotal = t + vatTax + cess + w + h + profit + p;
-      const tcs = (taxTotal * 1) / 100;
-      setGrandTotal(taxTotal + tcs);
+      const vatTax = t * 0.12;
+      const cess = (t + vatTax) * 0.02;
+      const profit = q * 70;
+      const taxTotal = t + vatTax + cess + w + h + profit + p + exDuty;
+      const tcsValue = taxTotal * 0.01;
+      setGrandTotal(taxTotal + tcsValue);
+      setTcs(tcsValue);
 
       console.log("total quantity: " + q);
       console.log("total price: " + t);
@@ -467,22 +507,33 @@ const BeerBillForm = () => {
       console.log("final holo is: " + h);
       console.log("Profit: " + profit);
       console.log("final pratifal is: " + p);
+      console.log("final excise duty is: " + exDuty);
       console.log("Total tax: " + taxTotal);
-      console.log("tcs: " + tcs);
+      console.log("tcs: " + tcsValue);
     } catch (e) {
-      console.error(e);
+      console.error("Error deleting product:", e);
+      toast.error("Error deleting product. Please try again.");
     } finally {
       setSpinner2(false);
     }
   };
+
   const handleBrandChange = (e) => {
     const brand = e.target.value;
-    console.log(brand);
     setCurrentInput((prevInput) => ({
       ...prevInput,
       brand: brand,
       sizes: [],
     }));
+
+    // Update stocks and sizes when brand changes
+    const selectedBrand = beerBrandData.find(
+      (brand) => brand.beer.brandName === e.target.value
+    );
+    if (selectedBrand) {
+      setStocks(selectedBrand.stock || []);
+      setSizes(selectedBrand.beer.sizes || []);
+    }
   };
 
   // Preprocess products to create a sizes object
@@ -638,15 +689,10 @@ const BeerBillForm = () => {
                           onChange={handleBrandChange}
                         >
                           {beerBrandData.length > 0 &&
-                            beerBrandData?.map((brand, i) => (
+                            beerBrandData?.map((brand) => (
                               <MenuItem
                                 key={brand._id}
                                 value={brand?.beer?.brandName}
-                                onClick={() => {
-                                  console.log(brand.beer);
-                                  setStocks(brand.stock);
-                                  setSizes(brand.beer.sizes);
-                                }}
                               >
                                 {brand?.beer?.brandName}
                               </MenuItem>
@@ -672,35 +718,6 @@ const BeerBillForm = () => {
                                 key={size?.size}
                                 className="flex flex-col gap-5"
                               >
-                                {/* <TextField
-                                  fullWidth
-                                  value={
-                                    currentInput?.sizes.find(
-                                      (s) => s.size === size?.size
-                                    )?.quantity ?? ""
-                                  }
-                                  label={`Quantity ${size?.size}`}
-                                  name={`quantity-${size?.size}`}
-                                  onChange={handleInputChange}
-                                  variant="outlined"
-                                  type="number"
-                                />
-                                <TextField
-                                  fullWidth
-                                  value={
-                                    currentInput?.sizes
-                                      .find((s) => s.size === size?.size)
-                                      ?.price.toFixed(2) || ""
-                                  }
-                                  label={`Price ${size?.size}`}
-                                  name={`price-${size?.size}`}
-                                  onChange={handleInputChange}
-                                  variant="outlined"
-                                  type="number"
-                                  focused={false}
-                                  inputProps={{ readOnly: true }}
-                                /> */}
-
                                 <TextField
                                   fullWidth
                                   value={
@@ -713,7 +730,15 @@ const BeerBillForm = () => {
                                   onChange={handleInputChange}
                                   variant="outlined"
                                   type="number"
-                                  onFocus={(e) => e.target.addEventListener("wheel", function (e) { e.preventDefault() }, { passive: false })}
+                                  onFocus={(e) =>
+                                    e.target.addEventListener(
+                                      "wheel",
+                                      function (e) {
+                                        e.preventDefault();
+                                      },
+                                      { passive: false }
+                                    )
+                                  }
                                   InputProps={{ inputProps: { min: 0 } }}
                                 />
                                 <TextField
@@ -721,11 +746,10 @@ const BeerBillForm = () => {
                                   value={
                                     currentInput?.sizes
                                       .find((s) => s.size === size?.size)
-                                      ?.price.toFixed(2) || 0
+                                      ?.price?.toFixed(2) || "0.00"
                                   }
                                   label={`Price ${size?.size}`}
                                   name={`price-${size?.size}`}
-                                  onChange={handleInputChange}
                                   variant="outlined"
                                   type="number"
                                   focused={false}
@@ -812,15 +836,16 @@ const BeerBillForm = () => {
                                 key={`price-${size}-${i}`}
                                 align="center"
                               >
-                                {p.sizes[size]?.price.toFixed(2) || "-"}
+                                {p.sizes[size]?.price?.toFixed(2) || "-"}
                               </TableCell>
                             ))}
                             <TableCell align="center" className="w-0">
                               <Button
                                 className="text-red-500 hover:text-red-700"
                                 onClick={() => handleDeleteProduct(i)}
+                                disabled={spinner2}
                               >
-                                <Delete />
+                                {spinner2 ? <Spinner /> : <Delete />}
                               </Button>
                             </TableCell>
                           </TableRow>
@@ -839,11 +864,12 @@ const BeerBillForm = () => {
                         ))}
                         {allSizes.map((size) => (
                           <TableCell key={`price-total-${size}`} align="center">
-                            {processedProducts.reduce(
-                              (acc, p) =>
-                                acc + (p.sizes[size]?.price || 0),
-                              0
-                            ).toFixed(2)}
+                            {processedProducts
+                              .reduce(
+                                (acc, p) => acc + (p.sizes[size]?.price || 0),
+                                0
+                              )
+                              .toFixed(2)}
                           </TableCell>
                         ))}
                         <TableCell></TableCell>

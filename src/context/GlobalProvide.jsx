@@ -5,6 +5,7 @@ import BeerState from "./beer/beerState.jsx";
 import CompanyState from "./company/companyState.jsx";
 import CustomerState from "./customer/customerState.jsx";
 import LiquorState from "./liquor/liquorState.jsx";
+import CLState from "./cl/clState.jsx";
 const GlobalProvider = ({ children }) => {
   return (
     <UserState>
@@ -12,7 +13,9 @@ const GlobalProvider = ({ children }) => {
         <CompanyState>
           <CustomerState>
             <LiquorState>
-              <BillState>{children}</BillState>
+              <CLState>
+                <BillState>{children}</BillState>
+              </CLState>
             </LiquorState>
           </CustomerState>
         </CompanyState>

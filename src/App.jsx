@@ -45,6 +45,10 @@ import BillDetails from "./pages/Bill/BillDetails.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import MonthlyAnalytics from "./pages/Analytics/MonthlyAnalytics.jsx";
 import ProtectedRoutes from "./components/routes/ProtectedRoutes.jsx";
+import Dashboard from "./pages/Home/Dashboard.jsx";
+import CLBillForm from "./pages/CL2/CLBillForm.jsx";
+import CLList from "./pages/CL2/CLList.jsx";
+import UpdateCL from "./pages/CL2/UpdateCL.jsx";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -71,7 +75,7 @@ const App = () => {
               index
               element={
                 <ProtectedRoutes>
-                  <AdminHome />
+                  <Dashboard />
                 </ProtectedRoutes>
               }
             />
@@ -108,10 +112,26 @@ const App = () => {
               }
             />
             <Route
+              path="cl/cllist"
+              element={
+                <ProtectedRoutes>
+                  <CLList />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
               path="beer/edit/:id"
               element={
                 <ProtectedRoutes>
                   <UpdateBeerForm />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="cl/edit/:id"
+              element={
+                <ProtectedRoutes>
+                  <UpdateCL />
                 </ProtectedRoutes>
               }
             />
@@ -179,6 +199,14 @@ const App = () => {
               element={
                 <ProtectedRoutes>
                   <LiquorBillForm />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="clbill"
+              element={
+                <ProtectedRoutes>
+                  <CLBillForm />
                 </ProtectedRoutes>
               }
             />

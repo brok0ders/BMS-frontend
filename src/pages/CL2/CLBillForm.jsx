@@ -27,7 +27,7 @@ import Loader from "../../components/Layout/Loader";
 import Spinner from "../../components/Layout/Spinner";
 import BackButton from "../../components/BackButton";
 
-const LiquorBillForm = () => {
+const CLBillForm = () => {
   const { company } = useParams();
   const [licensee, setLicensee] = useState("");
   const [liquorBrandData, setLiquorBrandData] = useState([{}]);
@@ -45,7 +45,6 @@ const LiquorBillForm = () => {
   const [products, setProducts] = useState([]);
   const [sizes, setSizes] = useState([]);
   const [totalQuantity, setTotalQuantity] = useState(0);
-  const [fexduty, setFexduty] = useState(0);
   const [fholo, setFholo] = useState(0);
   const [fpratifal, setFpratifal] = useState(0);
   const [fwep, setFwep] = useState(0);
@@ -195,7 +194,8 @@ const LiquorBillForm = () => {
   const getLiquors = async () => {
     setLoading(true);
     try {
-      const res = await getLiquorCom({ id: company });
+    //   const res = await getLiquorCom({ id: company });
+    const data = {}
       setLiquorBrandData(res.liquor);
     } catch (e) {
     } finally {
@@ -337,7 +337,6 @@ const LiquorBillForm = () => {
       let p = fpratifal;
       let w = fwep;
       let q = totalQuantity;
-      let ex = fexduty;
       let t = total;
 
       const existingProductIndex = products.findIndex(
@@ -352,7 +351,6 @@ const LiquorBillForm = () => {
           h -= size.quantity * sizes.find((s) => s.size === size.size).hologram;
           p -= size.quantity * sizes.find((s) => s.size === size.size).pratifal;
           w -= size.quantity * sizes.find((s) => s.size === size.size).wep;
-          ex -= size.quantity * sizes.find((s) => s.size == size.size).excise;
           q -= size.quantity;
           t -= size.price;
         });
@@ -378,7 +376,6 @@ const LiquorBillForm = () => {
         h += size.quantity * sizes.find((s) => s.size === size.size).hologram;
         p += size.quantity * sizes.find((s) => s.size === size.size).pratifal;
         w += size.quantity * sizes.find((s) => s.size === size.size).wep;
-        ex += size.quantity * sizes.find((s) => s.size == size.size).excise;
         q += size.quantity;
         t += size.price;
       });
@@ -387,15 +384,14 @@ const LiquorBillForm = () => {
       setFpratifal(p);
       setFwep(w);
       setTotalQuantity(q);
-      setFexduty(ex);
       setTotal(t);
 
       // Tax calculations
       const vatTax = t * 0.12;
       const cess = (t + vatTax) * 0.02;
-      const profit = q * 70;
+      const profit = q * 50;
 
-      const taxTotal = t + vatTax + cess + w + h + profit + p + ex;
+      const taxTotal = t + vatTax + cess + w + h + profit + p;
       const tcs = taxTotal * 0.01;
       setTcs(tcs);
       setGrandTotal(taxTotal + tcs);
@@ -418,7 +414,6 @@ const LiquorBillForm = () => {
       let h = fholo;
       let p = fpratifal;
       let w = fwep;
-      let ex = fexduty;
       let q = totalQuantity;
       let t = total;
 
@@ -442,10 +437,6 @@ const LiquorBillForm = () => {
               size.quantity *
               liquorBrandData[j].liquor.sizes.find((s) => s.size === size.size)
                 .wep;
-            ex -=
-              size.quantity *
-              liquorBrandData[j].liquor.sizes.find((s) => s.size === size.size)
-                .excise;
             q -= size.quantity;
             t -= size.price;
           });
@@ -467,7 +458,6 @@ const LiquorBillForm = () => {
       setFpratifal(p);
       setFwep(w);
       setTotalQuantity(q);
-      setFexduty(ex);
       setTotal(t);
 
       // Tax calculations
@@ -475,7 +465,7 @@ const LiquorBillForm = () => {
       const cess = (t + vatTax) * 0.02;
       const profit = q * 50;
 
-      const taxTotal = t + vatTax + cess + w + h + profit + p + ex;
+      const taxTotal = t + vatTax + cess + w + h + profit + p;
       const tcs = taxTotal * 0.01;
       setGrandTotal(taxTotal + tcs);
 
@@ -533,7 +523,7 @@ const LiquorBillForm = () => {
                 alt="No Data"
                 className="w-[25vw] m-auto"
               />
-              <p>NO LIQUOR BRAND FOUND FOR THE SELECTED COMPANY!</p>
+              <p>NO LIQUOR FOUND!</p>
               <Box className="flex justify-center mt-5">
                 <Link to={`/dashboard/liquor/create/${company}`}>
                   <Button startIcon={<Add />} variant="contained">
@@ -552,7 +542,7 @@ const LiquorBillForm = () => {
             className="py-10 px-10 md:py-5 md:px-20"
           >
             <h1 className="md:text-5xl text-center font-bold text-slate-700 px-2 py-2 m-4 text-4xl">
-              FL Bill Details
+              CL Bill Details
             </h1>
 
             {/* Licensee Details */}
@@ -629,24 +619,6 @@ const LiquorBillForm = () => {
             >
               <Box className="w-full">
                 <h1 className="md:text-3xl px-2 py-2 m-4 font-semibold text-2xl">
-                  Supplier
-                </h1>
-                <Box className="px-3 grid grid-cols-1 sm:grid-cols-3 gap-10">
-                  <FormControl sx={{ m: 1, minWidth: 120 }}>
-                    <TextField
-                      value={comp}
-                      label="Supplier"
-                      required
-                      variant="outlined"
-                      inputProps={{
-                        readOnly: true,
-                      }}
-                    />
-                  </FormControl>
-                </Box>
-              </Box>
-              <Box className="w-full">
-                <h1 className="md:text-3xl px-2 py-2 m-4 font-semibold text-2xl">
                   Select Brand
                 </h1>
                 <Box className="px-3 grid grid-cols-1 sm:grid-cols-3 gap-10">
@@ -662,6 +634,7 @@ const LiquorBillForm = () => {
                       label="Brand Name"
                       name="brand"
                       className="w-full"
+                      defaultValue={liquorBrandData[0].liquor?.brandName}
                       onChange={handleBrandChange}
                     >
                       {liquorBrandData.length > 0 &&
@@ -679,19 +652,6 @@ const LiquorBillForm = () => {
                         ))}
                     </Select>
                   </FormControl>
-                  <Box className="pt-4">
-                    <Link to={`/dashboard/liquor/create/${company}`}>
-                      <Button
-                        startIcon={<Add />}
-                        variant="contained"
-                        onClick={() => {
-                          setOpen(true);
-                        }}
-                      >
-                        Add Liquor
-                      </Button>
-                    </Link>
-                  </Box>
                 </Box>
               </Box>
               {currentInput?.brand && (
@@ -722,7 +682,7 @@ const LiquorBillForm = () => {
                                   ? size?.size + " (P)"
                                   : size?.size === "180ml"
                                   ? size?.size + " (N)"
-                                  : size?.size
+                                  : size?.size 
                               }`}
                               name={`quantity-${size?.size}`}
                               onChange={handleInputChange}
@@ -753,7 +713,7 @@ const LiquorBillForm = () => {
                                   ? size?.size + " (P)"
                                   : size?.size === "180ml"
                                   ? size?.size + " (N)"
-                                  : size?.size
+                                  : size?.size 
                               }`}
                               name={`price-${size?.size}`}
                               onChange={handleInputChange}
@@ -806,7 +766,7 @@ const LiquorBillForm = () => {
                           ? size + " (P)"
                           : size === "180ml"
                           ? size + " (N)"
-                          : size}
+                          : size }
                       </TableCell>
                     ))}
                     {allSizes.map((size) => (
@@ -882,6 +842,8 @@ const LiquorBillForm = () => {
             </TableContainer>
 
             {/* Total Calculation */}
+
+            {/* Total Calculation */}
             <Box className="px-2 py-2 m-4 flex justify-end overflow-x-auto">
               <TextField
                 id="filled-read-only-input"
@@ -934,4 +896,4 @@ const LiquorBillForm = () => {
   );
 };
 
-export default LiquorBillForm;
+export default CLBillForm;

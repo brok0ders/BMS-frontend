@@ -13,7 +13,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import UserContext from "../../context/user/userContext";
-import { Alert } from "@mui/material";
+import { Alert, MenuItem, Select } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
@@ -24,6 +24,8 @@ import {
   InputLabel,
   OutlinedInput,
 } from "@mui/material";
+import LiquorContext from "../../context/liquor/liquorContext";
+import ClContext from "../../context/cl/clContext";
 
 function Copyright(props) {
   return (
@@ -59,6 +61,8 @@ export default function RegisterPage() {
   const [address, setAddress] = useState("");
   const [TINno, setTINno] = useState("");
   const [PANno, setPANno] = useState("");
+  const [gType, setgType] = useState("");
+  const { createCL } = useContext(ClContext);
 
   const navigate = useNavigate();
   const handleSubmit = async (event) => {
@@ -75,8 +79,12 @@ export default function RegisterPage() {
         address,
         TINno,
         PANno,
+        gType,
       });
       if (data.success) {
+        const res = await createCL({
+          userId: data.user._id,
+        });
         toast.success(
           `${data.user.username} has been registered successfully!`
         );
@@ -91,6 +99,10 @@ export default function RegisterPage() {
   };
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleChange = (e) => {
+    setgType(e.target.value);
+  };
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -235,11 +247,29 @@ export default function RegisterPage() {
                 />
               </Grid>
               <Grid item xs={12}>
+                <FormControl sx={{ minWidth: 400 }}>
+                  <InputLabel id="demo-simple-select-autowidth-label">
+                    Godown Type
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-autowidth-label"
+                    id="demo-simple-select-autowidth"
+                    value={gType}
+                    onChange={handleChange}
+                    fullWidth
+                    label="Godown Type"
+                  >
+                    <MenuItem value={"fl"}>FL2</MenuItem>
+                    <MenuItem value={"cl"}>CL2</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12}>
                 <TextField
                   required
                   fullWidth
                   id="FLliscensee"
-                  label="FL Liscensee Name"
+                  label="FL/CL Liscensee Name"
                   name="FLliscensee"
                   autoComplete="FLliscensee"
                   value={FLliscensee}
