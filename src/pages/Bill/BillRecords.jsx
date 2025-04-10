@@ -8,6 +8,62 @@ import { useNavigate } from "react-router-dom";
 import BackButton from "../../components/BackButton";
 
 const BillRecords = () => {
+  const navigate = useNavigate();
+  const { getAllBills, updateBill } = useContext(BillContext);
+  const { getCompany } = useContext(CompanyContext);
+  const [bills, setBills] = useState([]);
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [updateLoading, setUpdateLoading] = useState(false);
+
+  // Function to handle cell edits (primarily for the "paid" column)
+  const handleRowEdit = async (newRow, oldRow) => {
+    // Log the received parameters to debug
+    console.log("New Row:", newRow);
+    console.log("Old Row:", oldRow);
+
+    if (newRow.paid !== oldRow.paid) {
+      try {
+        setUpdateLoading(true);
+        
+        // Create updated row data
+        const updatedRow = {
+          ...newRow,
+          remaining: newRow.total - newRow.paid
+        };
+        
+        // Call API to update the bill payment in the database
+        const response = await updateBill({
+          id: newRow?.billId,
+          paid: newRow?.paid,
+        });
+        
+        if (response && response.success) {
+          // If API call is successful, update local state
+          console.log(`Successfully updated bill ${newRow.billId} with payment: ${newRow.paid}`);
+          
+          setUpdateLoading(false);
+          return updatedRow;
+        } else {
+          console.error("Failed to update bill:", response?.error || "Unknown error");
+          setUpdateLoading(false);
+          return oldRow; // Return original row on failed API call
+        }
+      } catch (error) {
+        console.error("Error updating bill payment:", error);
+        setUpdateLoading(false);
+        return oldRow; // Return original row on error
+      }
+    }
+    
+    // If no changes to paid amount, just return the new row
+    return newRow;
+  };
+  
+  const handleViewBill = (billId) => {
+    navigate(`/dashboard/bill/details/${billId}`);
+  };
+
   const columns = [
     {
       field: "sno",
@@ -36,7 +92,7 @@ const BillRecords = () => {
     },
     {
       field: "lincensee",
-      headerName: "Lincensee",
+      headerName: "Licensee",
       width: 250,
       cellClassName: "centered-cell",
       align: "center",
@@ -58,21 +114,56 @@ const BillRecords = () => {
       cellClassName: "centered-cell",
       align: "center",
       headerAlign: "center",
+      valueFormatter: (params) => Math.round(params),
     },
+    {
+      field: "paid",
+      type: "number",
+      headerName: "Paid",
+      width: 150,
+      cellClassName: "centered-cell",
+      align: "center",
+      headerAlign: "center",
+      editable: true,
+      valueFormatter: (params) => Math.round(params),
+    },
+    {
+      field: "remaining",
+      type: "number",
+      headerName: "Remaining",
+      width: 150,
+      cellClassName: "centered-cell",
+      align: "center",
+      headerAlign: "center",
+      valueFormatter: (params) => Math.round(params),
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 150,
+      cellClassName: "centered-cell",
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => (
+        <button
+          onClick={() => handleViewBill(params.row.billId)}
+          className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-2 py-1 rounded-md shadow-sm transition duration-200"
+        >
+          View bill
+        </button>
+      ),
+    }
+    
   ];
-  const { getAllBills } = useContext(BillContext);
-  const { getCompany } = useContext(CompanyContext);
-  const [bills, setBills] = useState([]);
-  const [rows, setRows] = useState([]);
-  const [loading, setLoading] = useState(false);
 
   const getBills = async () => {
     setLoading(true);
-    const data = await getAllBills();
-    console.log(data);
-    if (data) {
-      setBills(data);
-      if (rows.length == 0) {
+    try {
+      const data = await getAllBills();
+      console.log(data);
+      if (data) {
+        setBills(data);
+        // Always recreate rows to avoid stale data
         const newRows = data.map((bill, index) => ({
           id: index + 1, // +1 to ensure id is unique and not 0-based
           sno: index + 1,
@@ -82,17 +173,21 @@ const BillRecords = () => {
           lincensee: bill?.customer?.licensee,
           Company: bill?.company?.company?.name,
           total: bill?.total,
+          paid: bill?.paid,
+          remaining: bill?.total - bill.paid,
         }));
-        setRows((prevRows) => [...prevRows, ...newRows]);
+        setRows(newRows);
       }
+    } catch (error) {
+      console.error("Error fetching bills:", error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
+  
   useEffect(() => {
     getBills();
   }, []);
-
-  const navigate = useNavigate();
 
   return (
     <>
@@ -117,6 +212,9 @@ const BillRecords = () => {
               <DataGrid
                 rows={rows}
                 columns={columns}
+                processRowUpdate={handleRowEdit}
+                onProcessRowUpdateError={(error) => console.error("Error processing row update:", error)}
+                editMode="cell"
                 initialState={{
                   pagination: {
                     paginationModel: { page: 0, pageSize: 5 },
@@ -126,10 +224,8 @@ const BillRecords = () => {
                 disableColumnMenu
                 disableColumnSorting
                 pageSizeOptions={[5, 10]}
-                onRowClick={(params) => {
-                  navigate(`/dashboard/bill/details/${params.row.billId}`);
-                }}
                 className="my-10"
+                loading={updateLoading}
               />
             </div>
           )}

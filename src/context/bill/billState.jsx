@@ -1,7 +1,6 @@
 import { useContext, useState } from "react";
 import API from "../../utils/API";
 import BillContext from "./billContext";
-import axios from "axios";
 import { toast } from "react-toastify";
 
 const BillState = ({ children }) => {
@@ -157,7 +156,7 @@ const BillState = ({ children }) => {
     }
   };
 
-  const updateBill = async ({ id, customer, seller, products, company }) => {
+  const updateBill = async ({ id, paid }) => {
     try {
       const config = {
         headers: {
@@ -165,9 +164,10 @@ const BillState = ({ children }) => {
           authorization: localStorage.getItem("token"),
         },
       };
+      console.log(`url: /bill/update/${id} \n paid: ${paid}`);
       const { data } = await API.put(
         `/bill/update/${id}`,
-        { customer, seller, products, company },
+        { paid },
         config
       );
       if (data.success) {
