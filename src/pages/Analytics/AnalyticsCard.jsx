@@ -7,7 +7,8 @@ const AnalyticsCard = ({ name, value, icon }) => {
         <h1 className="text-lg font-[400] uppercase   text-sky-700 pt-4">
           {name}
         </h1>
-        <div className="w-[4rem] shadow-md shadow-blue-400/30 h-[4rem] rounded-full bg-gradient-to-tr from-blue-300 via-gray-50 to-sky-500 p-3">
+        <div className="w-[4rem] shadow-md shadow-blue-400/30 h-[4rem] rounded-full bg-yellow-50/50 p-3">
+        {/* <div className="w-[4rem] shadow-md shadow-blue-400/30 h-[4rem] rounded-full bg-gradient-to-tr from-blue-300 via-gray-50 to-sky-500 p-3"> */}
           <img className="w-full" src={icon} alt="" />
         </div>
       </div>

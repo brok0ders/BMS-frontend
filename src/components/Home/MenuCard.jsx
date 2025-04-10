@@ -10,7 +10,7 @@ const MenuCard = ({ image, text, menu }) => {
       >
         <img src={image} alt="#" className="w-[4.8rem] md:w-[5.6rem]" />
       </Link>
-      <h1 className="mx-4 my-2">{text}</h1>
+      <h1 className="mx-4 my-2 font-semibold text-lg text-gray-800">{text}</h1>
     </div>
   );
 };
