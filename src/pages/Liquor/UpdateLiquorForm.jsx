@@ -23,35 +23,44 @@ const UpdateLiquorForm = () => {
   const handleQuantityChange = (index, e) => {
     const { name, value } = e.target;
     const newStock = [...stock];
-    
+
+    // Convert to number and handle empty string as 0
+    const numericValue = value === "" ? 0 : Number(value);
+
     if (name === "quantity") {
-      newStock[index].quantity = Number(value);
+      newStock[index].quantity = numericValue;
     } else if (name === "leak") {
-      newStock[index].leak = Number(value);
+      newStock[index].leak = numericValue;
     }
-    
+
     setStock(newStock);
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       setSpinner(true);
-      const res = await updateLiquor({ id, stock });
-      toast.success("Liquor updated succesfully!");
+
+      // Make sure all stock entries have at least 0 for quantity and leak
+      const processedStock = stock.map((item) => ({
+        ...item,
+        quantity: item.quantity !== undefined ? item.quantity : 0,
+        leak: item.leak !== undefined ? item.leak : 0,
+      }));
+
+      const res = await updateLiquor({ id, stock: processedStock });
+      toast.success("Liquor updated successfully!");
       setBrandName("");
       setStock([]);
       navigate(-1);
       setSpinner(false);
-      // Handle success (e.g., reset form, display success message)
     } catch (error) {
       console.error("Error:", error);
       setSpinner(false);
     }
   };
 
-  // GEt the liquor data
-
+  // Get the liquor data
   const getLiquorData = async () => {
     try {
       setLoading(true);
@@ -61,16 +70,30 @@ const UpdateLiquorForm = () => {
       setCompanyName(res1?.company?.company?.name);
 
       setBrandName(res.liquor?.liquor?.brandName);
-      setStock(res.liquor.stock);
+
+      // Process stock data to ensure quantity and leak are properly initialized
+      const processedStock = res.liquor.stock.map((item) => ({
+        ...item,
+        quantity: item.quantity !== undefined ? item.quantity : 0,
+        leak: item.leak !== undefined ? item.leak : 0,
+      }));
+
+      setStock(processedStock);
       setLoading(false);
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error fetching liquor data:", error);
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     getLiquorData();
   }, [id]);
+
+  // Helper function to get display value (empty string or actual value)
+  const getDisplayValue = (value) => {
+    return value === 0 ? "" : value;
+  };
 
   return (
     <>
@@ -90,7 +113,6 @@ const UpdateLiquorForm = () => {
             <Box className="py-10">
               <h1 className="text-2xl font-semibold mb-5">Company</h1>
               <TextField
-                required
                 aria-readonly
                 value={companyName}
                 className="w-full "
@@ -101,7 +123,6 @@ const UpdateLiquorForm = () => {
             <Box className="py-10">
               <h1 className="text-2xl font-semibold mb-5">Brand</h1>
               <TextField
-                required
                 onChange={(e) => setBrandName(e.target.value)}
                 value={brandName}
                 className="w-full "
@@ -111,15 +132,14 @@ const UpdateLiquorForm = () => {
             </Box>
           </Box>
           {stock?.map((s, index) => (
-            <>
+            <React.Fragment key={index}>
               <h1 className="text-2xl font-semibold mb-3">{s.size}</h1>
               <Box className="pb-10 grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-10">
                 <TextField
                   onChange={(e) => handleQuantityChange(index, e)}
-                  value={s?.quantity}
+                  value={getDisplayValue(s?.quantity)}
                   type="number"
                   inputProps={{ min: 0 }}
-                  required
                   name="quantity"
                   label={`Quantity ${s?.size}`}
                   variant="outlined"
@@ -138,7 +158,7 @@ const UpdateLiquorForm = () => {
                   label={`Price ${s?.size}`}
                   variant="outlined"
                 />
-                 <TextField
+                <TextField
                   inputProps={{ min: 0 }}
                   type="number"
                   label={`Loose ${s.size}`}
@@ -147,7 +167,7 @@ const UpdateLiquorForm = () => {
                   onChange={(e) => {
                     handleQuantityChange(index, e);
                   }}
-                  value={s?.leak}
+                  value={getDisplayValue(s?.leak)}
                   onFocus={(e) =>
                     e.target.addEventListener(
                       "wheel",
@@ -159,7 +179,7 @@ const UpdateLiquorForm = () => {
                   }
                 />
               </Box>
-            </>
+            </React.Fragment>
           ))}
 
           <Box

@@ -49,6 +49,7 @@ const BeerBillForm = () => {
   const [fholo, setFholo] = useState(0);
   const [fpratifal, setFpratifal] = useState(0);
   const [fwep, setFwep] = useState(0);
+  const [fexduty, setFexduty] = useState(0);
   const [total, setTotal] = useState(0);
   const [grandTotal, setGrandTotal] = useState(0);
   const inputRefs = useRef({});
@@ -180,7 +181,13 @@ const BeerBillForm = () => {
   const createBill2 = async () => {
     try {
       setSpinner(true);
-      const customerData = await createCustomer({ licensee, shop, firm, pan, email });
+      const customerData = await createCustomer({
+        licensee,
+        shop,
+        firm,
+        pan,
+        email,
+      });
       customerId = customerData.customer._id;
       const res = await createBill({
         excise,
@@ -332,6 +339,7 @@ const BeerBillForm = () => {
       let w = fwep;
       let q = totalQuantity;
       let t = total;
+      let ex = fexduty;
 
       const existingProductIndex = products.findIndex(
         (product) => product.brand === currentInput.brand
@@ -344,6 +352,7 @@ const BeerBillForm = () => {
           h -= size.quantity * sizes.find((s) => s.size === size.size).hologram;
           p -= size.quantity * sizes.find((s) => s.size === size.size).pratifal;
           w -= size.quantity * sizes.find((s) => s.size === size.size).wep;
+          ex -= size.quantity * sizes.find((s) => s.size == size.size).excise;
           q -= size.quantity;
           t -= size.price;
         });
@@ -369,6 +378,7 @@ const BeerBillForm = () => {
         h += size.quantity * sizes.find((s) => s.size === size.size).hologram;
         p += size.quantity * sizes.find((s) => s.size === size.size).pratifal;
         w += size.quantity * sizes.find((s) => s.size === size.size).wep;
+        ex += size.quantity * sizes.find((s) => s.size == size.size).excise;
         q += size.quantity;
         t += size.price;
       });
@@ -376,6 +386,7 @@ const BeerBillForm = () => {
       setFholo(h);
       setFpratifal(p);
       setFwep(w);
+      setFexduty(ex);
       setTotalQuantity(q);
       setTotal(t);
 
@@ -384,7 +395,7 @@ const BeerBillForm = () => {
       const cess = (t + vatTax) * 0.02;
       const profit = q * 50;
 
-      const taxTotal = t + vatTax + cess + w + h + profit + p;
+      const taxTotal = t + vatTax + cess + w + h + profit + p + ex;
       const tcs = taxTotal * 0.01;
       setGrandTotal(taxTotal + tcs);
       setTcs(tcs);
@@ -434,6 +445,10 @@ const BeerBillForm = () => {
             w -=
               size.quantity *
               beerBrandData[j].beer.sizes.find((s) => s.size === size.size).wep;
+            ex -=
+              size.quantity *
+              beerBrandData[j].beer.sizes.find((s) => s.size === size.size)
+                .excise;
             q -= size.quantity;
             t -= size.price;
           });
@@ -448,6 +463,7 @@ const BeerBillForm = () => {
       setFholo(h);
       setFpratifal(p);
       setFwep(w);
+      setFexduty(ex);
       setTotalQuantity(q);
       setTotal(t);
 
@@ -455,7 +471,7 @@ const BeerBillForm = () => {
       const vatTax = t * (12 / 100);
       const cess = ((t + vatTax) * 2) / 100;
       const profit = q * 50;
-      const taxTotal = t + vatTax + cess + w + h + profit + p;
+      const taxTotal = t + vatTax + cess + w + h + profit + p + ex;
       const tcs = (taxTotal * 1) / 100;
       setGrandTotal(taxTotal + tcs);
 
@@ -713,7 +729,15 @@ const BeerBillForm = () => {
                                   onChange={handleInputChange}
                                   variant="outlined"
                                   type="number"
-                                  onFocus={(e) => e.target.addEventListener("wheel", function (e) { e.preventDefault() }, { passive: false })}
+                                  onFocus={(e) =>
+                                    e.target.addEventListener(
+                                      "wheel",
+                                      function (e) {
+                                        e.preventDefault();
+                                      },
+                                      { passive: false }
+                                    )
+                                  }
                                   InputProps={{ inputProps: { min: 0 } }}
                                 />
                                 <TextField
@@ -839,11 +863,12 @@ const BeerBillForm = () => {
                         ))}
                         {allSizes.map((size) => (
                           <TableCell key={`price-total-${size}`} align="center">
-                            {processedProducts.reduce(
-                              (acc, p) =>
-                                acc + (p.sizes[size]?.price || 0),
-                              0
-                            ).toFixed(2)}
+                            {processedProducts
+                              .reduce(
+                                (acc, p) => acc + (p.sizes[size]?.price || 0),
+                                0
+                              )
+                              .toFixed(2)}
                           </TableCell>
                         ))}
                         <TableCell></TableCell>

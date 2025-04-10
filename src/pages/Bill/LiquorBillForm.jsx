@@ -45,6 +45,7 @@ const LiquorBillForm = () => {
   const [products, setProducts] = useState([]);
   const [sizes, setSizes] = useState([]);
   const [totalQuantity, setTotalQuantity] = useState(0);
+  const [fexduty, setFexduty] = useState(0);
   const [fholo, setFholo] = useState(0);
   const [fpratifal, setFpratifal] = useState(0);
   const [fwep, setFwep] = useState(0);
@@ -336,6 +337,7 @@ const LiquorBillForm = () => {
       let p = fpratifal;
       let w = fwep;
       let q = totalQuantity;
+      let ex = fexduty;
       let t = total;
 
       const existingProductIndex = products.findIndex(
@@ -350,6 +352,7 @@ const LiquorBillForm = () => {
           h -= size.quantity * sizes.find((s) => s.size === size.size).hologram;
           p -= size.quantity * sizes.find((s) => s.size === size.size).pratifal;
           w -= size.quantity * sizes.find((s) => s.size === size.size).wep;
+          ex -= size.quantity * sizes.find((s) => s.size == size.size).excise;
           q -= size.quantity;
           t -= size.price;
         });
@@ -375,6 +378,7 @@ const LiquorBillForm = () => {
         h += size.quantity * sizes.find((s) => s.size === size.size).hologram;
         p += size.quantity * sizes.find((s) => s.size === size.size).pratifal;
         w += size.quantity * sizes.find((s) => s.size === size.size).wep;
+        ex += size.quantity * sizes.find((s) => s.size == size.size).excise;
         q += size.quantity;
         t += size.price;
       });
@@ -383,14 +387,15 @@ const LiquorBillForm = () => {
       setFpratifal(p);
       setFwep(w);
       setTotalQuantity(q);
+      setFexduty(ex);
       setTotal(t);
 
       // Tax calculations
       const vatTax = t * 0.12;
       const cess = (t + vatTax) * 0.02;
-      const profit = q * 50;
+      const profit = q * 70;
 
-      const taxTotal = t + vatTax + cess + w + h + profit + p;
+      const taxTotal = t + vatTax + cess + w + h + profit + p + ex;
       const tcs = taxTotal * 0.01;
       setTcs(tcs);
       setGrandTotal(taxTotal + tcs);
@@ -413,6 +418,7 @@ const LiquorBillForm = () => {
       let h = fholo;
       let p = fpratifal;
       let w = fwep;
+      let ex = fexduty;
       let q = totalQuantity;
       let t = total;
 
@@ -436,6 +442,10 @@ const LiquorBillForm = () => {
               size.quantity *
               liquorBrandData[j].liquor.sizes.find((s) => s.size === size.size)
                 .wep;
+            ex -=
+              size.quantity *
+              liquorBrandData[j].liquor.sizes.find((s) => s.size === size.size)
+                .excise;
             q -= size.quantity;
             t -= size.price;
           });
@@ -457,6 +467,7 @@ const LiquorBillForm = () => {
       setFpratifal(p);
       setFwep(w);
       setTotalQuantity(q);
+      setFexduty(ex);
       setTotal(t);
 
       // Tax calculations
@@ -464,7 +475,7 @@ const LiquorBillForm = () => {
       const cess = (t + vatTax) * 0.02;
       const profit = q * 50;
 
-      const taxTotal = t + vatTax + cess + w + h + profit + p;
+      const taxTotal = t + vatTax + cess + w + h + profit + p + ex;
       const tcs = taxTotal * 0.01;
       setGrandTotal(taxTotal + tcs);
 
@@ -869,8 +880,6 @@ const LiquorBillForm = () => {
                 </TableBody>
               </Table>
             </TableContainer>
-
-            {/* Total Calculation */}
 
             {/* Total Calculation */}
             <Box className="px-2 py-2 m-4 flex justify-end overflow-x-auto">
