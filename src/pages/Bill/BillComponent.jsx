@@ -230,7 +230,20 @@ const BillComponent = () => {
 
     const tcs = (taxTotal * 1) / 100;
     const grandTotal = taxTotal + tcs;
-
+    console.log("taxesData", {
+      totalQuantity,
+      total,
+      fholo,
+      fpratifal,
+      fwep,
+      vatTax,
+      cess,
+      profit,
+      taxTotal,
+      tcs,
+      excise,
+      grandTotal,
+    });
     return {
       totalQuantity,
       total,
