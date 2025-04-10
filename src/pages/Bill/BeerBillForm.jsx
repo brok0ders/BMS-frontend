@@ -196,6 +196,7 @@ const BeerBillForm = () => {
         seller: user?._id,
         company,
         pratifal: fpratifal,
+        fexcise: fexduty,
         tcs,
         total: grandTotal,
         billType: "beer",

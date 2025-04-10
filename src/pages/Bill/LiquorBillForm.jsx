@@ -214,6 +214,8 @@ const LiquorBillForm = () => {
         pan,
       });
       customerId = customerData.customer._id;
+      console.log(fexduty);
+
       const res = await createBill({
         excise,
         pno,
@@ -223,6 +225,7 @@ const LiquorBillForm = () => {
         company,
         tcs,
         pratifal: fpratifal,
+        fexcise: fexduty,
         total: grandTotal,
         billType: "liquor",
       });

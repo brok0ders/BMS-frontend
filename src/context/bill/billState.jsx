@@ -112,6 +112,7 @@ const BillState = ({ children }) => {
   const createBill = async ({
     excise,
     pno,
+    fexcise,
     customer,
     seller,
     products,
@@ -138,6 +139,7 @@ const BillState = ({ children }) => {
           products,
           company,
           excise,
+          fexcise,
           pno,
           total,
           billType,
