@@ -235,7 +235,7 @@ const BeerBillForm = () => {
     setLicensee(e.target.value);
     try {
       const res = await getCustomerByLisencee({ licensee: e.target.value });
-      if (res.success) {
+      if (res?.success) {
         setShop(res?.customer[0].shop);
         setFirm(res?.customer[0].firm);
         setPan(res?.customer[0].pan);
@@ -348,6 +348,8 @@ const BeerBillForm = () => {
       let q = totalQuantity;
       let t = total;
       let exDuty = fexduty;
+      let dProfit = 70;
+
 
       const existingProductIndex = products.findIndex(
         (product) => product.brand === currentInput.brand
@@ -359,6 +361,8 @@ const BeerBillForm = () => {
         const selectedBrand = beerBrandData.find(
           (brand) => brand.beer.brandName === currentInput.brand
         );
+
+        // console.log("brand data: "+brandData);
 
         if (selectedBrand) {
           existingProduct.sizes.forEach((size) => {
@@ -397,12 +401,18 @@ const BeerBillForm = () => {
         (brand) => brand.beer.brandName === currentInput.brand
       );
 
+      
+
       if (selectedBrand) {
         currentInput.sizes.forEach((size) => {
           const sizeData = selectedBrand.beer.sizes.find(
             (s) => s.size === size.size
           );
+
+          // console.log("size Data: ", sizeData);
+
           if (sizeData) {
+            dProfit = sizeData.profit;
             h += size.quantity * (sizeData.hologram || 0);
             p += size.quantity * (sizeData.pratifal || 0);
             w += size.quantity * (sizeData.wep || 0);
@@ -420,10 +430,13 @@ const BeerBillForm = () => {
       setTotalQuantity(q);
       setTotal(t);
 
+      console.log("dProfit: "+dProfit);
+
+
       // Tax calculations
       const vatTax = t * 0.12;
       const cess = (t + vatTax) * 0.02;
-      const profit = q * 70;
+      const profit = q * dProfit;
       const taxTotal = t + vatTax + cess + w + h + profit + p + exDuty;
       const tcsValue = taxTotal * 0.01;
       setGrandTotal(taxTotal + tcsValue);
@@ -456,6 +469,7 @@ const BeerBillForm = () => {
       let exDuty = fexduty;
       let q = totalQuantity;
       let t = total;
+      let dProfit = 70;
 
       // Subtract the values of the product being deleted
       const productToDelete = products[index];
@@ -465,10 +479,11 @@ const BeerBillForm = () => {
 
       if (brandData) {
         productToDelete.sizes.forEach((size) => {
-          const sizeData = brandData.beer.sizes.find(
+          const sizeData = brandData?.beer?.sizes?.find(
             (s) => s.size === size.size
           );
           if (sizeData) {
+            dProfit = sizeData.profit;
             h -= size.quantity * (sizeData.hologram || 0);
             p -= size.quantity * (sizeData.pratifal || 0);
             w -= size.quantity * (sizeData.wep || 0);
@@ -494,7 +509,7 @@ const BeerBillForm = () => {
       // Recalculate all taxes and grand total
       const vatTax = t * 0.12;
       const cess = (t + vatTax) * 0.02;
-      const profit = q * 70;
+      const profit = q * dProfit;
       const taxTotal = t + vatTax + cess + w + h + profit + p + exDuty;
       const tcsValue = taxTotal * 0.01;
       setGrandTotal(taxTotal + tcsValue);

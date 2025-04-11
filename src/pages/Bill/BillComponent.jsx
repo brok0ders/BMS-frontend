@@ -498,11 +498,11 @@ const BillComponent = () => {
                       align="center"
                     >
                       {size === "750ml"
-                        ? "Q"
+                        ? "Q (750ml)"
                         : size === "375ml"
-                        ? "P"
+                        ? "P (375ml)"
                         : size === "180ml"
-                        ? "N"
+                        ? "N (180ml)"
                         : size}
                     </TableCell>
                   ))}
@@ -513,11 +513,11 @@ const BillComponent = () => {
                       align="center"
                     >
                       {size === "750ml"
-                        ? "Q"
+                        ? "Q (750ml)"
                         : size === "375ml"
-                        ? "P"
+                        ? "P (375ml)"
                         : size === "180ml"
-                        ? "N"
+                        ? "N (180ml)"
                         : size}
                     </TableCell>
                   ))}
@@ -528,11 +528,11 @@ const BillComponent = () => {
                       align="center"
                     >
                       {size === "750ml"
-                        ? "Q"
+                        ? "Q (750ml)"
                         : size === "375ml"
-                        ? "P"
+                        ? "P (375ml)"
                         : size === "180ml"
-                        ? "N"
+                        ? "N (180ml)"
                         : size}
                     </TableCell>
                   ))}

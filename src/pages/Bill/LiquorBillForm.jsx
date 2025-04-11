@@ -342,6 +342,7 @@ const LiquorBillForm = () => {
       let q = totalQuantity;
       let ex = fexduty;
       let t = total;
+      let dProfit = 70;
 
       const existingProductIndex = products.findIndex(
         (product) => product.brand === currentInput.brand
@@ -375,15 +376,30 @@ const LiquorBillForm = () => {
           },
         ]);
       }
+      // console.log("current Input: ", currentInput);
 
       // Add current values
+      // currentInput.sizes.forEach((size) => {
+      //   h += size.quantity * sizes.find((s) => s.size === size.size).hologram;
+      //   p += size.quantity * sizes.find((s) => s.size === size.size).pratifal;
+      //   w += size.quantity * sizes.find((s) => s.size === size.size).wep;
+      //   ex += size.quantity * sizes.find((s) => s.size == size.size).excise;
+      //   q += size.quantity;
+      //   t += size.price;
+      // });
+
       currentInput.sizes.forEach((size) => {
-        h += size.quantity * sizes.find((s) => s.size === size.size).hologram;
-        p += size.quantity * sizes.find((s) => s.size === size.size).pratifal;
-        w += size.quantity * sizes.find((s) => s.size === size.size).wep;
-        ex += size.quantity * sizes.find((s) => s.size == size.size).excise;
-        q += size.quantity;
-        t += size.price;
+        const sizeData = sizes.find((s) => s.size === size.size);
+
+        if (sizeData) {
+          dProfit = sizeData.profit;
+          h += size.quantity * (sizeData.hologram || 0);
+          p += size.quantity * (sizeData.pratifal || 0);
+          w += size.quantity * (sizeData.wep || 0);
+          ex += size.quantity * (sizeData.excise || 0);
+          q += size.quantity;
+          t += size.price;
+        }
       });
 
       setFholo(h);
@@ -396,12 +412,21 @@ const LiquorBillForm = () => {
       // Tax calculations
       const vatTax = t * 0.12;
       const cess = (t + vatTax) * 0.02;
-      const profit = q * 70;
+      const profit = q * dProfit;
 
+      
       const taxTotal = t + vatTax + cess + w + h + profit + p + ex;
       const tcs = taxTotal * 0.01;
       setTcs(tcs);
       setGrandTotal(taxTotal + tcs);
+
+      // console.log("dProfit: "+dProfit);
+      // console.log("vatTax: "+vatTax);
+      // console.log("Profit: "+profit);
+      // console.log("total tax: "+taxTotal);
+      // console.log("tcs: "+tcs);
+      // console.log("grand total: "+(taxTotal + tcs));
+
 
       setCurrentInput({ brand: "", sizes: [] });
     } catch (error) {
@@ -424,35 +449,30 @@ const LiquorBillForm = () => {
       let ex = fexduty;
       let q = totalQuantity;
       let t = total;
+      let dProfit = 70;
 
       // Subtract the values of the product being deleted
-
       const productToDelete = products[index];
+      const brandData = liquorBrandData.find(
+        (item) => item.liquor.brandName === productToDelete.brand
+      );
 
-      for (let j = 0; j < liquorBrandData.length; j++) {
-        if (liquorBrandData[j].liquor.brandName === productToDelete.brand) {
-          productToDelete.sizes.forEach((size, i) => {
-            h -=
-              size.quantity *
-              liquorBrandData[j].liquor.sizes.find((s) => s.size === size.size)
-                .hologram;
-            p -=
-              size.quantity *
-              liquorBrandData[j].liquor.sizes.find((s) => s.size === size.size)
-                .pratifal;
-            // console.log("pratifal is: " + p);
-            w -=
-              size.quantity *
-              liquorBrandData[j].liquor.sizes.find((s) => s.size === size.size)
-                .wep;
-            ex -=
-              size.quantity *
-              liquorBrandData[j].liquor.sizes.find((s) => s.size === size.size)
-                .excise;
+      if (brandData) {
+        productToDelete.sizes.forEach((size) => {
+          const sizeData = brandData?.liquor?.sizes?.find(
+            (s) => s.size === size.size
+          );
+
+          if (sizeData) {
+            dProfit = sizeData.profit;
+            h -= size.quantity * (sizeData.hologram || 0);
+            p -= size.quantity * (sizeData.pratifal || 0);
+            w -= size.quantity * (sizeData.wep || 0);
+            ex -= size.quantity * (sizeData.excise || 0);
             q -= size.quantity;
             t -= size.price;
-          });
-        }
+          }
+        });
       }
 
       // Update the products list
@@ -476,7 +496,7 @@ const LiquorBillForm = () => {
       // Tax calculations
       const vatTax = t * 0.12;
       const cess = (t + vatTax) * 0.02;
-      const profit = q * 50;
+      const profit = q * dProfit;
 
       const taxTotal = t + vatTax + cess + w + h + profit + p + ex;
       const tcs = taxTotal * 0.01;

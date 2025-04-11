@@ -337,7 +337,7 @@ const UpdateBeerForm = () => {
                     type="number"
                     name="quantity"
                     inputProps={{ min: 0 }}
-                    required
+                    // required
                     label={`Quantity ${s?.size}`}
                     variant="outlined"
                     onFocus={(e) =>
