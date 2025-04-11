@@ -209,6 +209,12 @@ import dayjs from "dayjs";
 import { toast } from "react-toastify";
 import AnalyticsCard from "./AnalyticsCard";
 
+
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { format } from "date-fns";
+
+
 const DateRangeAnalytics = () => {
   const [loading, setLoading] = useState(false);
   const [analyticsData, setAnalyticsData] = useState(null);
@@ -219,6 +225,8 @@ const DateRangeAnalytics = () => {
   const today = dayjs();
   const firstDayOfMonth = dayjs().startOf("month");
   const [dateRange, setDateRange] = useState([firstDayOfMonth, today]);
+
+  const [startDate, endDate] = dateRange;
 
   const getAnalyticsData = async () => {
     if (!dateRange[0] || !dateRange[1]) {
@@ -236,8 +244,11 @@ const DateRangeAnalytics = () => {
       };
 
       // Format dates for API request (YYYY-MM-DD)
-      const formattedFromDate = dateRange[0].format("YYYY-MM-DD");
-      const formattedToDate = dateRange[1].format("YYYY-MM-DD");
+      // const formattedFromDate = dateRange[0].format("YYYY-MM-DD");
+      // const formattedToDate = dateRange[1].format("YYYY-MM-DD");
+
+      const formattedFromDate = format(startDate, "yyyy-MM-dd");
+      const formattedToDate = format(endDate, "yyyy-MM-dd");
 
       const { data } = await API.get(
         `/bill/analytics/monthly?billType=${billType}&fromDate=${formattedFromDate}&toDate=${formattedToDate}&aggregate=true`,
@@ -283,10 +294,17 @@ const DateRangeAnalytics = () => {
   };
 
   // Format date range for display
+  // const formatDateRangeForDisplay = () => {
+  //   if (!dateRange[0] || !dateRange[1]) return "No date range selected";
+  //   return `${dateRange[0].format("MMM D, YYYY")} to ${dateRange[1].format(
+  //     "MMM D, YYYY"
+  //   )}`;
+  // };
   const formatDateRangeForDisplay = () => {
-    if (!dateRange[0] || !dateRange[1]) return "No date range selected";
-    return `${dateRange[0].format("MMM D, YYYY")} to ${dateRange[1].format(
-      "MMM D, YYYY"
+    if (!startDate || !endDate) return "No date range selected";
+    return `${format(startDate, "MMM d, yyyy")} to ${format(
+      endDate,
+      "MMM d, yyyy"
     )}`;
   };
 
@@ -294,7 +312,7 @@ const DateRangeAnalytics = () => {
     <div className="pt-20">
       <div>
         <Box className="grid grid-cols-1 sm:grid-cols-3 gap-5 items-center mb-8">
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
+          {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DemoContainer components={["DateRangePicker"]} sx={{ m: 1 }}>
               <DateRangePicker
                 localeText={{ start: "From Date", end: "To Date" }}
@@ -303,7 +321,23 @@ const DateRangeAnalytics = () => {
                 onChange={(newValue) => setDateRange(newValue)}
               />
             </DemoContainer>
-          </LocalizationProvider>
+          </LocalizationProvider>*/}
+
+          <div className="w-full">
+            <label className="block text-gray-700 font-medium mb-1">
+              Select Date Range
+            </label>
+            <DatePicker
+              selectsRange
+              startDate={startDate}
+              endDate={endDate}
+              onChange={(update) => setDateRange(update)}
+              dateFormat="dd/MM/yyyy"
+              className="border rounded px-3 py-2 w-full"
+              isClearable
+              placeholderText="Select date range"
+            />
+          </div>
 
           <FormControl>
             <InputLabel id="bill-type-label">Select Liquor/Beer</InputLabel>
