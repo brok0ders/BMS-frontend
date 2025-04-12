@@ -352,7 +352,7 @@ const BeerBillForm = () => {
       let w = round(fwep);
       let q = totalQuantity;
       let t = round(total);
-      let exDuty = (fexduty);
+      let exDuty = round(fexduty);
       let dProfit = 70;
 
       console.log("initial price: ", t);
@@ -458,12 +458,12 @@ const BeerBillForm = () => {
   const handleDeleteProduct = (index) => {
     setSpinner2(true);
     try {
-      let h = fholo;
-      let p = fpratifal;
-      let w = fwep;
-      let exDuty = fexduty;
+      let h = round(fholo);
+      let p = round(fpratifal);
+      let w = round(fwep);
+      let exDuty = round(fexduty);
       let q = totalQuantity;
-      let t = total;
+      let t = round(total);
       let dProfit = 70;
 
       // Subtract the values of the product being deleted
@@ -507,7 +507,7 @@ const BeerBillForm = () => {
       const profit = q * dProfit;
       const taxTotal = t + vatTax + cess + w + h + profit + p + exDuty;
       const tcsValue = taxTotal * 0.01;
-      setGrandTotal(taxTotal + tcsValue);
+      setGrandTotal(round(taxTotal + tcsValue));
       setTcs(tcsValue);
 
       console.log("total quantity: " + q);

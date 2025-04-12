@@ -338,12 +338,12 @@ const LiquorBillForm = () => {
         toast.warning("Select quantity of atleast one size!");
         return;
       }
-      let h = fholo;
-      let p = fpratifal;
-      let w = fwep;
+      let h = round(fholo);
+      let p = round(fpratifal);
+      let w = round(fwep);
       let q = totalQuantity;
-      let ex = fexduty;
-      let t = total;
+      let ex = round(fexduty);
+      let t = round(total);
       let dProfit = 70;
 
       const existingProductIndex = products.findIndex(
@@ -440,12 +440,12 @@ const LiquorBillForm = () => {
   const handleDeleteProduct = (index) => {
     setSpinner2(true);
     try {
-      let h = fholo;
-      let p = fpratifal;
-      let w = fwep;
-      let ex = fexduty;
+      let h = round(fholo);
+      let p = round(fpratifal);
+      let w = round(fwep);
+      let ex = round(fexduty);
       let q = totalQuantity;
-      let t = total;
+      let t = round(total);
       let dProfit = 70;
 
       // Subtract the values of the product being deleted
@@ -497,7 +497,7 @@ const LiquorBillForm = () => {
 
       const taxTotal = t + vatTax + cess + w + h + profit + p + ex;
       const tcs = taxTotal * 0.01;
-      setGrandTotal(taxTotal + tcs);
+      setGrandTotal(round(taxTotal + tcs));
 
       setCurrentInput({ brand: "", sizes: [] });
     } catch (e) {

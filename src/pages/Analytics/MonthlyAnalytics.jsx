@@ -312,7 +312,7 @@ const DateRangeAnalytics = () => {
     <div className="pt-20">
       <div>
         <Box className="grid grid-cols-1 sm:grid-cols-3 gap-5 items-center mb-8">
-          {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DemoContainer components={["DateRangePicker"]} sx={{ m: 1 }}>
               <DateRangePicker
                 localeText={{ start: "From Date", end: "To Date" }}
@@ -321,24 +321,9 @@ const DateRangeAnalytics = () => {
                 onChange={(newValue) => setDateRange(newValue)}
               />
             </DemoContainer>
-          </LocalizationProvider>*/}
+          </LocalizationProvider>
 
-          <div className="w-full">
-            <label className="block text-gray-700 font-medium mb-1">
-              Select Date Range
-            </label>
-            <DatePicker
-              selectsRange
-              startDate={startDate}
-              endDate={endDate}
-              onChange={(update) => setDateRange(update)}
-              dateFormat="dd/MM/yyyy"
-              className="border rounded px-3 py-2 w-full"
-              isClearable
-              placeholderText="Select date range"
-            />
-          </div>
-
+      
           <FormControl>
             <InputLabel id="bill-type-label">Select Liquor/Beer</InputLabel>
             <Select
