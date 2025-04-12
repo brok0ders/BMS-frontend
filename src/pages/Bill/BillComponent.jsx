@@ -115,7 +115,7 @@ const BillComponent = () => {
     if (!words) {
       return "zero";
     }
-    return words + " only";
+    return words.charAt(0).toUpperCase() + words.slice(1) + " only";
   };
 
   useEffect(() => {
@@ -284,7 +284,7 @@ const BillComponent = () => {
         <div className="p-1">
           {/* Old tabular Structure */}
 
-          <TableContainer className="">
+          <TableContainer className="pb-5">
             <Table
               borderAxis="both"
               sx={{
@@ -872,6 +872,9 @@ const BillComponent = () => {
                     Authorised Signatory
                   </TableCell>
                 </TableRow>
+                <p className="text-center text-xs mt-4">
+                  Note*: This is a system-generated invoice
+                </p>
               </TableBody>
             </Table>
           </TableContainer>

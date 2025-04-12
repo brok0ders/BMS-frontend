@@ -1,37 +1,28 @@
 // import React, { useEffect, useState } from "react";
 // import API from "../../utils/API";
-// import {
-//   Box,
-//   MenuItem,
-//   FormControl,
-//   Select,
-//   InputLabel,
-//   TextField,
-// } from "@mui/material";
-// import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-// import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-// import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-
+// import { Box, MenuItem, FormControl, Select, InputLabel } from "@mui/material";
+// import dayjs from "dayjs";
 // import { toast } from "react-toastify";
 // import AnalyticsCard from "./AnalyticsCard";
+// import { DateRangePicker, DateRange } from "mui-daterange-picker";
 
-// const DateRangeAnalytics = () => {
+// const MonthlyAnalytics = () => {
 //   const [loading, setLoading] = useState(false);
 //   const [analyticsData, setAnalyticsData] = useState(null);
 //   const [billType, setBillType] = useState("liquor");
 //   const [sizesData, setSizesData] = useState([]);
-
-//   // Get first day of current month as default fromDate
-//   const defaultFromDate = new Date();
-//   defaultFromDate.setDate(1);
-
-//   // Get current date as default toDate
-//   const defaultToDate = new Date();
-
-//   const [fromDate, setFromDate] = useState(defaultFromDate);
-//   const [toDate, setToDate] = useState(defaultToDate);
+//   const [open, setOpen] = React.useState(false);
+//   // Default date range: first day of current month to today
+//   const today = dayjs();
+//   const firstDayOfMonth = dayjs().startOf("month");
+//   const [dateRange, setDateRange] = useState([firstDayOfMonth, today]);
 
 //   const getAnalyticsData = async () => {
+//     if (!dateRange[0] || !dateRange[1]) {
+//       toast.warning("Please select a valid date range");
+//       return;
+//     }
+
 //     try {
 //       setLoading(true);
 //       const config = {
@@ -42,8 +33,8 @@
 //       };
 
 //       // Format dates for API request (YYYY-MM-DD)
-//       const formattedFromDate = fromDate.toISOString().split("T")[0];
-//       const formattedToDate = toDate.toISOString().split("T")[0];
+//       const formattedFromDate = dateRange[0].format("YYYY-MM-DD");
+//       const formattedToDate = dateRange[1].format("YYYY-MM-DD");
 
 //       const { data } = await API.get(
 //         `/bill/analytics/monthly?billType=${billType}&fromDate=${formattedFromDate}&toDate=${formattedToDate}&aggregate=true`,
@@ -78,56 +69,39 @@
 //   };
 
 //   useEffect(() => {
-//     getAnalyticsData();
+//     if (dateRange[0] && dateRange[1]) {
+//       getAnalyticsData();
+//     }
 //   }, [billType]);
-
-//   // Handle date changes
-//   const handleFromDateChange = (newDate) => {
-//     setFromDate(newDate);
-//   };
-
-//   const handleToDateChange = (newDate) => {
-//     setToDate(newDate);
-//   };
 
 //   // Handle filter application
 //   const applyFilters = () => {
 //     getAnalyticsData();
 //   };
 
-//   // Format date for display
-//   const formatDateForDisplay = (date) => {
-//     return date ? new Date(date).toLocaleDateString() : "";
+//   // Format date range for display
+//   const formatDateRangeForDisplay = () => {
+//     if (!dateRange[0] || !dateRange[1]) return "No date range selected";
+//     return `${dateRange[0].format("MMM D, YYYY")} to ${dateRange[1].format(
+//       "MMM D, YYYY"
+//     )}`;
+//   };
+
+//   const toggle = () => {
+//     setOpen(!open);
 //   };
 
 //   return (
 //     <div className="pt-20">
 //       <div>
-//         <Box className="grid grid-cols-1 sm:grid-cols-4 gap-5 mb-8">
-//           <LocalizationProvider dateAdapter={AdapterDateFns}>
-//             <FormControl sx={{ m: 1 }}>
-//               <DatePicker
-//                 label="From Date"
-//                 value={fromDate}
-//                 onChange={handleFromDateChange}
-//                 renderInput={(params) => <TextField {...params} />}
-//                 inputFormat="MM/dd/yyyy"
-//               />
-//             </FormControl>
+//         <Box className="grid grid-cols-1 sm:grid-cols-3 gap-5 items-center mb-8">
+//           <DateRangePicker
+//             open={open}
+//             toggle={toggle}
+//             onChange={(range) => setDateRange(range)}
+//           />
 
-//             <FormControl sx={{ m: 1 }}>
-//               <DatePicker
-//                 label="To Date"
-//                 value={toDate}
-//                 onChange={handleToDateChange}
-//                 renderInput={(params) => <TextField {...params} />}
-//                 inputFormat="MM/dd/yyyy"
-//                 minDate={fromDate}
-//               />
-//             </FormControl>
-//           </LocalizationProvider>
-
-//           <FormControl sx={{ m: 1 }}>
+//           <FormControl>
 //             <InputLabel id="bill-type-label">Select Liquor/Beer</InputLabel>
 //             <Select
 //               required
@@ -150,7 +124,7 @@
 //             <button
 //               onClick={applyFilters}
 //               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-//               disabled={loading}
+//               disabled={loading || !dateRange[0] || !dateRange[1]}
 //             >
 //               {loading ? "Loading..." : "Apply Filters"}
 //             </button>
@@ -161,7 +135,7 @@
 //       <h4 className="my-5 text-xl underline text-center font-bold">
 //         Data for period:{" "}
 //         <span className="text-sky-800 font-bold">
-//           {formatDateForDisplay(fromDate)} to {formatDateForDisplay(toDate)}
+//           {formatDateRangeForDisplay()}
 //         </span>
 //       </h4>
 
@@ -170,6 +144,11 @@
 //           name={"Revenue"}
 //           value={analyticsData?.totalRevenue?.toFixed(2) || "0.00"}
 //           icon={"/images/salary.png"}
+//         />
+//         <AnalyticsCard
+//           name={"Excise Duty"}
+//           value={analyticsData?.totalExcise?.toFixed(2) || "0.00"}
+//           icon={"/images/pay.png"}
 //         />
 //         <AnalyticsCard
 //           name={"Pratifal"}
@@ -196,40 +175,38 @@
 //   );
 // };
 
-// export default DateRangeAnalytics;
+// export default MonthlyAnalytics;
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import API from "../../utils/API";
 import { Box, MenuItem, FormControl, Select, InputLabel } from "@mui/material";
-import { LocalizationProvider } from "@mui/x-date-pickers-pro/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers-pro/AdapterDayjs";
-import { DateRangePicker } from "@mui/x-date-pickers-pro/DateRangePicker";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
 import AnalyticsCard from "./AnalyticsCard";
-
-
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import { DateRange } from "react-date-range";
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
 import { format } from "date-fns";
 
-
-const DateRangeAnalytics = () => {
+const MonthlyAnalytics = () => {
   const [loading, setLoading] = useState(false);
   const [analyticsData, setAnalyticsData] = useState(null);
   const [billType, setBillType] = useState("liquor");
   const [sizesData, setSizesData] = useState([]);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const datePickerRef = useRef(null);
 
   // Default date range: first day of current month to today
-  const today = dayjs();
-  const firstDayOfMonth = dayjs().startOf("month");
-  const [dateRange, setDateRange] = useState([firstDayOfMonth, today]);
-
-  const [startDate, endDate] = dateRange;
+  const [dateState, setDateState] = useState([
+    {
+      startDate: new Date(new Date().setDate(1)), // First day of current month
+      endDate: new Date(),
+      key: "selection",
+    },
+  ]);
 
   const getAnalyticsData = async () => {
-    if (!dateRange[0] || !dateRange[1]) {
+    if (!dateState[0].startDate || !dateState[0].endDate) {
       toast.warning("Please select a valid date range");
       return;
     }
@@ -244,11 +221,10 @@ const DateRangeAnalytics = () => {
       };
 
       // Format dates for API request (YYYY-MM-DD)
-      // const formattedFromDate = dateRange[0].format("YYYY-MM-DD");
-      // const formattedToDate = dateRange[1].format("YYYY-MM-DD");
-
-      const formattedFromDate = format(startDate, "yyyy-MM-dd");
-      const formattedToDate = format(endDate, "yyyy-MM-dd");
+      const formattedFromDate = dayjs(dateState[0].startDate).format(
+        "YYYY-MM-DD"
+      );
+      const formattedToDate = dayjs(dateState[0].endDate).format("YYYY-MM-DD");
 
       const { data } = await API.get(
         `/bill/analytics/monthly?billType=${billType}&fromDate=${formattedFromDate}&toDate=${formattedToDate}&aggregate=true`,
@@ -283,15 +259,31 @@ const DateRangeAnalytics = () => {
   };
 
   useEffect(() => {
-    if (dateRange[0] && dateRange[1]) {
-      getAnalyticsData();
-    }
+    getAnalyticsData();
   }, [billType]);
 
   // Handle filter application
   const applyFilters = () => {
+    setShowDatePicker(false);
     getAnalyticsData();
   };
+
+  // Handle clicks outside the date picker to close it
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        datePickerRef.current &&
+        !datePickerRef.current.contains(event.target)
+      ) {
+        setShowDatePicker(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [datePickerRef]);
 
   // Format date range for display
   // const formatDateRangeForDisplay = () => {
@@ -301,9 +293,10 @@ const DateRangeAnalytics = () => {
   //   )}`;
   // };
   const formatDateRangeForDisplay = () => {
-    if (!startDate || !endDate) return "No date range selected";
-    return `${format(startDate, "MMM d, yyyy")} to ${format(
-      endDate,
+    if (!dateState[0].startDate || !dateState[0].endDate)
+      return "No date range selected";
+    return `${format(dateState[0].startDate, "MMM d, yyyy")} to ${format(
+      dateState[0].endDate,
       "MMM d, yyyy"
     )}`;
   };
@@ -312,18 +305,56 @@ const DateRangeAnalytics = () => {
     <div className="pt-20">
       <div>
         <Box className="grid grid-cols-1 sm:grid-cols-3 gap-5 items-center mb-8">
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={["DateRangePicker"]} sx={{ m: 1 }}>
-              <DateRangePicker
-                localeText={{ start: "From Date", end: "To Date" }}
-                value={dateRange}
-                format="DD/MM/YYYY"
-                onChange={(newValue) => setDateRange(newValue)}
-              />
-            </DemoContainer>
-          </LocalizationProvider>
+          <div className="relative">
+            <button
+              onClick={() => setShowDatePicker(!showDatePicker)}
+              className="bg-white border border-gray-300 rounded-md py-2 px-4 w-full text-left shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <div className="flex items-center justify-between">
+                <span>{formatDateRangeForDisplay()}</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+              </div>
+            </button>
 
-      
+            {showDatePicker && (
+              <div
+                ref={datePickerRef}
+                className="absolute z-10 mt-1 bg-white shadow-lg rounded-md overflow-hidden"
+              >
+                <DateRange
+                  editableDateInputs={true}
+                  onChange={(item) => setDateState([item.selection])}
+                  moveRangeOnFirstSelection={false}
+                  ranges={dateState}
+                  rangeColors={["#3b82f6"]}
+                  months={1}
+                  direction="vertical"
+                />
+                <div className="p-2 bg-gray-50 border-t flex justify-end">
+                  <button
+                    onClick={applyFilters}
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium"
+                  >
+                    Apply
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
           <FormControl>
             <InputLabel id="bill-type-label">Select Liquor/Beer</InputLabel>
             <Select
@@ -347,7 +378,9 @@ const DateRangeAnalytics = () => {
             <button
               onClick={applyFilters}
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              disabled={loading || !dateRange[0] || !dateRange[1]}
+              disabled={
+                loading || !dateState[0].startDate || !dateState[0].endDate
+              }
             >
               {loading ? "Loading..." : "Apply Filters"}
             </button>
@@ -398,4 +431,4 @@ const DateRangeAnalytics = () => {
   );
 };
 
-export default DateRangeAnalytics;
+export default MonthlyAnalytics;

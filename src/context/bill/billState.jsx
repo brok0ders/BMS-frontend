@@ -112,6 +112,7 @@ const BillState = ({ children }) => {
     excise,
     pno,
     fexcise,
+    createdAt,
     customer,
     seller,
     products,
@@ -144,6 +145,7 @@ const BillState = ({ children }) => {
           billType,
           pratifal,
           tcs,
+          createdAt,
         },
         config
       );
@@ -167,11 +169,7 @@ const BillState = ({ children }) => {
         },
       };
       console.log(`url: /bill/update/${id} \n paid: ${paid}`);
-      const { data } = await API.put(
-        `/bill/update/${id}`,
-        { paid },
-        config
-      );
+      const { data } = await API.put(`/bill/update/${id}`, { paid }, config);
       if (data.success) {
         setBill(data.bill);
       }
