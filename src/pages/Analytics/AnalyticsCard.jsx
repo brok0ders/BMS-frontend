@@ -12,7 +12,7 @@ const AnalyticsCard = ({ name, value, icon }) => {
           <img className="w-full" src={icon} alt="" />
         </div>
       </div>
-      <h1 className="text-xl md:text-2xl font-semibold text-gray-600">
+      <h1 className="text-base md:text-xl font-semibold text-gray-600">
         {value || 0}
       </h1>
     </div>
