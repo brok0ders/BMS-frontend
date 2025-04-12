@@ -28,7 +28,9 @@
 }
 
 .gradient-background {
-  background-image: linear-gradient(to right, #ebf8ff, #ebf8ff); /* both from-blue-100 and to-blue-100 */
+  background-image: linear-gradient(
+    to right,
+    #ebf8ff,
+    #ebf8ff
+  ); /* both from-blue-100 and to-blue-100 */
 }
-
-
