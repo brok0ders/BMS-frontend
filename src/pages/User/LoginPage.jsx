@@ -20,7 +20,6 @@ import {
   OutlinedInput,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { Spinner } from "@chakra-ui/react";
 
 function Copyright(props) {
   return (
@@ -151,7 +150,7 @@ export default function LoginPage() {
                 sx={{ minWidth: "6rem", minHeight: "2rem", mt: 3, mb: 2 }}
                 variant="contained"
               >
-                <Spinner />
+                Logging...
               </Button>
             ) : (
               <Button
