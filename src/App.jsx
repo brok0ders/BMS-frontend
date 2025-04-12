@@ -50,6 +50,7 @@ import CLBillForm from "./pages/CL2/CLBillForm.jsx";
 import CLList from "./pages/CL2/CLList.jsx";
 import UpdateCL from "./pages/CL2/UpdateCL.jsx";
 import CalculatorPage from "./pages/Calculator/CalculatorPage.jsx";
+import BillForm from "./pages/Bill/BillForm.jsx";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -149,6 +150,14 @@ const App = () => {
               element={
                 <ProtectedRoutes>
                   <BillSelection />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="bill/create"
+              element={
+                <ProtectedRoutes>
+                  <BillForm />
                 </ProtectedRoutes>
               }
             />

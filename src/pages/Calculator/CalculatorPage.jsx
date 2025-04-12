@@ -27,22 +27,21 @@ import { toast } from "react-toastify";
 import Loader from "../../components/Layout/Loader";
 import Spinner from "../../components/Layout/Spinner";
 import BackButton from "../../components/BackButton";
+import LiquorContext from "../../context/liquor/liquorContext";
 
 const CalculatorPage = () => {
   const { company } = useParams();
   const [licensee, setLicensee] = useState("");
   const [beerBrandData, setBeerBrandData] = useState([{}]);
+
   const [shop, setShop] = useState("");
   const [firm, setFirm] = useState("");
   const [pan, setPan] = useState("");
   const [excise, setExcise] = useState("");
   const [pno, setPno] = useState("");
-  const { getBeerCom } = useContext(BeerContext);
-  const { createCustomer } = useContext(CustomerContext);
-  const { createBill } = useContext(BillContext);
-  const { user } = useContext(UserContext);
-  const { getCompany } = useContext(CompanyContext);
-  const [comp, setComp] = useState("");
+  const { getMasterBeerCom } = useContext(BeerContext);
+  const { getLiquorCompany } = useContext(LiquorContext);
+
   const [products, setProducts] = useState([]);
   const [sizes, setSizes] = useState([]);
   const [totalQuantity, setTotalQuantity] = useState(0);
@@ -52,24 +51,22 @@ const CalculatorPage = () => {
   const [fexduty, setFexduty] = useState(0);
   const [total, setTotal] = useState(0);
   const [grandTotal, setGrandTotal] = useState(0);
-  const inputRefs = useRef({});
   const [stocks, setStocks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [spinner, setSpinner] = useState(false);
   const [spinner2, setSpinner2] = useState(false);
   const [added, setAdded] = useState(false);
   const [tcs, setTcs] = useState(0);
-  const { getCustomerByLisencee } = useContext(CustomerContext);
-  const [email, setEmail] = useState("");
-  const navigate = useNavigate();
-  let customerId = "";
+  const [gTotal, setGTotal] = useState(0);
+
   const [currentInput, setCurrentInput] = useState({ brand: "", sizes: [] });
 
   const getBeers = async () => {
     setLoading(true);
     try {
-      const res = await getBeerCom({ id: company });
-      setBeerBrandData(res.beer);
+      const res = await getMasterBeerCom({ id: selectedSupplier });
+      // console.log("master beers: ", res);
+      setBeerBrandData(res.data);
     } catch (error) {
       console.error("Error fetching beers:", error);
     } finally {
@@ -77,192 +74,15 @@ const CalculatorPage = () => {
     }
   };
 
-  const NumberToWordsConverter = (n) => {
-    // Ensuring the number has two decimal places
-    n = n.toFixed(2);
-
-    const one = [
-      "One",
-      "Two",
-      "Three",
-      "Four",
-      "Five",
-      "Six",
-      "Seven",
-      "Eight",
-      "Nine",
-      "Ten",
-      "Eleven",
-      "Twelve",
-      "Thirteen",
-      "Fourteen",
-      "Fifteen",
-      "Sixteen",
-      "Seventeen",
-      "Eighteen",
-      "Nineteen",
-    ];
-    const ten = [
-      "Twenty",
-      "Thirty",
-      "Forty",
-      "Fifty",
-      "Sixty",
-      "Seventy",
-      "Eighty",
-      "Ninety",
-    ];
-
-    const numToWords = (num, suffix) => {
-      let str = "";
-      if (num > 19) {
-        str += ten[Math.floor(num / 10) - 2];
-        if (num % 10 > 0) {
-          str += " " + one[(num % 10) - 1];
-        }
-      } else if (num > 0) {
-        str += one[num - 1];
-      }
-
-      if (num !== 0) {
-        str += " " + suffix;
-      }
-
-      return str.trim();
-    };
-
-    const convertToWords = (num) => {
-      let output = "";
-
-      if (Math.floor(num / 100000) > 0) {
-        output += numToWords(Math.floor(num / 100000), "Lakh");
-        num %= 100000;
-      }
-
-      if (Math.floor(num / 1000) > 0) {
-        output += " " + numToWords(Math.floor(num / 1000), "Thousand");
-        num %= 1000;
-      }
-
-      if (Math.floor(num / 100) > 0) {
-        output += " " + numToWords(Math.floor(num / 100), "Hundred");
-        num %= 100;
-      }
-
-      if (num > 0) {
-        if (output !== "") {
-          output += " and ";
-        }
-        output += numToWords(num, "");
-      }
-
-      return output.trim();
-    };
-
-    const parts = n.split(".");
-    const integerPart = parseInt(parts[0], 10);
-    const decimalPart = parseInt(parts[1], 10);
-
-    let words = convertToWords(integerPart);
-
-    if (decimalPart > 0) {
-      words += " Point";
-      for (const digit of parts[1]) {
-        words += ` ${one[parseInt(digit) - 1] || "Zero"}`;
-      }
-    }
-    if (!words) {
-      return "Zero";
-    }
-    return words + " Only";
-  };
-
-  const createBill2 = async () => {
-    try {
-      setSpinner(true);
-      const customerData = await createCustomer({
-        licensee,
-        shop,
-        firm,
-        pan,
-        email,
-      });
-      customerId = customerData.customer._id;
-      const res = await createBill({
-        excise,
-        pno,
-        products,
-        customer: customerId,
-        seller: user?._id,
-        company,
-        pratifal: fpratifal,
-        fexcise: fexduty,
-        tcs,
-        total: grandTotal,
-        billType: "beer",
-      });
-
-      setLicensee("");
-      setShop("");
-      setFirm("");
-      setPan("");
-      setExcise("");
-      setPno("");
-      setProducts([]);
-      setGrandTotal(0);
-      navigate(`/dashboard/bill/details/${res.bill}`);
-    } catch (e) {
-      console.error("Error creating bill:", e);
-      toast.error("Failed to create bill. Please try again.");
-    } finally {
-      setSpinner(false);
-    }
-  };
-
-  const getCompany2 = async () => {
+  const getLiquors = async () => {
     setLoading(true);
     try {
-      const res = await getCompany({ id: company });
-      setComp(res?.company?.company.name);
+      const res = await getLiquorCompany({ id: selectedSupplier });
+      setBeerBrandData(res.data);
     } catch (e) {
-      console.error("Error fetching company:", e);
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleLisencee = async (e) => {
-    setLicensee(e.target.value);
-    try {
-      const res = await getCustomerByLisencee({ licensee: e.target.value });
-      if (res?.success) {
-        setShop(res?.customer[0].shop);
-        setFirm(res?.customer[0].firm);
-        setPan(res?.customer[0].pan);
-        setEmail(res?.customer[0].email);
-      } else {
-        setShop("");
-        setFirm("");
-        setPan("");
-        setEmail("");
-      }
-    } catch (e) {
-      console.error("Error fetching licensee data:", e);
-      setShop("");
-      setFirm("");
-      setPan("");
-      setEmail("");
-    }
-  };
-
-  useEffect(() => {
-    getCompany2();
-    getBeers();
-  }, []);
-
-  const handleBillSubmit = (e) => {
-    e.preventDefault();
-    createBill2();
   };
 
   const handleInputChange = (e) => {
@@ -273,21 +93,21 @@ const CalculatorPage = () => {
 
     // Validate stock quantity
     const stock = stocks.find((stock) => stock.size === size);
-    if (stock && stock.quantity < value) {
-      toast.warning(`Stock for ${size} is only ${stock.quantity}`);
-      return;
-    }
+    // if (stock && stock.quantity < value) {
+    //   toast.warning(`Stock for ${size} is only ${stock.quantity}`);
+    //   return;
+    // }
 
     // Prevent negative values and non-numeric inputs
     if (value !== "" && (isNaN(value) || parseInt(value) < 0)) return;
 
     setCurrentInput((prevInput) => {
-      const existingSizeIndex = prevInput.sizes.findIndex(
+      const existingSizeIndex = prevInput?.sizes.findIndex(
         (s) => s.size === size
       );
 
       if (existingSizeIndex > -1) {
-        const updatedSizes = [...prevInput.sizes];
+        const updatedSizes = [...prevInput?.sizes];
         updatedSizes[existingSizeIndex] = {
           ...updatedSizes[existingSizeIndex],
           [type]: value === "" ? 0 : parseInt(value),
@@ -295,9 +115,9 @@ const CalculatorPage = () => {
 
         if (type === "quantity") {
           const selectedBrand = beerBrandData.find(
-            (brand) => brand.beer.brandName === currentInput.brand
+            (brand) => brand?.brandName === currentInput.brand
           );
-          const selectedSize = selectedBrand.beer.sizes.find(
+          const selectedSize = selectedBrand?.sizes.find(
             (s) => s.size === size
           );
 
@@ -317,9 +137,9 @@ const CalculatorPage = () => {
 
         if (type === "quantity") {
           const selectedBrand = beerBrandData.find(
-            (brand) => brand.beer.brandName === currentInput.brand
+            (brand) => brand?.brandName === currentInput.brand
           );
-          const selectedSize = selectedBrand.beer.sizes.find(
+          const selectedSize = selectedBrand?.sizes.find(
             (s) => s.size === size
           );
 
@@ -355,8 +175,6 @@ const CalculatorPage = () => {
       let exDuty = round(fexduty);
       let dProfit = 70;
 
-      console.log("initial price: ", t);
-
       const existingProductIndex = products.findIndex(
         (product) => product.brand === currentInput.brand
       );
@@ -364,12 +182,12 @@ const CalculatorPage = () => {
       if (existingProductIndex > -1) {
         const existingProduct = products[existingProductIndex];
         const selectedBrand = beerBrandData.find(
-          (brand) => brand.beer.brandName === currentInput.brand
+          (brand) => brand?.brandName === currentInput.brand
         );
 
         if (selectedBrand) {
           existingProduct.sizes.forEach((size) => {
-            const sizeData = selectedBrand.beer.sizes.find(
+            const sizeData = selectedBrand?.sizes.find(
               (s) => s.size === size.size
             );
             if (sizeData) {
@@ -397,12 +215,12 @@ const CalculatorPage = () => {
       }
 
       const selectedBrand = beerBrandData.find(
-        (brand) => brand.beer.brandName === currentInput.brand
+        (brand) => brand?.brandName === currentInput.brand
       );
 
       if (selectedBrand) {
         currentInput.sizes.forEach((size) => {
-          const sizeData = selectedBrand.beer.sizes.find(
+          const sizeData = selectedBrand?.sizes.find(
             (s) => s.size === size.size
           );
 
@@ -431,10 +249,14 @@ const CalculatorPage = () => {
       let profit = q * dProfit;
 
       let taxTotal = t + vatTax + cess + w + h + profit + p + exDuty;
-      let tcsValue = taxTotal * 0.01;
-      let gTotal = round(taxTotal + tcsValue);
+      let taxTotal2 = t + vatTax + cess + w + h;
 
-      setGrandTotal(gTotal);
+      let tcsValue = taxTotal * 0.01;
+      let tcsValue2 = taxTotal2 * 0.01;
+
+      setGTotal(taxTotal2 + tcsValue2);
+
+      setGrandTotal(taxTotal + tcsValue);
       setTcs(tcsValue);
       setCurrentInput({ brand: "", sizes: [] });
 
@@ -469,14 +291,12 @@ const CalculatorPage = () => {
       // Subtract the values of the product being deleted
       const productToDelete = products[index];
       const brandData = beerBrandData.find(
-        (item) => item.beer.brandName === productToDelete.brand
+        (item) => item?.brandName === productToDelete.brand
       );
 
       if (brandData) {
         productToDelete.sizes.forEach((size) => {
-          const sizeData = brandData?.beer?.sizes?.find(
-            (s) => s.size === size.size
-          );
+          const sizeData = brandData?.sizes?.find((s) => s.size === size.size);
           if (sizeData) {
             dProfit = sizeData.profit;
             h -= size.quantity * (sizeData.hologram || 0);
@@ -539,11 +359,11 @@ const CalculatorPage = () => {
 
     // Update stocks and sizes when brand changes
     const selectedBrand = beerBrandData.find(
-      (brand) => brand.beer.brandName === e.target.value
+      (brand) => brand?.brandName === e.target.value
     );
     if (selectedBrand) {
       setStocks(selectedBrand.stock || []);
-      setSizes(selectedBrand.beer.sizes || []);
+      setSizes(selectedBrand?.sizes || []);
     }
   };
 
@@ -563,27 +383,38 @@ const CalculatorPage = () => {
     )
   );
 
-  const [liquorType, setLiquorType] = useState("Liquor");
+  const [liquorType, setLiquorType] = useState("liquor");
   const [selectedSupplier, setSelectedSupplier] = useState("");
-  const [selectedBrand, setSelectedBrand] = useState("");
 
-  const handleSupplierChange = () => {}
+  const [companyData, setCompanyData] = useState([]);
+  const { allGlobalCompany } = useContext(CompanyContext);
 
-  // Example data (replace with API calls or real state data)
-  const suppliers = [
-    { _id: "1", name: "Supplier A" },
-    { _id: "2", name: "Supplier B" },
-  ];
+  const getAllCompanies = async () => {
+    setLoading(true);
+    try {
+      const res = await allGlobalCompany();
 
-  const brands = [
-    { _id: "1", name: "Kingfisher", supplier: "Supplier A" },
-    { _id: "2", name: "Budweiser", supplier: "Supplier A" },
-    { _id: "3", name: "Jack Daniels", supplier: "Supplier B" },
-  ];
+      const filteredCompanies = res?.data?.filter(
+        (company) => company.companyType === liquorType
+      );
+      setCompanyData(filteredCompanies);
+    } catch (e) {
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const filteredBrands = brands.filter(
-    (brand) => brand.supplier === selectedSupplier
-  );
+  useEffect(() => {
+    getAllCompanies();
+  }, [liquorType]);
+
+  useEffect(() => {
+    if (liquorType === "liquor") {
+      getLiquors();
+    } else {
+      getBeers();
+    }
+  }, [selectedSupplier]);
 
   return (
     <>
@@ -596,14 +427,19 @@ const CalculatorPage = () => {
             autoComplete="off"
             className="py-0 pb-10 px-10 md:py-0 md:px-20"
           >
-            <BackButton className={"top-16 left-2"} />
-            <h1 className="md:text-5xl text-center font-bold text-slate-700 px-2 py-2 m-4 text-3xl">
+            <BackButton className="top-4 left-2 md:top-16 md:left-2" />
+
+            <h1 className="text-2xl sm:text-3xl md:text-5xl text-center font-bold text-slate-700 px-2 py-2 m-2 sm:m-4">
               Amount Calculator
             </h1>
 
-            <Box component="form" onSubmit={handleAddProduct}>
-              {/* Dropdown: Liquor or Beer */}
-              <Box className="px-3 grid grid-cols-1 sm:grid-cols-3 gap-10">
+            <Box
+              className="w-full mt-5"
+              component="form"
+              onSubmit={handleAddProduct}
+            >
+              {/* Type and Supplier Dropdowns in one row */}
+              <Box className="px-3 py-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-10">
                 <FormControl fullWidth>
                   <InputLabel id="liquor-beer-label">Type</InputLabel>
                   <Select
@@ -613,52 +449,116 @@ const CalculatorPage = () => {
                     label="Type"
                     onChange={(e) => setLiquorType(e.target.value)}
                   >
-                    <MenuItem value="Liquor">Liquor</MenuItem>
-                    <MenuItem value="Beer">Beer</MenuItem>
+                    <MenuItem value="liquor">Liquor</MenuItem>
+                    <MenuItem value="beer">Beer</MenuItem>
                   </Select>
                 </FormControl>
 
-                {/* Supplier Dropdown */}
                 <FormControl fullWidth>
                   <InputLabel id="supplier-label">Supplier</InputLabel>
                   <Select
                     labelId="supplier-label"
                     id="supplier-select"
                     value={selectedSupplier}
-                    onChange={handleSupplierChange}
+                    label="Supplier"
+                    onChange={(e) => setSelectedSupplier(e.target.value)}
+                    required
                   >
-                    {suppliers.map((supplier) => (
-                      <MenuItem key={supplier._id} value={supplier.name}>
-                        {supplier.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-
-                {/* Brand Dropdown */}
-                <FormControl fullWidth>
-                  <InputLabel id="brand-label">Brand</InputLabel>
-                  <Select
-                    labelId="brand-label"
-                    id="brand-select"
-                    value={selectedBrand}
-                    onChange={handleBrandChange}
-                  >
-                    {filteredBrands.map((brand) => (
-                      <MenuItem key={brand._id} value={brand.name}>
-                        {brand.name}
+                    {companyData?.map((supp, index) => (
+                      <MenuItem key={index} value={supp?._id}>
+                        {supp?.name}
                       </MenuItem>
                     ))}
                   </Select>
                 </FormControl>
               </Box>
 
-              {/* Add Button */}
-              <Box className="px-2 py-2 m-4 flex justify-end">
-                <Button variant="contained" type="submit">
-                  Add
-                </Button>
+              {/* Brand Select */}
+              <Box className="w-full">
+                <h1 className="md:text-3xl px-2 py-2 m-4 font-semibold text-2xl">
+                  Select Brand
+                </h1>
+                <Box className="px-3 grid grid-cols-1 sm:grid-cols-3 gap-10">
+                  <FormControl fullWidth>
+                    <InputLabel id="brand-label">Brand Name</InputLabel>
+                    <Select
+                      required
+                      labelId="brand-label"
+                      id="brand-select"
+                      value={currentInput?.brand || ""}
+                      label="Brand Name"
+                      name="brand"
+                      onChange={handleBrandChange}
+                    >
+                      {beerBrandData?.length > 0 &&
+                        beerBrandData?.map((brand) => (
+                          <MenuItem key={brand._id} value={brand?.brandName}>
+                            {brand?.brandName}
+                          </MenuItem>
+                        ))}
+                    </Select>
+                  </FormControl>
+                </Box>
               </Box>
+
+              {/* Quantities and Prices */}
+              {currentInput?.brand && (
+                <>
+                  <h1 className="md:text-3xl px-2 py-2 m-4 font-semibold text-2xl">
+                    Select Quantities
+                  </h1>
+                  <Box className="px-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
+                    {beerBrandData
+                      .find((brand) => brand?.brandName === currentInput?.brand)
+                      ?.sizes?.map((size) => (
+                        <Box key={size?.size} className="flex flex-col gap-5">
+                          <TextField
+                            fullWidth
+                            value={
+                              currentInput?.sizes.find(
+                                (s) => s.size === size?.size
+                              )?.quantity || ""
+                            }
+                            label={`Quantity ${size?.size}`}
+                            name={`quantity-${size?.size}`}
+                            onChange={handleInputChange}
+                            variant="outlined"
+                            type="number"
+                            onFocus={(e) =>
+                              e.target.addEventListener(
+                                "wheel",
+                                (e) => e.preventDefault(),
+                                { passive: false }
+                              )
+                            }
+                            InputProps={{ inputProps: { min: 0 } }}
+                          />
+                          <TextField
+                            fullWidth
+                            value={
+                              currentInput?.sizes
+                                .find((s) => s.size === size?.size)
+                                ?.price?.toFixed(2) || "0.00"
+                            }
+                            label={`Price ${size?.size}`}
+                            name={`price-${size?.size}`}
+                            variant="outlined"
+                            type="number"
+                            focused={false}
+                            inputProps={{ readOnly: true }}
+                          />
+                        </Box>
+                      ))}
+                  </Box>
+
+                  {/* Add Product Button */}
+                  <Box className="px-2 py-5 m-4 flex justify-end">
+                    <Button variant="contained" type="submit">
+                      Add Product
+                    </Button>
+                  </Box>
+                </>
+              )}
             </Box>
 
             <TableContainer className="py-12">
@@ -674,10 +574,10 @@ const CalculatorPage = () => {
                   <TableRow>
                     <TableCell>S.No.</TableCell>
                     <TableCell>Brand Name</TableCell>
-                    <TableCell align="center" colSpan={allSizes.length}>
+                    <TableCell align="center" colSpan={allSizes?.length}>
                       Quantity
                     </TableCell>
-                    <TableCell align="center" colSpan={allSizes.length}>
+                    <TableCell align="center" colSpan={allSizes?.length}>
                       Price
                     </TableCell>
                     <TableCell align="center">Action</TableCell>
@@ -712,7 +612,7 @@ const CalculatorPage = () => {
                 </TableHead>
 
                 <TableBody>
-                  {processedProducts.length > 0 &&
+                  {processedProducts?.length > 0 &&
                     processedProducts.map((p, i) => (
                       <TableRow key={i}>
                         <TableCell>{i + 1}</TableCell>
@@ -765,37 +665,34 @@ const CalculatorPage = () => {
                 </TableBody>
               </Table>
             </TableContainer>
-            {/* Total Calculation */}
+          </Box>
 
-            <Box className="px-2 py-2 m-4 flex justify-end">
-              <TextField
-                id="filled-read-only-input"
-                label="Grand Total"
-                defaultValue="0"
-                value={grandTotal.toFixed(2)}
-                InputProps={{
-                  readOnly: true,
-                }}
-                variant="filled"
-              />
-            </Box>
-            
-            <Box className="px-2 py-2 m-4 flex justify-end">
-              <TextField
-                id="filled-read-only-input"
-                label="Grand Total"
-                defaultValue="0"
-                value={grandTotal.toFixed(2)}
-                InputProps={{
-                  readOnly: true,
-                }}
-                variant="filled"
-              />
-            </Box>
+          {/* Total Calculation - Removed duplicate */}
 
-        
+          <Box className="px-2 py-2 m-4 flex justify-end">
+            <TextField
+              id="filled-read-only-input"
+              label="Grand Total"
+              defaultValue="0"
+              value={gTotal.toFixed(2)}
+              InputProps={{
+                readOnly: true,
+              }}
+              variant="filled"
+            />
+          </Box>
 
-            
+          <Box className="px-2 py-2 m-4 flex justify-end">
+            <TextField
+              id="filled-read-only-input"
+              label="Grand Total (with tax)"
+              defaultValue="0"
+              value={grandTotal.toFixed(2)}
+              InputProps={{
+                readOnly: true,
+              }}
+              variant="filled"
+            />
           </Box>
         </>
       )}

@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 
 const BeerState = (props) => {
   const [beer, setBeer] = useState({});
+  const [masterBeer, setMasterBeer] = useState({});
 
   const getAllBeer = async () => {
     try {
@@ -46,9 +47,30 @@ const BeerState = (props) => {
           authorization: localStorage.getItem("token"),
         },
       };
+      console.log("beer comp id context: ", id);
       const { data } = await API.get(`/beer/company/${id}`, config);
       if (data.success) {
         setBeer(data.beer);
+      }
+      console.log(data.message);
+      return data;
+    } catch (e) {
+      toast.error(e.response.data.message);
+    }
+  };
+
+  const getMasterBeerCom = async ({ id }) => {
+    try {
+      const config = {
+        headers: {
+          authorization: localStorage.getItem("token"),
+        },
+      };
+      console.log("id: "+id);
+      const { data } = await API.get(`/master-beer/company/${id}`, config);
+      console.log("Master beer: ", data);
+      if (data.success) {
+        setMasterBeer(data.beer);
       }
       console.log(data.message);
       return data;
@@ -139,6 +161,7 @@ const BeerState = (props) => {
         updateBeer,
         createBeer,
         deleteBeer,
+        getMasterBeerCom,
       }}
     >
       {props.children}

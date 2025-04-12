@@ -832,7 +832,7 @@ const BeerBillForm = () => {
                       {processedProducts.length > 0 &&
                         processedProducts.map((p, i) => (
                           <TableRow key={i}>
-                            <TableCell>{i + 1}</TableCell>
+                            <TableCell>{i + 1}</TableCell>``
                             <TableCell>{p.brand}</TableCell>
                             {allSizes.map((size) => (
                               <TableCell

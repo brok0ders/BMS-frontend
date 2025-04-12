@@ -28,6 +28,7 @@ const BillDetails = () => {
     html2pdf().set(opt).from(element).save();
   };
 
+
   const exportPDFWithMethod = () => {
     let element = printRef.current || document.body;
     savePDF(element, {

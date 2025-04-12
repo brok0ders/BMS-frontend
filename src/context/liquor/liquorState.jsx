@@ -246,11 +246,30 @@ const LiquorState = (props) => {
           authorization: localStorage.getItem("token"),
         },
       };
+      console.log("company id: ", id);
       const { data } = await API.get(`/liquor/company/${id}`, config);
+      console.log("liquors: ", data);
       if (data.success) {
         setLiquor(data.liquor);
       }
       console.log(data.message);
+      return data;
+    } catch (e) {
+      toast.error(e.response.data.message);
+    }
+  };
+
+  const getLiquorCompany = async ({ id }) => {
+    try {
+      const config = {
+        headers: {
+          authorization: localStorage.getItem("token"),
+        },
+      };
+      const { data } = await API.get(`/master-liquor/company/${id}`, config);
+      if (data.success) {
+        setLiquor(data.liquor);
+      }
       return data;
     } catch (e) {
       toast.error(e.response.data.message);
@@ -351,6 +370,7 @@ const LiquorState = (props) => {
         updateLiquor,
         createLiquor,
         deleteLiquor,
+        getLiquorCompany,
       }}
     >
       {props.children}
