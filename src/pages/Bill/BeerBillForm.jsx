@@ -15,7 +15,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Delete } from "@mui/icons-material";
+import { Delete, GradeOutlined } from "@mui/icons-material";
 
 import CustomerContext from "../../context/customer/customerContext";
 import BeerContext from "../../context/beer/beerContext";
@@ -335,6 +335,10 @@ const BeerBillForm = () => {
     });
   };
 
+  const round = (value) => parseFloat(value.toFixed(2));
+  // const round = (value) => Math.floor(value * 100) / 100;
+  // const round = (value) => value;
+
   const handleAddProduct = (e) => {
     try {
       e.preventDefault();
@@ -342,27 +346,26 @@ const BeerBillForm = () => {
         toast.warning("Select quantity of at least one size!");
         return;
       }
-      let h = fholo;
-      let p = fpratifal;
-      let w = fwep;
+
+      let h = round(fholo);
+      let p = round(fpratifal);
+      let w = round(fwep);
       let q = totalQuantity;
-      let t = total;
-      let exDuty = fexduty;
+      let t = round(total);
+      let exDuty = (fexduty);
       let dProfit = 70;
 
+      console.log("initial price: ", t);
 
       const existingProductIndex = products.findIndex(
         (product) => product.brand === currentInput.brand
       );
 
       if (existingProductIndex > -1) {
-        // Subtract previous values
         const existingProduct = products[existingProductIndex];
         const selectedBrand = beerBrandData.find(
           (brand) => brand.beer.brandName === currentInput.brand
         );
-
-        // console.log("brand data: "+brandData);
 
         if (selectedBrand) {
           existingProduct.sizes.forEach((size) => {
@@ -370,23 +373,20 @@ const BeerBillForm = () => {
               (s) => s.size === size.size
             );
             if (sizeData) {
-              h -= size.quantity * (sizeData.hologram || 0);
-              p -= size.quantity * (sizeData.pratifal || 0);
-              w -= size.quantity * (sizeData.wep || 0);
-              exDuty -= size.quantity * (sizeData.excise || 0);
+              h = (h - size.quantity * (sizeData.hologram || 0));
+              p = (p - size.quantity * (sizeData.pratifal || 0));
+              w = (w - size.quantity * (sizeData.wep || 0));
+              exDuty = (exDuty - size.quantity * (sizeData.excise || 0));
               q -= size.quantity;
-              t -= size.price;
+              t = (t - size.price);
             }
           });
         }
 
-        // Update existing product
         const updatedProducts = [...products];
         updatedProducts[existingProductIndex].sizes = currentInput.sizes;
-
         setProducts(updatedProducts);
       } else {
-        // Add new product
         setProducts((prevProducts) => [
           ...prevProducts,
           {
@@ -396,12 +396,9 @@ const BeerBillForm = () => {
         ]);
       }
 
-      // Add current values
       const selectedBrand = beerBrandData.find(
         (brand) => brand.beer.brandName === currentInput.brand
       );
-
-      
 
       if (selectedBrand) {
         currentInput.sizes.forEach((size) => {
@@ -409,16 +406,14 @@ const BeerBillForm = () => {
             (s) => s.size === size.size
           );
 
-          // console.log("size Data: ", sizeData);
-
           if (sizeData) {
             dProfit = sizeData.profit;
-            h += size.quantity * (sizeData.hologram || 0);
-            p += size.quantity * (sizeData.pratifal || 0);
-            w += size.quantity * (sizeData.wep || 0);
-            exDuty += size.quantity * (sizeData.excise || 0);
+            h = (h + size.quantity * (sizeData.hologram || 0));
+            p = (p + size.quantity * (sizeData.pratifal || 0));
+            w = (w + size.quantity * (sizeData.wep || 0));
+            exDuty = (exDuty + size.quantity * (sizeData.excise || 0));
             q += size.quantity;
-            t += size.price;
+            t = (t + size.price);
           }
         });
       }
@@ -430,16 +425,16 @@ const BeerBillForm = () => {
       setTotalQuantity(q);
       setTotal(t);
 
-      console.log("dProfit: "+dProfit);
-
-
       // Tax calculations
-      const vatTax = t * 0.12;
-      const cess = (t + vatTax) * 0.02;
-      const profit = q * dProfit;
-      const taxTotal = t + vatTax + cess + w + h + profit + p + exDuty;
-      const tcsValue = taxTotal * 0.01;
-      setGrandTotal(taxTotal + tcsValue);
+      let vatTax = (t * 0.12);
+      let cess = ((t + vatTax) * 0.02);
+      let profit = (q * dProfit);
+
+      let taxTotal = (t + vatTax + cess + w + h + profit + p + exDuty);
+      let tcsValue = (taxTotal * 0.01);
+      let gTotal = round(taxTotal + tcsValue);
+
+      setGrandTotal(gTotal);
       setTcs(tcsValue);
       setCurrentInput({ brand: "", sizes: [] });
 

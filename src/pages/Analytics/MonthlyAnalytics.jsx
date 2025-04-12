@@ -286,6 +286,12 @@ const MonthlyAnalytics = () => {
   }, [datePickerRef]);
 
   // Format date range for display
+  // const formatDateRangeForDisplay = () => {
+  //   if (!dateRange[0] || !dateRange[1]) return "No date range selected";
+  //   return `${dateRange[0].format("MMM D, YYYY")} to ${dateRange[1].format(
+  //     "MMM D, YYYY"
+  //   )}`;
+  // };
   const formatDateRangeForDisplay = () => {
     if (!dateState[0].startDate || !dateState[0].endDate)
       return "No date range selected";

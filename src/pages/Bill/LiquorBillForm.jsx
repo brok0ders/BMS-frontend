@@ -329,6 +329,8 @@ const LiquorBillForm = () => {
     });
   };
 
+  const round = (value) => parseFloat(value.toFixed(2));
+
   const handleAddProduct = (e) => {
     try {
       e.preventDefault();
@@ -376,17 +378,6 @@ const LiquorBillForm = () => {
           },
         ]);
       }
-      // console.log("current Input: ", currentInput);
-
-      // Add current values
-      // currentInput.sizes.forEach((size) => {
-      //   h += size.quantity * sizes.find((s) => s.size === size.size).hologram;
-      //   p += size.quantity * sizes.find((s) => s.size === size.size).pratifal;
-      //   w += size.quantity * sizes.find((s) => s.size === size.size).wep;
-      //   ex += size.quantity * sizes.find((s) => s.size == size.size).excise;
-      //   q += size.quantity;
-      //   t += size.price;
-      // });
 
       currentInput.sizes.forEach((size) => {
         const sizeData = sizes.find((s) => s.size === size.size);
@@ -416,16 +407,22 @@ const LiquorBillForm = () => {
 
       
       const taxTotal = t + vatTax + cess + w + h + profit + p + ex;
-      const tcs = taxTotal * 0.01;
+      const tcs = (taxTotal * 0.01);
       setTcs(tcs);
-      setGrandTotal(taxTotal + tcs);
+      setGrandTotal(round(taxTotal + tcs));
 
-      // console.log("dProfit: "+dProfit);
-      // console.log("vatTax: "+vatTax);
-      // console.log("Profit: "+profit);
-      // console.log("total tax: "+taxTotal);
-      // console.log("tcs: "+tcs);
-      // console.log("grand total: "+(taxTotal + tcs));
+
+      console.log("total quantity: " + q);
+      console.log("total price: " + t);
+      console.log("vatTax: " + vatTax);
+      console.log("cess: " + cess);
+      console.log("final wep is: " + w);
+      console.log("final holo is: " + h);
+      console.log("Profit: " + profit);
+      console.log("final pratifal is: " + p);
+      console.log("final excise duty is: " + ex);
+      console.log("Total tax: " + taxTotal);
+      console.log("tcs: " + tcs);
 
 
       setCurrentInput({ brand: "", sizes: [] });
