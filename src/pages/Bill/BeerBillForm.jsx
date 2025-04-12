@@ -352,7 +352,7 @@ const BeerBillForm = () => {
       let w = round(fwep);
       let q = totalQuantity;
       let t = round(total);
-      let exDuty = (fexduty);
+      let exDuty = fexduty;
       let dProfit = 70;
 
       console.log("initial price: ", t);
@@ -373,12 +373,12 @@ const BeerBillForm = () => {
               (s) => s.size === size.size
             );
             if (sizeData) {
-              h = (h - size.quantity * (sizeData.hologram || 0));
-              p = (p - size.quantity * (sizeData.pratifal || 0));
-              w = (w - size.quantity * (sizeData.wep || 0));
-              exDuty = (exDuty - size.quantity * (sizeData.excise || 0));
+              h = h - size.quantity * (sizeData.hologram || 0);
+              p = p - size.quantity * (sizeData.pratifal || 0);
+              w = w - size.quantity * (sizeData.wep || 0);
+              exDuty = exDuty - size.quantity * (sizeData.excise || 0);
               q -= size.quantity;
-              t = (t - size.price);
+              t = t - size.price;
             }
           });
         }
@@ -408,12 +408,12 @@ const BeerBillForm = () => {
 
           if (sizeData) {
             dProfit = sizeData.profit;
-            h = (h + size.quantity * (sizeData.hologram || 0));
-            p = (p + size.quantity * (sizeData.pratifal || 0));
-            w = (w + size.quantity * (sizeData.wep || 0));
-            exDuty = (exDuty + size.quantity * (sizeData.excise || 0));
+            h = h + size.quantity * (sizeData.hologram || 0);
+            p = p + size.quantity * (sizeData.pratifal || 0);
+            w = w + size.quantity * (sizeData.wep || 0);
+            exDuty = exDuty + size.quantity * (sizeData.excise || 0);
             q += size.quantity;
-            t = (t + size.price);
+            t = t + size.price;
           }
         });
       }
@@ -426,12 +426,12 @@ const BeerBillForm = () => {
       setTotal(t);
 
       // Tax calculations
-      let vatTax = (t * 0.12);
-      let cess = ((t + vatTax) * 0.02);
-      let profit = (q * dProfit);
+      let vatTax = t * 0.12;
+      let cess = (t + vatTax) * 0.02;
+      let profit = q * dProfit;
 
-      let taxTotal = (t + vatTax + cess + w + h + profit + p + exDuty);
-      let tcsValue = (taxTotal * 0.01);
+      let taxTotal = t + vatTax + cess + w + h + profit + p + exDuty;
+      let tcsValue = taxTotal * 0.01;
       let gTotal = round(taxTotal + tcsValue);
 
       setGrandTotal(gTotal);

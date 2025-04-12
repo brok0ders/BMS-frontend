@@ -284,7 +284,7 @@ const BillComponent = () => {
         <div className="p-1">
           {/* Old tabular Structure */}
 
-          <TableContainer className="">
+          <TableContainer className="pb-5">
             <Table
               borderAxis="both"
               sx={{
@@ -874,6 +874,9 @@ const BillComponent = () => {
                 </TableRow>
               </TableBody>
             </Table>
+            <p className="text-center text-xs mt-4">
+              Note: This is a system-generated invoice
+            </p>
           </TableContainer>
         </div>
       )}
