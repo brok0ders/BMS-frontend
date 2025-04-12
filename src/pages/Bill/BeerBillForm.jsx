@@ -44,6 +44,9 @@ const BeerBillForm = () => {
   const { getCompany } = useContext(CompanyContext);
   const [comp, setComp] = useState("");
   const [products, setProducts] = useState([]);
+  const [createdAt, setCreatedAt] = useState(
+    new Date().toISOString().split("T")[0]
+  );
   const [sizes, setSizes] = useState([]);
   const [totalQuantity, setTotalQuantity] = useState(0);
   const [fholo, setFholo] = useState(0);
@@ -198,6 +201,7 @@ const BeerBillForm = () => {
         pratifal: fpratifal,
         fexcise: fexduty,
         tcs,
+        createdAt,
         total: grandTotal,
         billType: "beer",
       });
@@ -651,6 +655,16 @@ const BeerBillForm = () => {
                       label="Email"
                       variant="outlined"
                     />
+                    <div>
+                      <input
+                        className="border border-gray-300 rounded-md p-2 py-3.5 w-full bg-transparent"
+                        type="date"
+                        name="createdAt"
+                        id="createdAt"
+                        value={createdAt}
+                        onChange={(e) => setCreatedAt(e.target.value)}
+                      />
+                    </div>
                   </Box>
                 </Box>
 

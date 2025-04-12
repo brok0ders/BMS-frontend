@@ -872,11 +872,11 @@ const BillComponent = () => {
                     Authorised Signatory
                   </TableCell>
                 </TableRow>
+                <p className="text-center text-xs mt-4">
+                  Note*: This is a system-generated invoice
+                </p>
               </TableBody>
             </Table>
-            <p className="text-center text-xs mt-4">
-              Note: This is a system-generated invoice
-            </p>
           </TableContainer>
         </div>
       )}

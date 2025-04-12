@@ -506,10 +506,10 @@ const BillRecords = () => {
               <BackButton className={"top-5 left-5"} url={"/dashboard"} />
 
               {/* Search Bar */}
-              <div className="my-4 flex items-center">
+              <div className="my-4 flex items-center mt-10">
                 <input
                   type="text"
-                  placeholder="Search bills by any field..."
+                  placeholder="Search..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="p-2 border border-gray-300 rounded-md w-full max-w-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"

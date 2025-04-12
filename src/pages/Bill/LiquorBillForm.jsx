@@ -60,6 +60,9 @@ const LiquorBillForm = () => {
   const navigate = useNavigate();
   const { getCustomerByLisencee } = useContext(CustomerContext);
   const [email, setEmail] = useState("");
+  const [createdAt, setCreatedAt] = useState(
+    new Date().toISOString().split("T")[0]
+  );
   let customerId = "";
   const [tcs, setTcs] = useState(0);
 
@@ -228,6 +231,7 @@ const LiquorBillForm = () => {
         fexcise: fexduty,
         total: grandTotal,
         billType: "liquor",
+        createdAt,
       });
       setLicensee("");
       setShop("");
@@ -405,12 +409,10 @@ const LiquorBillForm = () => {
       const cess = (t + vatTax) * 0.02;
       const profit = q * dProfit;
 
-      
       const taxTotal = t + vatTax + cess + w + h + profit + p + ex;
-      const tcs = (taxTotal * 0.01);
+      const tcs = taxTotal * 0.01;
       setTcs(tcs);
       setGrandTotal(round(taxTotal + tcs));
-
 
       console.log("total quantity: " + q);
       console.log("total price: " + t);
@@ -423,7 +425,6 @@ const LiquorBillForm = () => {
       console.log("final excise duty is: " + ex);
       console.log("Total tax: " + taxTotal);
       console.log("tcs: " + tcs);
-
 
       setCurrentInput({ brand: "", sizes: [] });
     } catch (error) {
@@ -638,6 +639,16 @@ const LiquorBillForm = () => {
                   label="Email"
                   variant="outlined"
                 />
+                <div>
+                  <input
+                    className="border border-gray-300 rounded-md p-2 py-3.5 w-full bg-transparent"
+                    type="date"
+                    name="createdAt"
+                    id="createdAt"
+                    value={createdAt}
+                    onChange={(e) => setCreatedAt(e.target.value)}
+                  />
+                </div>
               </Box>
             </Box>
 
