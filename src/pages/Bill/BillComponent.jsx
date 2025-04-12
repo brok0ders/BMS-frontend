@@ -115,7 +115,7 @@ const BillComponent = () => {
     if (!words) {
       return "zero";
     }
-    return words + " only";
+    return words.charAt(0).toUpperCase() + words.slice(1) + " only";
   };
 
   useEffect(() => {
