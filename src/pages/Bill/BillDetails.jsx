@@ -7,7 +7,6 @@ import jsPDF from "jspdf";
 import { savePDF } from "@progress/kendo-react-pdf";
 import { useNavigate } from "react-router-dom";
 import { Add, Home, PictureAsPdfOutlined } from "@mui/icons-material";
-
 const BillDetails = () => {
   const printRef = useRef();
   const navigate = useNavigate();
@@ -39,7 +38,7 @@ const BillDetails = () => {
   };
 
   return (
-    <div className="bg-white py-5">
+    <div className="bg-white py-5 max-w-5xl mx-auto">
       <div ref={printRef} id="bill-content">
         <BillComponent />
       </div>
@@ -59,20 +58,20 @@ const BillDetails = () => {
         >
           New Bill
         </Button>
-        {/* <Button
+        <Button
           startIcon={<PictureAsPdfOutlined />}
           variant="contained"
           onClick={exportPDFWithMethod}
         >
           Download PDF
-        </Button> */}
-        <Button
+        </Button>
+        {/* <Button
           startIcon={<PictureAsPdfOutlined />}
           variant="contained"
           onClick={handleGeneratePdf}
         >
           Download PDF
-        </Button>
+        </Button> */}
       </div>
     </div>
   );
