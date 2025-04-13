@@ -71,6 +71,10 @@ const BillForm = () => {
   const [companyData, setCompanyData] = useState([]);
   const { getAllCompany } = useContext(CompanyContext);
 
+  const [createdAt, setCreatedAt] = useState(
+    new Date().toISOString().split("T")[0]
+  );
+
   const handleLisencee = async (e) => {
     setLicensee(e.target.value);
     try {
@@ -247,6 +251,7 @@ const BillForm = () => {
         seller: user?._id,
         company: selectedSupplier,
         tcs,
+        createdAt,
         pratifal: fpratifal,
         fexcise: fexduty,
         total: grandTotal,
@@ -261,7 +266,7 @@ const BillForm = () => {
       setEmail("");
       setProducts([]);
       setGrandTotal(0);
-    
+
       navigate(`/dashboard/bill/details/${res.bill}`);
     } catch (e) {
     } finally {
@@ -683,8 +688,6 @@ const BillForm = () => {
     )
   );
 
-  
-
   const getAllCompanies = async () => {
     setLoading(true);
     try {
@@ -790,6 +793,16 @@ const BillForm = () => {
                   label="Email"
                   variant="outlined"
                 />
+                <div>
+                  <input
+                    className="border border-gray-300 rounded-md p-2 py-3.5 w-full bg-transparent"
+                    type="date"
+                    name="createdAt"
+                    id="createdAt"
+                    value={createdAt}
+                    onChange={(e) => setCreatedAt(e.target.value)}
+                  />
+                </div>
               </Box>
             </Box>
 
@@ -889,7 +902,7 @@ const BillForm = () => {
                           ))}
                     </Select>
                   </FormControl>
-                  <Box className="pt-4">
+                  {/* <Box className="pt-4">
                     <Link to={`/dashboard/${liquorType}/create/${selectedSupplier}`}>
                       <Button
                         startIcon={<Add />}
@@ -901,7 +914,7 @@ const BillForm = () => {
                         Add {liquorType}
                       </Button>
                     </Link>
-                  </Box>
+                  </Box> */}
                 </Box>
               </Box>
               {currentInput?.brand && (
