@@ -49,6 +49,8 @@ import Dashboard from "./pages/Home/Dashboard.jsx";
 import CLBillForm from "./pages/CL2/CLBillForm.jsx";
 import CLList from "./pages/CL2/CLList.jsx";
 import UpdateCL from "./pages/CL2/UpdateCL.jsx";
+import CalculatorPage from "./pages/Calculator/CalculatorPage.jsx";
+import BillForm from "./pages/Bill/BillForm.jsx";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -152,6 +154,14 @@ const App = () => {
               }
             />
             <Route
+              path="bill/create"
+              element={
+                <ProtectedRoutes>
+                  <BillForm />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
               path="company"
               element={
                 <ProtectedRoutes>
@@ -164,6 +174,14 @@ const App = () => {
               element={
                 <ProtectedRoutes>
                   <AnalyticsPage />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="calculator"
+              element={
+                <ProtectedRoutes>
+                  <CalculatorPage />
                 </ProtectedRoutes>
               }
             />

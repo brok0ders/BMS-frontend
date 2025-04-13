@@ -25,6 +25,7 @@ const CompanyState = (props) => {
     }
   };
 
+
   const getCompany = async ({ id }) => {
     try {
       const config = {
