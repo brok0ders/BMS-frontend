@@ -896,35 +896,35 @@ const BillComponent = () => {
     n = n.toFixed(2);
 
     const one = [
-      "one",
-      "two",
-      "three",
-      "four",
-      "five",
-      "six",
-      "seven",
-      "eight",
-      "nine",
-      "ten",
-      "eleven",
-      "twelve",
-      "thirteen",
-      "fourteen",
-      "fifteen",
-      "sixteen",
-      "seventeen",
-      "eighteen",
-      "nineteen",
+      "One",
+      "Two",
+      "Three",
+      "Four",
+      "Five",
+      "Six",
+      "Seven",
+      "Eight",
+      "Nine",
+      "Ten",
+      "Eleven",
+      "Twelve",
+      "Thirteen",
+      "Fourteen",
+      "Fifteen",
+      "Sixteen",
+      "Seventeen",
+      "Eighteen",
+      "Nineteen",
     ];
     const ten = [
-      "twenty",
-      "thirty",
-      "forty",
-      "fifty",
-      "sixty",
-      "seventy",
-      "eighty",
-      "ninety",
+      "Twenty",
+      "Thirty",
+      "Forty",
+      "Fifty",
+      "Sixty",
+      "Seventy",
+      "Eighty",
+      "Ninety",
     ];
 
     const numToWords = (num, suffix) => {
@@ -949,17 +949,17 @@ const BillComponent = () => {
       let output = "";
 
       if (Math.floor(num / 100000) > 0) {
-        output += numToWords(Math.floor(num / 100000), "lakh");
+        output += numToWords(Math.floor(num / 100000), "Lakh");
         num %= 100000;
       }
 
       if (Math.floor(num / 1000) > 0) {
-        output += " " + numToWords(Math.floor(num / 1000), "thousand");
+        output += " " + numToWords(Math.floor(num / 1000), "Thousand");
         num %= 1000;
       }
 
       if (Math.floor(num / 100) > 0) {
-        output += " " + numToWords(Math.floor(num / 100), "hundred");
+        output += " " + numToWords(Math.floor(num / 100), "Hundred");
         num %= 100;
       }
 
