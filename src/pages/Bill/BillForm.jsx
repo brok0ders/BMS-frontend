@@ -241,7 +241,6 @@ const BillForm = () => {
         pan,
       });
       customerId = customerData.customer._id;
-      console.log(fexduty);
 
       const res = await createBill({
         excise,
