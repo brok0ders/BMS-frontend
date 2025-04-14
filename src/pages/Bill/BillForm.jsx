@@ -232,6 +232,10 @@ const BillForm = () => {
 
   const createBill2 = async () => {
     try {
+      if (!products || products.length==0) {
+        toast.warning("Add at leaset one item to create bill!");
+        return;
+      }
       setSpinner(true);
       const customerData = await createCustomer({
         email,
@@ -241,7 +245,7 @@ const BillForm = () => {
         pan,
       });
       customerId = customerData.customer._id;
-
+      
       const res = await createBill({
         excise,
         pno,
