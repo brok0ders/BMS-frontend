@@ -7,6 +7,7 @@ import liquor from "/images/liquor.png";
 import company from "/images/companies.png";
 import analytics from "/images/analytics.png";
 import calculator from "/images/calculator.png";
+import customer from "/images/customer.png";
 
 const MenuList = () => {
   return (
@@ -19,6 +20,7 @@ const MenuList = () => {
         <MenuCard menu={"company?tab=all"} image={company} text={"Suppliers"} />
         <MenuCard menu={"analytics"} image={analytics} text={"Analytics"} />
         <MenuCard menu={"calculator"} image={calculator} text={"Amount Calculator"} />
+        <MenuCard menu={"licensee"} image={customer} text={"Licensee"} />
       </div>
     </>
   );

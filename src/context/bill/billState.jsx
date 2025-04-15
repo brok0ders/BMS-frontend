@@ -168,7 +168,6 @@ const BillState = ({ children }) => {
           authorization: localStorage.getItem("token"),
         },
       };
-      console.log(`url: /bill/update/${id} \n paid: ${paid}`);
       const { data } = await API.put(`/bill/update/${id}`, { paid }, config);
       if (data.success) {
         setBill(data.bill);
@@ -177,6 +176,27 @@ const BillState = ({ children }) => {
       return data;
     } catch (e) {
       toast.error(e.response.data.message);
+    }
+  };
+
+  const getBillsByCustomer = async (id, month) => {
+    try {
+      const {data} = await API.get(`bill/analytics/customer`, {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: localStorage.getItem("token"),
+        },
+        params: { id, month },
+      });
+      console.log(data.message);
+      if (data.success) {
+        return data?.stats;
+      }
+      else {
+        return [];
+      }
+    } catch (e) {
+      toast.error(e?.response?.data?.message);
     }
   };
 
@@ -191,6 +211,7 @@ const BillState = ({ children }) => {
         getLiquorChart,
         getBeerChart,
         getAnalyticsData,
+        getBillsByCustomer,
       }}
     >
       {children}

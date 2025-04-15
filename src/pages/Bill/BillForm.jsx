@@ -207,9 +207,7 @@ const BillForm = () => {
   const getLiquors = async () => {
     setLoading(true);
     try {
-      //   console.log("frontend comId: " + selectedSupplier);
       const res = await getLiquorCom({ id: selectedSupplier });
-      console.log("output: ", res);
       setBrandData(res.liquor);
     } catch (e) {
     } finally {
@@ -221,7 +219,6 @@ const BillForm = () => {
     setLoading(true);
     try {
       const res = await getBeerCom({ id: selectedSupplier });
-      console.log(res.beer);
       setBrandData(res.beer);
     } catch (error) {
       console.error("Error fetching beers:", error);

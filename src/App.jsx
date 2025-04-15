@@ -51,6 +51,8 @@ import CLList from "./pages/CL2/CLList.jsx";
 import UpdateCL from "./pages/CL2/UpdateCL.jsx";
 import CalculatorPage from "./pages/Calculator/CalculatorPage.jsx";
 import BillForm from "./pages/Bill/BillForm.jsx";
+import LicenseeList from "./pages/Licensee/LicenseeList.jsx";
+import LicenseeDetail from "./pages/Licensee/LicenseeDetail.jsx";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -182,6 +184,22 @@ const App = () => {
               element={
                 <ProtectedRoutes>
                   <CalculatorPage />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="licensee"
+              element={
+                <ProtectedRoutes>
+                  <LicenseeList />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="licensee/:id"
+              element={
+                <ProtectedRoutes>
+                  <LicenseeDetail />
                 </ProtectedRoutes>
               }
             />
