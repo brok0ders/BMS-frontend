@@ -15,9 +15,9 @@ const MenuList = () => {
       <div className="mx-10 md:mx-20 my-10 grid grid-cols-2 md:grid-cols-4 gap-10">
         <MenuCard menu={"bill/create"} image={add} text={"Create Bill"} />
         <MenuCard menu={"bill/records"} image={bills} text={"Bills"} />
-        <MenuCard menu={"company/beer"} image={beer} text={"Beers"} />
-        <MenuCard menu={"company/liquor"} image={liquor} text={"Liquors"} />
-        <MenuCard menu={"company?tab=all"} image={company} text={"Suppliers"} />
+        {/* <MenuCard menu={"company/beer"} image={beer} text={"Beers"} /> */}
+        {/* <MenuCard menu={"company/liquor"} image={liquor} text={"Liquors"} /> */}
+        {/* <MenuCard menu={"company?tab=all"} image={company} text={"Suppliers"} /> */}
         <MenuCard menu={"analytics"} image={analytics} text={"Analytics"} />
         <MenuCard menu={"calculator"} image={calculator} text={"Amount Calculator"} />
         <MenuCard menu={"licensee"} image={customer} text={"Licensee"} />

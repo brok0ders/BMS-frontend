@@ -54,7 +54,7 @@ const BillDetails = () => {
         <Button
           startIcon={<Add />}
           variant="contained"
-          onClick={() => navigate("/dashboard/select")}
+          onClick={() => navigate("/dashboard/bill/create")}
         >
           New Bill
         </Button>

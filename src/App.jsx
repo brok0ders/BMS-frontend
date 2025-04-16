@@ -17,7 +17,6 @@ import HomePage from "./Homepage/HomePage.jsx";
 import Navbar from "./components/Layout/Navbar.jsx";
 import LoginPage from "./pages/User/LoginPage.jsx";
 import BillRecords from "./pages/Bill/BillRecords.jsx";
-import AdminHome from "./pages/Home/AdminHome.jsx";
 
 const Layout = () => {
   return (
@@ -40,10 +39,8 @@ import AnalyticsPage from "./pages/Analytics/AnalyticsPage.jsx";
 import ProfilePage from "./pages/User/ProfilePage.jsx";
 import About from "./pages/About/About.jsx";
 import Contact from "./pages/Contact/Contact.jsx";
-import BillComponent from "./pages/Bill/BillComponent.jsx";
 import BillDetails from "./pages/Bill/BillDetails.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
-import MonthlyAnalytics from "./pages/Analytics/MonthlyAnalytics.jsx";
 import ProtectedRoutes from "./components/routes/ProtectedRoutes.jsx";
 import Dashboard from "./pages/Home/Dashboard.jsx";
 import CLBillForm from "./pages/CL2/CLBillForm.jsx";
@@ -187,6 +184,7 @@ const App = () => {
                 </ProtectedRoutes>
               }
             />
+            
             <Route
               path="licensee"
               element={

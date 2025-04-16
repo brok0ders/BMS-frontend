@@ -8,7 +8,20 @@ import {
   ArrowUpDown,
   Download,
   Printer,
+  BarChart3,
+  LineChart as LineChartIcon,
+  FileText,
 } from "lucide-react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
 
 // Sample data (you would replace this with your actual data)
 const sampleData = [
@@ -42,9 +55,16 @@ const sampleData = [
   },
 ];
 
-function FinancialDataTable({ data }) {
+function FinancialDataTable({ data = sampleData }) {
   const [sortField, setSortField] = useState("date");
   const [sortDirection, setSortDirection] = useState("desc");
+  const [showChart, setShowChart] = useState(true);
+  const [visibleLines, setVisibleLines] = useState({
+    fexcise: true,
+    pratifal: true,
+    tcs: true,
+    total: true,
+  });
   const tableRef = useRef(null);
   const contentRef = useRef(null);
 
@@ -92,6 +112,16 @@ function FinancialDataTable({ data }) {
     });
   }, [data, sortField, sortDirection]);
 
+  // Prepare chart data - sort chronologically for charts regardless of table sort
+  const chartData = useMemo(() => {
+    return [...data]
+      .sort((a, b) => new Date(a.date) - new Date(b.date))
+      .map((item) => ({
+        ...item,
+        formattedDate: formatDate(item.date),
+      }));
+  }, [data]);
+
   // Calculate totals
   const totals = useMemo(() => {
     return data.reduce(
@@ -125,6 +155,43 @@ function FinancialDataTable({ data }) {
       return <ArrowUp className="h-5 w-5 text-green-600" />;
     } else if (current < previous) {
       return <ArrowDown className="h-5 w-5 text-red-600" />;
+    }
+    return null;
+  };
+
+  // Toggle visibility of chart lines
+  const toggleLine = (dataKey) => {
+    setVisibleLines((prev) => ({
+      ...prev,
+      [dataKey]: !prev[dataKey],
+    }));
+  };
+
+  // Custom tooltip for the chart
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white p-4 rounded shadow border border-gray-200">
+          <p className="font-semibold text-gray-800 text-sm">{label}</p>
+          <div className="space-y-1 mt-2">
+            {payload.map((entry, index) => (
+              <p
+                key={index}
+                style={{ color: entry.color }}
+                className="text-sm font-semibold"
+              >
+                <span className="text-black">{entry.name}</span>:{" "}
+                {entry.name === "pratifal" || entry.name === "tcs"
+                  ? entry.value.toFixed(2)
+                  : entry.value.toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+              </p>
+            ))}
+          </div>
+        </div>
+      );
     }
     return null;
   };
@@ -347,8 +414,24 @@ function FinancialDataTable({ data }) {
             </p>
           </div>
 
-          {/* Export buttons - Improved UI */}
-          <div className="flex space-x-3">
+          {/* Export and view toggle buttons */}
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={() => setShowChart(!showChart)}
+              className={`flex items-center px-3 py-1 ${
+                showChart ? "bg-green-600" : "bg-gray-600"
+              } text-white rounded-md hover:opacity-90 transition-colors shadow-md`}
+              aria-label="Toggle Chart View"
+            >
+              {showChart ? (
+                <BarChart3 className="h-5 w-5 mr-2" />
+              ) : (
+                <LineChartIcon className="h-5 w-5 mr-2" />
+              )}
+              <span className="font-medium">
+                {showChart ? "Hide Chart" : "Show Chart"}
+              </span>
+            </button>
             <button
               onClick={downloadTablePDF}
               className="flex items-center px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors shadow-md"
@@ -369,95 +452,269 @@ function FinancialDataTable({ data }) {
         </div>
       </div>
 
+      {/* Chart Section */}
+      {showChart && (
+        <div className="border-b border-gray-200">
+          <div className="p-4 bg-gray-50">
+            <h3 className="text-lg font-semibold text-gray-800 mb-3">
+              Financial Metrics Comparison
+            </h3>
+
+            {/* Chart Toggle Controls */}
+            <div className="flex flex-wrap gap-2 mb-4">
+              <button
+                onClick={() => toggleLine("fexcise")}
+                className={`px-3 py-1 rounded-full text-sm flex items-center gap-2 ${
+                  visibleLines.fexcise
+                    ? "bg-blue-100 text-blue-700"
+                    : "bg-gray-100 text-gray-500"
+                }`}
+              >
+                <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                <span>Excise</span>
+              </button>
+              <button
+                onClick={() => toggleLine("pratifal")}
+                className={`px-3 py-1 rounded-full text-sm flex items-center gap-2 ${
+                  visibleLines.pratifal
+                    ? "bg-green-100 text-green-700"
+                    : "bg-gray-100 text-gray-500"
+                }`}
+              >
+                <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                <span>Pratifal</span>
+              </button>
+              <button
+                onClick={() => toggleLine("tcs")}
+                className={`px-3 py-1 rounded-full text-sm flex items-center gap-2 ${
+                  visibleLines.tcs
+                    ? "bg-purple-100 text-purple-700"
+                    : "bg-gray-100 text-gray-500"
+                }`}
+              >
+                <span className="w-2 h-2 rounded-full bg-purple-500"></span>
+                <span>TCS</span>
+              </button>
+              <button
+                onClick={() => toggleLine("total")}
+                className={`px-3 py-1 rounded-full text-sm flex items-center gap-2 ${
+                  visibleLines.total
+                    ? "bg-red-100 text-red-700"
+                    : "bg-gray-100 text-gray-500"
+                }`}
+              >
+                <span className="w-2 h-2 rounded-full bg-red-500"></span>
+                <span>Total</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Chart Container - Responsive with fixed height */}
+          <div
+            className="relative"
+            style={{ height: "350px", marginTop: "20px", marginBottom: "5px" }}
+          >
+            <div className="absolute inset-0 overflow-x-auto">
+              <div
+                style={{
+                  minWidth: Math.max(600, chartData.length * 200) + "px",
+                  height: "100%",
+                }}
+              >
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                    data={chartData}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+                    <XAxis
+                      dataKey="formattedDate"
+                      tick={{ fontSize: 12 }}
+                      tickMargin={10}
+                    />
+                    <YAxis
+                      yAxisId="left"
+                      tick={{ fontSize: 12 }}
+                      tickFormatter={(value) =>
+                        value >= 1000 ? `${(value / 1000).toFixed(1)}k` : value
+                      }
+                    />
+                    <YAxis
+                      yAxisId="right"
+                      orientation="right"
+                      domain={[0, 200]}
+                      tick={{ fontSize: 12 }}
+                    />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Legend />
+
+                    {visibleLines.fexcise && (
+                      <Line
+                        yAxisId="left"
+                        type="monotone"
+                        dataKey="fexcise"
+                        name="Excise"
+                        stroke="#3b82f6"
+                        activeDot={{ r: 8 }}
+                        strokeWidth={2}
+                        dot={{ r: 4 }}
+                      />
+                    )}
+                    {visibleLines.total && (
+                      <Line
+                        yAxisId="left"
+                        type="monotone"
+                        dataKey="total"
+                        name="Total"
+                        stroke="#ef4444"
+                        activeDot={{ r: 8 }}
+                        strokeWidth={2}
+                        dot={{ r: 4 }}
+                      />
+                    )}
+                    {visibleLines.pratifal && (
+                      <Line
+                        yAxisId="right"
+                        type="monotone"
+                        dataKey="pratifal"
+                        name="Pratifal"
+                        stroke="#22c55e"
+                        activeDot={{ r: 8 }}
+                        strokeWidth={2}
+                        dot={{ r: 4 }}
+                      />
+                    )}
+                    {visibleLines.tcs && (
+                      <Line
+                        yAxisId="right"
+                        type="monotone"
+                        dataKey="tcs"
+                        name="TCS"
+                        stroke="#a855f7"
+                        activeDot={{ r: 8 }}
+                        strokeWidth={2}
+                        dot={{ r: 4 }}
+                      />
+                    )}
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+          <div className="px-6 py-2 text-center text-xs text-gray-500 bg-gray-50 mb-10">
+            Scroll horizontally if chart is not fully visible. Click on legend
+            items to toggle metrics.
+          </div>
+        </div>
+      )}
+
       {/* Table container with ref for table access */}
       <div className="overflow-x-auto">
-        <table className="w-full" ref={tableRef}>
+        <table className="w-full text-sm" ref={tableRef}>
           <thead>
             <tr className="bg-gray-100">
               <th
-                className="px-6 py-4 text-left text-sm font-bold text-gray-800 uppercase tracking-wider cursor-pointer hover:bg-gray-200"
+                className="px-5 py-3 text-left font-semibold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-200"
                 onClick={() => handleSort("date")}
               >
                 <div className="flex items-center">
-                  <Calendar className="h-5 w-5 mr-2" />
+                  <Calendar className="h-4 w-4 mr-2" />
                   Date
                   {sortField === "date" ? (
                     sortDirection === "asc" ? (
-                      <ArrowUp className="h-5 w-5 ml-1" />
+                      <ArrowUp className="h-4 w-4 ml-1" />
                     ) : (
-                      <ArrowDown className="h-5 w-5 ml-1" />
+                      <ArrowDown className="h-4 w-4 ml-1" />
                     )
                   ) : (
-                    <ArrowUpDown className="h-5 w-5 ml-1" />
+                    <ArrowUpDown className="h-4 w-4 ml-1" />
                   )}
                 </div>
               </th>
               <th
-                className="px-6 py-4 text-left text-sm font-bold text-gray-800 uppercase tracking-wider cursor-pointer hover:bg-gray-200"
-                onClick={() => handleSort("fexcise")}
+                className="px-5 py-3 text-left font-semibold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-200"
+                onClick={() => handleSort("bills")}
               >
                 <div className="flex items-center">
+                  <FileText className="h-4 w-4 mr-2" />
+                  Bills
+                  {sortField === "bills" ? (
+                    sortDirection === "asc" ? (
+                      <ArrowUp className="h-4 w-4 ml-1" />
+                    ) : (
+                      <ArrowDown className="h-4 w-4 ml-1" />
+                    )
+                  ) : (
+                    <ArrowUpDown className="h-4 w-4 ml-1" />
+                  )}
+                </div>
+              </th>
+              <th
+                className="px-5 py-3 text-right font-semibold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-200"
+                onClick={() => handleSort("fexcise")}
+              >
+                <div className="flex items-center justify-end">
                   Excise
                   {sortField === "fexcise" ? (
                     sortDirection === "asc" ? (
-                      <ArrowUp className="h-5 w-5 ml-1" />
+                      <ArrowUp className="h-4 w-4 ml-1" />
                     ) : (
-                      <ArrowDown className="h-5 w-5 ml-1" />
+                      <ArrowDown className="h-4 w-4 ml-1" />
                     )
                   ) : (
-                    <ArrowUpDown className="h-5 w-5 ml-1" />
+                    <ArrowUpDown className="h-4 w-4 ml-1" />
                   )}
                 </div>
               </th>
               <th
-                className="px-6 py-4 text-left text-sm font-bold text-gray-800 uppercase tracking-wider cursor-pointer hover:bg-gray-200"
+                className="px-5 py-3 text-right font-semibold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-200"
                 onClick={() => handleSort("pratifal")}
               >
-                <div className="flex items-center">
+                <div className="flex items-center justify-end">
                   Pratifal
                   {sortField === "pratifal" ? (
                     sortDirection === "asc" ? (
-                      <ArrowUp className="h-5 w-5 ml-1" />
+                      <ArrowUp className="h-4 w-4 ml-1" />
                     ) : (
-                      <ArrowDown className="h-5 w-5 ml-1" />
+                      <ArrowDown className="h-4 w-4 ml-1" />
                     )
                   ) : (
-                    <ArrowUpDown className="h-5 w-5 ml-1" />
+                    <ArrowUpDown className="h-4 w-4 ml-1" />
                   )}
                 </div>
               </th>
               <th
-                className="px-6 py-4 text-left text-sm font-bold text-gray-800 uppercase tracking-wider cursor-pointer hover:bg-gray-200"
+                className="px-5 py-3 text-right font-semibold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-200"
                 onClick={() => handleSort("tcs")}
               >
-                <div className="flex items-center">
+                <div className="flex items-center justify-end">
                   TCS
                   {sortField === "tcs" ? (
                     sortDirection === "asc" ? (
-                      <ArrowUp className="h-5 w-5 ml-1" />
+                      <ArrowUp className="h-4 w-4 ml-1" />
                     ) : (
-                      <ArrowDown className="h-5 w-5 ml-1" />
+                      <ArrowDown className="h-4 w-4 ml-1" />
                     )
                   ) : (
-                    <ArrowUpDown className="h-5 w-5 ml-1" />
+                    <ArrowUpDown className="h-4 w-4 ml-1" />
                   )}
                 </div>
               </th>
               <th
-                className="px-6 py-4 text-left text-sm font-bold text-gray-800 uppercase tracking-wider cursor-pointer hover:bg-gray-200"
+                className="px-5 py-3 text-right font-semibold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-200"
                 onClick={() => handleSort("total")}
               >
-                <div className="flex items-center">
-                  <TrendingUp className="h-5 w-5 mr-2" />
+                <div className="flex items-center justify-end">
+                  <TrendingUp className="h-4 w-4 mr-2" />
                   Total
                   {sortField === "total" ? (
                     sortDirection === "asc" ? (
-                      <ArrowUp className="h-5 w-5 ml-1" />
+                      <ArrowUp className="h-4 w-4 ml-1" />
                     ) : (
-                      <ArrowDown className="h-5 w-5 ml-1" />
+                      <ArrowDown className="h-4 w-4 ml-1" />
                     )
                   ) : (
-                    <ArrowUpDown className="h-5 w-5 ml-1" />
+                    <ArrowUpDown className="h-4 w-4 ml-1" />
                   )}
                 </div>
               </th>
@@ -466,54 +723,96 @@ function FinancialDataTable({ data }) {
           <tbody className="bg-white divide-y divide-gray-200">
             {sortedData.map((item, index) => (
               <tr key={index} className="hover:bg-blue-50 transition-colors">
-                <td className="px-6 py-4 whitespace-nowrap text-base font-medium text-gray-900">
+                <td className="px-5 py-3 whitespace-nowrap font-medium text-gray-800">
                   {formatDate(item.date)}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-base text-gray-800">
+                <td className="px-5 py-3 whitespace-nowrap text-gray-700">
                   <div className="flex items-center">
-                    {formatCurrency(item.fexcise)}
-                    {getTrendIndicator(item.fexcise, index)}
+                    <span className="font-medium mr-2">{item?.billCount}</span>
+                    <div className="flex">
+                      {Array.from({ length: Math.min(item?.billCount, 5) }).map(
+                        (_, i) => (
+                          <div
+                            key={i}
+                            className={`h-3 w-1.5 mx-px rounded-sm ${
+                              i < Math.min(item?.billCount, 5)
+                                ? "bg-blue-500"
+                                : "bg-gray-200"
+                            }`}
+                          />
+                        )
+                      )}
+                      {item?.billCount > 5 && (
+                        <span className="text-xs text-gray-500 ml-1">
+                          +{item?.billCount - 5}
+                        </span>
+                      )}
+                    </div>
+                    {getTrendIndicator(item?.billCount, index, "bills")}
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-base text-gray-800">
-                  <div className="flex items-center">
-                    {formatCurrency(item.pratifal)}
-                    {getTrendIndicator(item.pratifal, index)}
+                <td className="px-5 py-3 whitespace-nowrap text-right font-medium text-gray-800">
+                  <div className="flex items-center justify-end">
+                    <span className="tabular-nums">
+                      {formatCurrency(item.fexcise)}
+                    </span>
+                    <span className="ml-1">
+                      {getTrendIndicator(item.fexcise, index)}
+                    </span>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-base text-gray-800">
-                  <div className="flex items-center">
-                    {formatCurrency(item.tcs)}
-                    {getTrendIndicator(item.tcs, index)}
+                <td className="px-5 py-3 whitespace-nowrap text-right font-medium text-gray-800">
+                  <div className="flex items-center justify-end">
+                    <span className="tabular-nums">
+                      {formatCurrency(item.pratifal)}
+                    </span>
+                    <span className="ml-1">
+                      {getTrendIndicator(item.pratifal, index)}
+                    </span>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <span className="px-3 py-1 inline-flex text-base leading-5 font-semibold rounded-full bg-blue-50 text-blue-800/90">
+                <td className="px-5 py-3 whitespace-nowrap text-right font-medium text-gray-800">
+                  <div className="flex items-center justify-end">
+                    <span className="tabular-nums">
+                      {formatCurrency(item.tcs)}
+                    </span>
+                    <span className="ml-1">
+                      {getTrendIndicator(item.tcs, index)}
+                    </span>
+                  </div>
+                </td>
+                <td className="px-5 py-3 whitespace-nowrap text-right">
+                  <div className="flex items-center justify-end">
+                    <span className="inline-flex px-3 py-1 rounded-md bg-blue-50 text-blue-800 font-medium tabular-nums">
                       {formatCurrency(item.total)}
                     </span>
-                    {getTrendIndicator(item.total, index)}
+                    <span className="ml-1">
+                      {getTrendIndicator(item.total, index)}
+                    </span>
                   </div>
                 </td>
               </tr>
             ))}
           </tbody>
           <tfoot>
-            <tr className="bg-gray-100 font-semibold">
-              <td className="px-6 py-4 whitespace-nowrap text-base text-gray-900">
+            <tr className="bg-gray-100">
+              <td className="px-5 py-3 whitespace-nowrap font-semibold text-gray-900">
                 Totals
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-base text-gray-900">
+              <td className="px-5 py-3 whitespace-nowrap font-semibold text-gray-900">
+                {totals?.billCount}
+              </td>
+              <td className="px-5 py-3 whitespace-nowrap text-right font-semibold text-gray-900 tabular-nums">
                 {formatCurrency(totals.fexcise)}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-base text-gray-900">
+              <td className="px-5 py-3 whitespace-nowrap text-right font-semibold text-gray-900 tabular-nums">
                 {formatCurrency(totals.pratifal)}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-base text-gray-900">
+              <td className="px-5 py-3 whitespace-nowrap text-right font-semibold text-gray-900 tabular-nums">
                 {formatCurrency(totals.tcs)}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <span className="px-3 py-1 inline-flex text-base leading-5 font-semibold bg-green-100 text-gray-700/90">
+              <td className="px-5 py-3 whitespace-nowrap text-right">
+                <span className="inline-flex px-3 py-1 rounded-md bg-green-100 text-gray-800 font-semibold tabular-nums">
                   {formatCurrency(totals.total)}
                 </span>
               </td>

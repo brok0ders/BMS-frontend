@@ -58,7 +58,7 @@ const BillForm = () => {
   const [spinner2, setSpinner2] = useState(false);
   const [added, setAdded] = useState(false);
   const navigate = useNavigate();
-  const { getCustomerByLisencee } = useContext(CustomerContext);
+  const { getCustomerByShop } = useContext(CustomerContext);
   const [email, setEmail] = useState("");
   let customerId = "";
   const [tcs, setTcs] = useState(0);
@@ -71,29 +71,63 @@ const BillForm = () => {
   const [companyData, setCompanyData] = useState([]);
   const { getAllCompany } = useContext(CompanyContext);
 
+  const { getMasterBeerCom } = useContext(BeerContext);
+  const { getLiquorCompany } = useContext(LiquorContext);
+
   const [createdAt, setCreatedAt] = useState(
     new Date().toISOString().split("T")[0]
   );
 
+  const { allGlobalCompany } = useContext(CompanyContext);
+
   const handleLisencee = async (e) => {
     setLicensee(e.target.value);
+  };
+
+  const latestShopRef = useRef(null);
+
+  const handleShop = async (e) => {
+    const input = e.target.value;
+    setShop(input);
+
+    if (!input) {
+      setLicensee("");
+      setFirm("");
+      setPan("");
+      setEmail("");
+      return;
+    }
+
+    latestShopRef.current = input; // track current input
+
     try {
-      const res = await getCustomerByLisencee({ licensee: e.target.value });
-      if (res.success) {
-        setShop(res?.customer[0].shop);
-        setFirm(res?.customer[0].firm);
-        setPan(res?.customer[0].pan);
-        setEmail(res?.customer[0].email);
-      } else {
-        setShop("");
+      const res = await getCustomerByShop({ shop: input });
+
+      // Only update state if response is for the latest input
+      if (
+        latestShopRef?.current === input &&
+        res?.success &&
+        res?.customer.length > 0
+      ) {
+        const customer = res.customer[0];
+        setLicensee(customer.licensee);
+        setFirm(customer.firm);
+        setPan(customer.pan);
+        setEmail(customer.email);
+      } else if (latestShopRef.current === input) {
+        setLicensee("");
         setFirm("");
         setPan("");
         setEmail("");
       }
     } catch (e) {
-      setShop("");
-      setFirm("");
-      setPan("");
+      if (latestShopRef.current === input) {
+        setLicensee("");
+        setFirm("");
+        setPan("");
+        setEmail("");
+      }
+      console.log("Search error in shop:", e);
     }
   };
 
@@ -204,22 +238,35 @@ const BillForm = () => {
 
   const [currentInput, setCurrentInput] = useState({ brand: "", sizes: [] });
 
-  const getLiquors = async () => {
-    setLoading(true);
-    try {
-      const res = await getLiquorCom({ id: selectedSupplier });
-      setBrandData(res.liquor);
-    } catch (e) {
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const getLiquors = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const res = await getLiquorCom({ id: selectedSupplier });
+  //     setBrandData(res.liquor);
+  //   } catch (e) {
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // const getBeers = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const res = await getBeerCom({ id: selectedSupplier });
+  //     setBrandData(res.beer);
+  //   } catch (error) {
+  //     console.error("Error fetching beers:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const getBeers = async () => {
     setLoading(true);
     try {
-      const res = await getBeerCom({ id: selectedSupplier });
-      setBrandData(res.beer);
+      const res = await getMasterBeerCom({ id: selectedSupplier });
+      // console.log("master beers: ", res);
+      setBrandData(res.data);
     } catch (error) {
       console.error("Error fetching beers:", error);
     } finally {
@@ -227,9 +274,20 @@ const BillForm = () => {
     }
   };
 
+  const getLiquors = async () => {
+    setLoading(true);
+    try {
+      const res = await getLiquorCompany({ id: selectedSupplier });
+      setBrandData(res.data);
+    } catch (e) {
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const createBill2 = async () => {
     try {
-      if (!products || products.length==0) {
+      if (!products || products.length == 0) {
         toast.warning("Add at leaset one item to create bill!");
         return;
       }
@@ -242,7 +300,7 @@ const BillForm = () => {
         pan,
       });
       customerId = customerData.customer._id;
-      
+
       const res = await createBill({
         excise,
         pno,
@@ -280,12 +338,6 @@ const BillForm = () => {
     const { name, value } = e.target;
     const [type, size] = name.split("-");
 
-    // Validate stock quantity
-    const stock = stocks.find((stock) => stock.size === size);
-    if (stock && stock.quantity < value) {
-      toast.warning(`Stock for ${size} is only ${stock.quantity}`);
-      return;
-    }
 
     // Prevent negative values and non-numeric inputs
     if (value !== "" && (isNaN(value) || parseInt(value) < 0)) return;
@@ -303,12 +355,10 @@ const BillForm = () => {
         };
 
         if (type === "quantity") {
-          const selectedBrand = brandData.find(
-            (brand) => brand.liquor.brandName === currentInput.brand
+          const selectedBrand = brandData?.find(
+            (brand) => brand?.brandName === currentInput.brand
           );
-          const selectedSize = selectedBrand.liquor.sizes.find(
-            (s) => s.size === size
-          );
+          const selectedSize = selectedBrand?.sizes?.find((s) => s.size === size);
 
           if (selectedSize) {
             const basePrice =
@@ -325,82 +375,10 @@ const BillForm = () => {
         };
 
         if (type === "quantity") {
-          const selectedBrand = brandData.find(
-            (brand) => brand.liquor.brandName === currentInput.brand
+          const selectedBrand = brandData?.find(
+            (brand) => brand.brandName === currentInput.brand
           );
-          const selectedSize = selectedBrand.liquor.sizes.find(
-            (s) => s.size === size
-          );
-
-          if (selectedSize) {
-            const basePrice =
-              selectedSize.price * (value === "" ? 0 : parseInt(value));
-            newSize.price = basePrice;
-          }
-        }
-
-        return { ...prevInput, sizes: [...prevInput.sizes, newSize] };
-      }
-    });
-  };
-
-  const handleInputChange2 = (e) => {
-    e.preventDefault();
-    setAdded(true);
-    const { name, value } = e.target;
-    const [type, size] = name.split("-");
-
-    // Validate stock quantity
-    const stock = stocks.find((stock) => stock.size === size);
-    if (stock && stock.quantity < value) {
-      toast.warning(`Stock for ${size} is only ${stock.quantity}`);
-      return;
-    }
-
-    // Prevent negative values and non-numeric inputs
-    if (value !== "" && (isNaN(value) || parseInt(value) < 0)) return;
-
-    setCurrentInput((prevInput) => {
-      const existingSizeIndex = prevInput.sizes.findIndex(
-        (s) => s.size === size
-      );
-
-      if (existingSizeIndex > -1) {
-        const updatedSizes = [...prevInput.sizes];
-        updatedSizes[existingSizeIndex] = {
-          ...updatedSizes[existingSizeIndex],
-          [type]: value === "" ? 0 : parseInt(value),
-        };
-
-        if (type === "quantity") {
-          const selectedBrand = brandData.find(
-            (brand) => brand.beer.brandName === currentInput.brand
-          );
-          const selectedSize = selectedBrand.beer.sizes.find(
-            (s) => s.size === size
-          );
-
-          if (selectedSize) {
-            const basePrice =
-              selectedSize.price * (value === "" ? 0 : parseInt(value));
-            updatedSizes[existingSizeIndex].price = basePrice;
-          }
-        }
-
-        return { ...prevInput, sizes: updatedSizes };
-      } else {
-        const newSize = {
-          size: size,
-          [type]: value === "" ? 0 : parseInt(value),
-        };
-
-        if (type === "quantity") {
-          const selectedBrand = brandData.find(
-            (brand) => brand.beer.brandName === currentInput.brand
-          );
-          const selectedSize = selectedBrand.beer.sizes.find(
-            (s) => s.size === size
-          );
+          const selectedSize = selectedBrand?.sizes?.find((s) => s.size === size);
 
           if (selectedSize) {
             const basePrice =
@@ -533,84 +511,12 @@ const BillForm = () => {
       // Subtract the values of the product being deleted
       const productToDelete = products[index];
       const bData = brandData.find(
-        (item) => item.liquor.brandName === productToDelete.brand
+        (item) => item?.brandName === productToDelete.brand
       );
 
       if (brandData) {
         productToDelete.sizes.forEach((size) => {
-          const sizeData = bData?.liquor?.sizes?.find(
-            (s) => s.size === size.size
-          );
-
-          if (sizeData) {
-            dProfit = sizeData.profit;
-            h -= size.quantity * (sizeData.hologram || 0);
-            p -= size.quantity * (sizeData.pratifal || 0);
-            w -= size.quantity * (sizeData.wep || 0);
-            ex -= size.quantity * (sizeData.excise || 0);
-            q -= size.quantity;
-            t -= size.price;
-          }
-        });
-      }
-
-      // Update the products list
-      const updatedProducts = products.filter((_, i) => i !== index);
-      setProducts(updatedProducts);
-
-      // if (products.length == 1) {
-      //   p = 0;
-      //   h = 0;
-      //   w = 0;
-      // }
-
-      // Set the new values
-      setFholo(h);
-      setFpratifal(p);
-      setFwep(w);
-      setTotalQuantity(q);
-      setFexduty(ex);
-      setTotal(t);
-
-      // Tax calculations
-      const vatTax = t * 0.12;
-      const cess = (t + vatTax) * 0.02;
-      const profit = q * dProfit;
-
-      const taxTotal = t + vatTax + cess + w + h + profit + p + ex;
-      const tcs = taxTotal * 0.01;
-      setGrandTotal(round(taxTotal + tcs));
-
-      setCurrentInput({ brand: "", sizes: [] });
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setSpinner2(false);
-    }
-  };
-
-  const handleDeleteProduct2 = (index) => {
-    setSpinner2(true);
-    try {
-      let h = round(fholo);
-      let p = round(fpratifal);
-      let w = round(fwep);
-      let ex = round(fexduty);
-      let q = totalQuantity;
-      let t = round(total);
-      let dProfit = 70;
-
-      // Subtract the values of the product being deleted
-      const productToDelete = products[index];
-      const bData = brandData.find(
-        (item) => item.beer.brandName === productToDelete.brand
-      );
-
-      if (bData) {
-        productToDelete.sizes.forEach((size) => {
-          const sizeData = bData?.beer?.sizes?.find(
-            (s) => s.size === size.size
-          );
+          const sizeData = bData?.sizes?.find((s) => s.size === size.size);
 
           if (sizeData) {
             dProfit = sizeData.profit;
@@ -688,12 +594,27 @@ const BillForm = () => {
     )
   );
 
+  // const getAllCompanies = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const res = await getAllCompany();
+  //     const filteredCompanies = res?.company?.filter(
+  //       (company) => company.company.companyType === liquorType
+  //     );
+  //     setCompanyData(filteredCompanies);
+  //   } catch (e) {
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const getAllCompanies = async () => {
     setLoading(true);
     try {
-      const res = await getAllCompany();
-      const filteredCompanies = res?.company?.filter(
-        (company) => company.company.companyType === liquorType
+      const res = await allGlobalCompany();
+
+      const filteredCompanies = res?.data?.filter(
+        (company) => company.companyType === liquorType
       );
       setCompanyData(filteredCompanies);
     } catch (e) {
@@ -749,7 +670,7 @@ const BillForm = () => {
                   required
                   id="outlined-basic"
                   value={shop}
-                  onChange={(e) => setShop(e.target.value)}
+                  onChange={handleShop}
                   label="Shop"
                   variant="outlined"
                 />
@@ -847,7 +768,7 @@ const BillForm = () => {
                     >
                       {companyData?.map((supp, index) => (
                         <MenuItem key={index} value={supp?._id}>
-                          {supp?.company?.name}
+                          {supp?.name}
                         </MenuItem>
                       ))}
                     </Select>
@@ -873,33 +794,19 @@ const BillForm = () => {
                       className="w-full"
                       onChange={handleBrandChange}
                     >
-                      {liquorType === "liquor"
-                        ? brandData.length > 0 &&
-                          brandData.map((brand) => (
-                            <MenuItem
-                              key={brand._id}
-                              value={brand?.liquor?.brandName}
-                              onClick={() => {
-                                setStocks(brand.stock);
-                                setSizes(brand?.liquor?.sizes);
-                              }}
-                            >
-                              {brand?.liquor?.brandName}
-                            </MenuItem>
-                          ))
-                        : brandData.length > 0 &&
-                          brandData.map((brand) => (
-                            <MenuItem
-                              key={brand._id}
-                              value={brand?.beer?.brandName}
-                              onClick={() => {
-                                setStocks(brand.stock);
-                                setSizes(brand?.beer?.sizes);
-                              }}
-                            >
-                              {brand?.beer?.brandName}
-                            </MenuItem>
-                          ))}
+                      {brandData.length > 0 &&
+                        brandData.map((brand) => (
+                          <MenuItem
+                            key={brand._id}
+                            value={brand?.brandName}
+                            onClick={() => {
+                              setStocks(brand.stock);
+                              setSizes(brand?.sizes);
+                            }}
+                          >
+                            {brand?.brandName}
+                          </MenuItem>
+                        ))}
                     </Select>
                   </FormControl>
                   {/* <Box className="pt-4">
@@ -922,147 +829,73 @@ const BillForm = () => {
                   <h1 className="md:text-3xl px-2 py-2 m-4 font-semibold text-2xl">
                     Select Quantities
                   </h1>
-                  {liquorType == "liquor" ? (
-                    <Box className="px-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
-                      {currentInput?.brand &&
-                        brandData
-                          .find(
-                            (brand) =>
-                              brand?.liquor?.brandName === currentInput?.brand
-                          )
-                          ?.liquor?.sizes?.map((size) => (
-                            <Box
-                              key={size?.size}
-                              className="flex flex-col gap-5"
-                            >
-                              <TextField
-                                fullWidth
-                                value={
-                                  currentInput?.sizes.find(
-                                    (s) => s.size === size?.size
-                                  )?.quantity || ""
-                                }
-                                label={`Quantity ${
-                                  size?.size === "750ml"
-                                    ? size?.size + " (Q)"
-                                    : size?.size === "375ml"
-                                    ? size?.size + " (P)"
-                                    : size?.size === "180ml"
-                                    ? size?.size + " (N)"
-                                    : size?.size
-                                }`}
-                                name={`quantity-${size?.size}`}
-                                onChange={handleInputChange}
-                                variant="outlined"
-                                onFocus={(e) =>
-                                  e.target.addEventListener(
-                                    "wheel",
-                                    function (e) {
-                                      e.preventDefault();
-                                    },
-                                    { passive: false }
-                                  )
-                                }
-                                type="number"
-                                InputProps={{ inputProps: { min: 0 } }} // Ensure minimum value is 0
-                              />
-                              <TextField
-                                fullWidth
-                                value={
-                                  currentInput?.sizes
-                                    .find((s) => s.size === size?.size)
-                                    ?.price.toFixed(2) || 0
-                                }
-                                label={`Price ${
-                                  size?.size === "750ml"
-                                    ? size?.size + " (Q)"
-                                    : size?.size === "375ml"
-                                    ? size?.size + " (P)"
-                                    : size?.size === "180ml"
-                                    ? size?.size + " (N)"
-                                    : size?.size
-                                }`}
-                                name={`price-${size?.size}`}
-                                onChange={handleInputChange}
-                                variant="outlined"
-                                type="number"
-                                focused={false}
-                                inputProps={{ readOnly: true }}
-                              />
-                            </Box>
-                          ))}
-                    </Box>
-                  ) : (
-                    <Box className="px-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
-                      {currentInput?.brand &&
-                        brandData
-                          .find(
-                            (brand) =>
-                              brand?.beer?.brandName === currentInput?.brand
-                          )
-                          ?.beer?.sizes?.map((size) => (
-                            <Box
-                              key={size?.size}
-                              className="flex flex-col gap-5"
-                            >
-                              <TextField
-                                fullWidth
-                                value={
-                                  currentInput?.sizes.find(
-                                    (s) => s.size === size?.size
-                                  )?.quantity || ""
-                                }
-                                label={`Quantity ${
-                                  size?.size === "750ml"
-                                    ? size?.size + " (Q)"
-                                    : size?.size === "375ml"
-                                    ? size?.size + " (P)"
-                                    : size?.size === "180ml"
-                                    ? size?.size + " (N)"
-                                    : size?.size
-                                }`}
-                                name={`quantity-${size?.size}`}
-                                onChange={handleInputChange2}
-                                variant="outlined"
-                                onFocus={(e) =>
-                                  e.target.addEventListener(
-                                    "wheel",
-                                    function (e) {
-                                      e.preventDefault();
-                                    },
-                                    { passive: false }
-                                  )
-                                }
-                                type="number"
-                                InputProps={{ inputProps: { min: 0 } }} // Ensure minimum value is 0
-                              />
-                              <TextField
-                                fullWidth
-                                value={
-                                  currentInput?.sizes
-                                    .find((s) => s.size === size?.size)
-                                    ?.price.toFixed(2) || 0
-                                }
-                                label={`Price ${
-                                  size?.size === "750ml"
-                                    ? size?.size + " (Q)"
-                                    : size?.size === "375ml"
-                                    ? size?.size + " (P)"
-                                    : size?.size === "180ml"
-                                    ? size?.size + " (N)"
-                                    : size?.size
-                                }`}
-                                name={`price-${size?.size}`}
-                                onChange={handleInputChange2}
-                                variant="outlined"
-                                type="number"
-                                focused={false}
-                                inputProps={{ readOnly: true }}
-                              />
-                            </Box>
-                          ))}
-                    </Box>
-                  )}
+
+                  <Box className="px-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
+                    {currentInput?.brand &&
+                      brandData
+                        .find(
+                          (brand) => brand?.brandName === currentInput?.brand
+                        )
+                        ?.sizes?.map((size) => (
+                          <Box key={size?.size} className="flex flex-col gap-5">
+                            <TextField
+                              fullWidth
+                              value={
+                                currentInput?.sizes.find(
+                                  (s) => s.size === size?.size
+                                )?.quantity || ""
+                              }
+                              label={`Quantity ${
+                                size?.size === "750ml"
+                                  ? size?.size + " (Q)"
+                                  : size?.size === "375ml"
+                                  ? size?.size + " (P)"
+                                  : size?.size === "180ml"
+                                  ? size?.size + " (N)"
+                                  : size?.size
+                              }`}
+                              name={`quantity-${size?.size}`}
+                              onChange={handleInputChange}
+                              variant="outlined"
+                              onFocus={(e) =>
+                                e.target.addEventListener(
+                                  "wheel",
+                                  function (e) {
+                                    e.preventDefault();
+                                  },
+                                  { passive: false }
+                                )
+                              }
+                              type="number"
+                              InputProps={{ inputProps: { min: 0 } }} // Ensure minimum value is 0
+                            />
+                            <TextField
+                              fullWidth
+                              value={
+                                currentInput?.sizes
+                                  .find((s) => s.size === size?.size)
+                                  ?.price.toFixed(2) || 0
+                              }
+                              label={`Price ${
+                                size?.size === "750ml"
+                                  ? size?.size + " (Q)"
+                                  : size?.size === "375ml"
+                                  ? size?.size + " (P)"
+                                  : size?.size === "180ml"
+                                  ? size?.size + " (N)"
+                                  : size?.size
+                              }`}
+                              name={`price-${size?.size}`}
+                              onChange={handleInputChange}
+                              variant="outlined"
+                              type="number"
+                              focused={false}
+                              inputProps={{ readOnly: true }}
+                            />
+                          </Box>
+                        ))}
+                  </Box>
+
                   <Box className="px-2 py-2 m-4 flex justify-end">
                     <Button variant="contained" type="submit">
                       Add Product

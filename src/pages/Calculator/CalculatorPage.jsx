@@ -91,12 +91,6 @@ const CalculatorPage = () => {
     const { name, value } = e.target;
     const [type, size] = name.split("-");
 
-    // Validate stock quantity
-    const stock = stocks.find((stock) => stock.size === size);
-    // if (stock && stock.quantity < value) {
-    //   toast.warning(`Stock for ${size} is only ${stock.quantity}`);
-    //   return;
-    // }
 
     // Prevent negative values and non-numeric inputs
     if (value !== "" && (isNaN(value) || parseInt(value) < 0)) return;
