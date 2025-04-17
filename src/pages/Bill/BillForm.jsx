@@ -74,8 +74,12 @@ const BillForm = () => {
   const { getMasterBeerCom } = useContext(BeerContext);
   const { getLiquorCompany } = useContext(LiquorContext);
 
+  // const [createdAt, setCreatedAt] = useState(
+  //   new Date().toISOString().split("T")[0]
+  // );
+
   const [createdAt, setCreatedAt] = useState(
-    new Date().toISOString().split("T")[0]
+    new Date("2025-04-12").toISOString().split("T")[0]
   );
 
   const { allGlobalCompany } = useContext(CompanyContext);
@@ -338,7 +342,6 @@ const BillForm = () => {
     const { name, value } = e.target;
     const [type, size] = name.split("-");
 
-
     // Prevent negative values and non-numeric inputs
     if (value !== "" && (isNaN(value) || parseInt(value) < 0)) return;
 
@@ -358,7 +361,9 @@ const BillForm = () => {
           const selectedBrand = brandData?.find(
             (brand) => brand?.brandName === currentInput.brand
           );
-          const selectedSize = selectedBrand?.sizes?.find((s) => s.size === size);
+          const selectedSize = selectedBrand?.sizes?.find(
+            (s) => s.size === size
+          );
 
           if (selectedSize) {
             const basePrice =
@@ -378,7 +383,9 @@ const BillForm = () => {
           const selectedBrand = brandData?.find(
             (brand) => brand.brandName === currentInput.brand
           );
-          const selectedSize = selectedBrand?.sizes?.find((s) => s.size === size);
+          const selectedSize = selectedBrand?.sizes?.find(
+            (s) => s.size === size
+          );
 
           if (selectedSize) {
             const basePrice =
