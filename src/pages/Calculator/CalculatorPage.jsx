@@ -320,8 +320,14 @@ const CalculatorPage = () => {
       const cess = (t + vatTax) * 0.02;
       const profit = q * dProfit;
       const taxTotal = t + vatTax + cess + w + h + profit + p + exDuty;
+      let taxTotal2 = t + vatTax + cess + w + h;
+
       const tcsValue = taxTotal * 0.01;
+      let tcsValue2 = taxTotal2 * 0.01;
+
       setGrandTotal(round(taxTotal + tcsValue));
+      setGTotal(round(taxTotal2 + tcsValue2));
+
       setTcs(tcsValue);
 
       console.log("total quantity: " + q);

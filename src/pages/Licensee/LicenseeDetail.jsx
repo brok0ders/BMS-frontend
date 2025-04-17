@@ -9,7 +9,6 @@ import {
   Building,
   Mail,
   CreditCard,
-  Loader,
 } from "lucide-react";
 import {
   BarChart,
@@ -23,6 +22,7 @@ import {
 } from "recharts";
 import BillContext from "../../context/bill/billContext";
 import FinancialDataTable from "./FinancialDataTable";
+import Loader from "../../components/Layout/Loader";
 
 const generateProfitData = (year, month) => {
   const daysInMonth = new Date(year, month, 0).getDate();
@@ -91,17 +91,19 @@ const LicenseeDetail = () => {
     getBillStats();
   }, [date, id]);
 
-  if (loading) return <Loader />;
+  if (loading) {
+    return <Loader />;
+  } 
 
   return (
-    <div className="bg-white shadow rounded-lg p-6 max-w-4xl mx-auto">
+    <div className="bg-white shadow rounded-lg p-6 max-w-4xl mx-auto overflow-x-hidden">
       {/* Customer Details Section */}
       <div className="mb-8 bg-yellow-50/50 p-5">
         <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">
           Customer Information
         </h2>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-2 gap-6 break-all">
           <div className="flex items-start space-x-3">
             <User className="text-blue-600 mt-1" size={20} />
             <div>

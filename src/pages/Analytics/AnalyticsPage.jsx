@@ -37,7 +37,7 @@ const AnalyticsPage = () => {
         <Loader />
       ) : (
         <>
-          <div className="px-5  pb-10 md:px-20 md:pb-20">
+          <div className="px-5 pb-10 md:px-20 md:pb-20">
             <BackButton url={`/dashboard/`} />
             <h1 className="text-gray-600 text-center  text-4xl md:text-6xl font-bold">
               Analytics
@@ -59,7 +59,7 @@ const AnalyticsPage = () => {
                 name={"Total Revenue"}
                 value={`₹ ${analytics?.totalRevenue}`}
               />
-              <AnalyticsCard
+              {/* <AnalyticsCard
                 icon={Company}
                 name={"Total Suppliers"}
                 value={analytics?.totalCompanies}
@@ -73,7 +73,7 @@ const AnalyticsPage = () => {
                 icon={Liquor}
                 name={"Total Liquors"}
                 value={analytics?.totalLiquors}
-              />
+              /> */}
               <AnalyticsCard
                 icon={People}
                 name={"Total Licensee"}

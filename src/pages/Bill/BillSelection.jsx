@@ -12,7 +12,6 @@ const BillSelection = () => {
     try {
       setLoading(true);
       const res = await getUser();
-      console.log(res);
       setUser(res.user);
     } catch (e) {
     } finally {

@@ -258,10 +258,6 @@ const BillRecords = () => {
 
   // Function to handle cell edits (primarily for the "paid" column)
   const handleRowEdit = async (newRow, oldRow) => {
-    // Log the received parameters to debug
-    console.log("New Row:", newRow);
-    console.log("Old Row:", oldRow);
-
     if (newRow.paid !== oldRow.paid) {
       try {
         setUpdateLoading(true);
@@ -323,6 +319,15 @@ const BillRecords = () => {
     {
       field: "date",
       headerName: "Date",
+      width: 150,
+      cellClassName: "centered-cell",
+      align: "center",
+      headerAlign: "center",
+      sortable: true,
+    },
+    {
+      field: "excise",
+      headerName: "Excise",
       width: 150,
       cellClassName: "centered-cell",
       align: "center",
@@ -435,10 +440,11 @@ const BillRecords = () => {
             date: bill.createdAt.split("T")[0],
             billno: bill?.billNo || "",
             lincensee: bill?.customer?.licensee || "",
-            Company: bill?.company?.company?.name || "",
+            Company: bill?.company?.name || "",
             total: total,
             paid: paid,
             remaining: total - paid,
+            excise: bill?.excise
           };
         });
         setRows(newRows);
