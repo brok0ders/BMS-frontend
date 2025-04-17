@@ -81,13 +81,13 @@ const BillForm = () => {
   const { allGlobalCompany } = useContext(CompanyContext);
 
   const handleLisencee = async (e) => {
-    setLicensee(e.target.value);
+    setLicensee(e.target.value.trimStart());
   };
 
   const latestShopRef = useRef(null);
 
   const handleShop = async (e) => {
-    const input = e.target.value;
+    const input = e.target.value.trimStart();
     setShop(input);
 
     if (!input) {
@@ -678,7 +678,7 @@ const BillForm = () => {
                   required
                   id="outlined-basic"
                   value={firm}
-                  onChange={(e) => setFirm(e.target.value)}
+                  onChange={(e) => setFirm(e.target.value.trimStart())}
                   label="Firm"
                   variant="outlined"
                 />
@@ -686,7 +686,7 @@ const BillForm = () => {
                   required
                   id="outlined-basic"
                   value={pan}
-                  onChange={(e) => setPan(e.target.value)}
+                  onChange={(e) => setPan(e.target.value.trimStart())}
                   label="PAN No."
                   variant="outlined"
                 />
@@ -694,7 +694,7 @@ const BillForm = () => {
                   required
                   id="outlined-basic"
                   value={excise}
-                  onChange={(e) => setExcise(e.target.value)}
+                  onChange={(e) => setExcise(e.target.value.trimStart())}
                   label="Excise FL"
                   variant="outlined"
                 />
@@ -702,7 +702,7 @@ const BillForm = () => {
                   required
                   id="outlined-basic"
                   value={pno}
-                  onChange={(e) => setPno(e.target.value)}
+                  onChange={(e) => setPno(e.target.value.trimStart())}
                   label="P. No."
                   variant="outlined"
                 />
@@ -710,7 +710,7 @@ const BillForm = () => {
                   id="basic"
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => setEmail(e.target.value.trimStart())}
                   label="Email"
                   variant="outlined"
                 />
