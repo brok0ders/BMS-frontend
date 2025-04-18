@@ -74,13 +74,10 @@ const BillForm = () => {
   const { getMasterBeerCom } = useContext(BeerContext);
   const { getLiquorCompany } = useContext(LiquorContext);
 
-  // const [createdAt, setCreatedAt] = useState(
-  //   new Date().toISOString().split("T")[0]
-  // );
-
   const [createdAt, setCreatedAt] = useState(
-    new Date("2025-04-12").toISOString().split("T")[0]
+    new Date().toISOString().split("T")[0]
   );
+
 
   const { allGlobalCompany } = useContext(CompanyContext);
 
