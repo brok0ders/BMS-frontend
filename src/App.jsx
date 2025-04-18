@@ -50,6 +50,7 @@ import CalculatorPage from "./pages/Calculator/CalculatorPage.jsx";
 import BillForm from "./pages/Bill/BillForm.jsx";
 import LicenseeList from "./pages/Licensee/LicenseeList.jsx";
 import LicenseeDetail from "./pages/Licensee/LicenseeDetail.jsx";
+import LiquorRm0 from "./pages/LiquorRm0.jsx";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -71,6 +72,7 @@ const App = () => {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
+          {/* <Route path="/rmEx0" element={<LiquorRm0 />} /> */}
           <Route path="/dashboard">
             <Route
               index
