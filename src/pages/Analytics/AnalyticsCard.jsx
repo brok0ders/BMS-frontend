@@ -8,6 +8,7 @@ const AnalyticsCard = ({
   trend = null,
   color = "blue",
   isLoading = false,
+  isRupee = false
 }) => {
   const [animate, setAnimate] = useState(false);
   const [displayValue, setDisplayValue] = useState(0);
@@ -73,9 +74,9 @@ const AnalyticsCard = ({
     if (typeof num !== "number") return num;
 
     // Add abbreviations for large numbers
-    if (num >= 1e9) return (num / 1e9).toFixed(1) + "B";
-    if (num >= 1e6) return (num / 1e6).toFixed(1) + "M";
-    if (num >= 1e3) return (num / 1e3).toFixed(1) + "K";
+    // if (num >= 1e9) return (num / 1e9).toFixed(1) + "B";
+    // if (num >= 1e6) return (num / 1e6).toFixed(1) + "M";
+    // if (num >= 1e3) return (num / 1e3).toFixed(1) + "K";
 
     return new Intl.NumberFormat().format(num);
   };
@@ -142,7 +143,7 @@ const AnalyticsCard = ({
 
       <div className="flex items-center space-x-3">
         <h1 className={`text-xl md:text-2xl ${currentTheme.value}`}>
-          {isLoading ? "..." : formattedValue}
+          {isLoading ? "..." : isRupee ? `₹ ${formattedValue}` : formattedValue}
         </h1>
 
         {trend !== null && !isLoading && (

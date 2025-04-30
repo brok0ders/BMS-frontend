@@ -12,6 +12,7 @@ import Loader from "../../components/Layout/Loader";
 import BackButton from "../../components/BackButton";
 import MonthlyAnalytics from "./MonthlyAnalytics";
 import DateWiseReports from "./DateWiseReports";
+import { Package } from "lucide-react";
 
 const AnalyticsPage = () => {
   const [analytics, setAnalytics] = useState({});
@@ -70,7 +71,8 @@ const AnalyticsPage = () => {
             <AnalyticsCard
               icon={Revenue}
               name={"Total Revenue"}
-              value={`₹ ${analytics?.totalRevenue}`}
+              value={analytics?.totalRevenue}
+              isRupee={true}
             />
             {/* <AnalyticsCard
               icon={Company}
@@ -91,6 +93,23 @@ const AnalyticsPage = () => {
               icon={People}
               name={"Total Licensee"}
               value={analytics?.totalCustomers}
+            />
+            <AnalyticsCard
+              icon={<Package className="text-gray-600" />}
+              name={"Total TCS"}
+              value={analytics?.totalTCS}
+              isRupee={true}
+            />
+            <AnalyticsCard
+              icon={<Package className="text-gray-600" />}
+              name={"Total Pratifal"}
+              value={analytics?.totalPratifal}
+              isRupee={true}
+            />
+            <AnalyticsCard
+              icon={<Package className="text-gray-600" />}
+              name={"Total Cases"}
+              value={analytics?.totalQuantity}
             />
           </div>
 

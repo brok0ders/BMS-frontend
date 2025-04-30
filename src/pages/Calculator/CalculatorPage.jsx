@@ -30,15 +30,7 @@ import BackButton from "../../components/BackButton";
 import LiquorContext from "../../context/liquor/liquorContext";
 
 const CalculatorPage = () => {
-  const { company } = useParams();
-  const [licensee, setLicensee] = useState("");
   const [beerBrandData, setBeerBrandData] = useState([{}]);
-
-  const [shop, setShop] = useState("");
-  const [firm, setFirm] = useState("");
-  const [pan, setPan] = useState("");
-  const [excise, setExcise] = useState("");
-  const [pno, setPno] = useState("");
   const { getMasterBeerCom } = useContext(BeerContext);
   const { getLiquorCompany } = useContext(LiquorContext);
 
@@ -53,7 +45,6 @@ const CalculatorPage = () => {
   const [grandTotal, setGrandTotal] = useState(0);
   const [stocks, setStocks] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [spinner, setSpinner] = useState(false);
   const [spinner2, setSpinner2] = useState(false);
   const [added, setAdded] = useState(false);
   const [tcs, setTcs] = useState(0);

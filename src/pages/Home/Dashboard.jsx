@@ -10,7 +10,6 @@ const Dashboard = () => {
   const { user, getUser } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
   const gettingUser = async () => {
-    console.log("abhay");
     try {
       setLoading(true);
       const res = await getUser();

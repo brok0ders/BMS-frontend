@@ -232,12 +232,16 @@ const MonthlyAnalytics = () => {
                 displayEmpty
               >
                 <MenuItem value="liquor" className="flex items-center gap-2">
-                  <Wine size={16} className="text-purple-600" />
-                  Liquor
+                  <Box display="flex" alignItems="center" gap={1}>
+                    <Wine size={16} className="text-purple-600" />
+                    Liquor
+                  </Box>
                 </MenuItem>
                 <MenuItem value="beer" className="flex items-center gap-2">
-                  <Beer size={16} className="text-green-600" />
-                  Beer
+                  <Box display="flex" alignItems="center" gap={1}>
+                    <Beer size={16} className="text-green-600" />
+                    Beer
+                  </Box>
                 </MenuItem>
               </Select>
             </FormControl>

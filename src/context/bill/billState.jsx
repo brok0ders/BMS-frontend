@@ -181,7 +181,7 @@ const BillState = ({ children }) => {
 
   const getBillsByCustomer = async (id, month) => {
     try {
-      const {data} = await API.get(`bill/analytics/customer`, {
+      const { data } = await API.get(`bill/analytics/customer`, {
         headers: {
           "Content-Type": "application/json",
           authorization: localStorage.getItem("token"),
@@ -191,8 +191,48 @@ const BillState = ({ children }) => {
       console.log(data.message);
       if (data.success) {
         return data?.stats;
+      } else {
+        return [];
       }
-      else {
+    } catch (e) {
+      toast.error(e?.response?.data?.message);
+    }
+  };
+
+  const getBillsBySeller = async ({ month, billType }) => {
+    try {
+      const { data } = await API.get(`bill/analytics/seller`, {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: localStorage.getItem("token"),
+        },
+        params: { month, billType },
+      });
+      console.log(data.message);
+      if (data.success) {
+        return data?.company;
+      } else {
+        return [];
+      }
+    } catch (e) {
+      toast.error(e?.response?.data?.message);
+    }
+  };
+
+  const getBrandsByBill = async ({ company, month, billType }) => {
+    try {
+      const { data } = await API.get(`bill/analytics/brands`, {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: localStorage.getItem("token"),
+        },
+        params: { company, month, billType },
+      });
+      console.log(data?.message);
+      console.log("brands: ", data?.data);
+      if (data.success) {
+        return data?.data;
+      } else {
         return [];
       }
     } catch (e) {
@@ -212,6 +252,8 @@ const BillState = ({ children }) => {
         getBeerChart,
         getAnalyticsData,
         getBillsByCustomer,
+        getBillsBySeller,
+        getBrandsByBill,
       }}
     >
       {children}
